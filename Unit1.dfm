@@ -23,7 +23,7 @@ object Form1: TForm1
     ElementID = 'pages'
     Align = alClient
     ElementFont = efCSS
-    TabIndex = 11
+    TabIndex = 0
     ShowTabs = False
     TabOrder = 0
     Visible = False

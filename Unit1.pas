@@ -842,8 +842,10 @@ begin
               }
             }
           }
-          // Do what we normally do when these values change
+          // Reconnect to reload everything
           this.editConfigChange(null);
+          this.editConfigBACKGROUNDChange(null);
+          this.dataConfigSTATUSClick(null);
 
           // Put back the normal icon
           btnHALoadConfiguration.innerHTML = '<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i><div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>';
