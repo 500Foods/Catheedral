@@ -1,0 +1,342 @@
+html, body {
+  background: black;
+  font-family: "Cairo" !important;
+  overflow: hidden;
+}
+
+#pages {
+  transition: opacity 1.5s ease;
+}
+
+/* Main TWebPage Component */
+.Page {
+  top: 0px !important;
+  left: 0px !important;
+  width: 1280px !important;
+  height: 400px !important;
+  overflow: hidden;
+  background: transparent;
+  transition: opacity 0.4s ease;
+}
+
+/*  Main Left/Right Page Navigation Components */
+.Nav {
+  z-index: 10;
+  background: black;
+  width: 40px;
+  height: 300px;
+  opacity: 0.25;
+  left: 0px;
+  transition: left 1.4s ease;
+}
+.NavLeft {
+  left: -40px;
+  clip-path: polygon(0% 0%, 100% 50%, 0 100%);
+}
+.NavRight {
+  left: 1320px;
+  clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+}
+.Nav:hover {
+  opacity: 0.5;
+}
+.NavLeftInner {
+  top: 1px !important;
+  left: 0px !important;
+  width: 38px !important;
+  height: 299px !important;
+  background: white;
+  clip-path: polygon(0% 0%, 100% 50%, 0 100%);
+}
+.NavRightInner {
+  top: 1px !important;
+  left: 2px !important;
+  width: 38px !important;
+  height: 299px !important;
+  background: white;
+  clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+}
+
+.MainButton {
+  opacity: 0;
+  transition: opacity 1.5s ease, left 1.5s ease, top 1.5s ease;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+
+.ConfigButton {
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.ConfigEdit {
+  font-size: 20px;
+  margin: 3px;
+  height: 36px !important;
+  padding-left: 8px;
+  padding-bottom: 5px;
+  border: 2px solid var(--bs-light);
+  border-radius: 6px;
+  background: black;
+  color: white;
+  overflow-x: hidden !important;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.ConfigList {
+  font-size: 20px;
+  margin: 3px;
+  padding-left: 8px;
+  border: 2px solid var(--bs-light);
+  border-radius: 6px;
+  background: black;
+  color: white;
+  overflow-x: hidden !important;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.ConfigDropdown > input {
+  font-size: 20px;
+  margin: 3px;
+  padding-left: 8px;
+  border: 2px solid white;
+  border-radius: 6px;
+  background: black;
+  color: white;
+}
+.ConfigListButton {
+  width: 25px !important;
+  height: 36px !important;
+  padding: 0px !important;
+  margin: 3px 0px 0px 8px !importAnt;
+  font-size: 22px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+
+
+input[type=password]:focus-visible.ConfigEdit,
+input[type=text]:focus-visible.ConfigEdit  {
+  border: 2px solid #FF0;
+  outline-offset: 0px;
+  outline: 1px solid #FF0;
+  filter: drop-shadow(0px 0px 2px blue) drop-shadow(0px 0px 2px blue);
+}
+
+.Title {
+  overflow: visible;
+  font-size: 40px;
+  padding: 2px 8px 2px 8px;
+  color: white;
+  filter: drop-shadow(0px 0px 4px blue) drop-shadow(0px 0px 4px blue);
+}
+.SplashTitle {
+  opacity: 0;
+  overflow: visible;
+  font-size: 40px;
+  padding: 2px 8px 2px 8px;
+  color: white;
+  filter: drop-shadow(0px 0px 4px blue) drop-shadow(0px 0px 4px blue);
+  transition: opacity 3.5s ease;
+}
+.SplashSubtitle {
+  opacity: 0;
+  overflow: visible;
+  font-size: 20px;
+  padding: 2px 8px 2px 8px;
+  color: white;
+  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
+  transition: opacity 3.5s ease;
+}
+
+.Status {
+  overflow: visible;
+  font-size: 40px;
+  padding: 2px 8px 2px 8px;
+  color: white;
+  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
+}
+.StatusGood {
+  overflow: visible;
+  font-size: 40px;
+  padding: 2px 8px 2px 8px;
+  color: white;
+  filter: drop-shadow(0px 0px 4px blue) drop-shadow(0px 0px 4px blue);
+}
+.StatusBad {
+  overflow: visible;
+  font-size: 40px;
+  padding: 2px 8px 2px 8px;
+  color: white;
+  filter: drop-shadow(0px 0px 4px red) drop-shadow(0px 0px 4px red);
+}
+
+.Label {
+  overflow: visible;
+  font-size: 24px;
+  padding: 2px 8px 2px 8px;
+  color: white;
+  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 4px 8px black);
+}
+
+.Data {
+  color: lightblue;
+}
+.YellowData {
+  color: yellow;
+}
+
+.HelpTitle {
+  color: lightblue;
+  font-size: 30px;
+  width: 100%;
+  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 4px 8px black);
+  white-space: normal;
+  padding: 0px 4px 8px 4px;
+}
+.HelpBody {
+  padding: 0px 4px 8px 4px;
+  font-size: 24px;
+  line-height: 1.15;
+  white-space: normal;
+  color: white;
+  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 4px 8px black);
+}
+
+
+.Time {
+  z-index: 5;
+  font-size: 48px;
+  font-weight: 700;
+  color: white;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.Date {
+  z-index: 5;
+  font-size: 32px;
+  color: lightgray;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.Moon {
+  z-index: 5;
+  font-size: 40px;
+  color: deepskyblue;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+
+.Circle {
+  z-index: 3;
+  opacity: 0.6;
+  filter: drop-shadow(0px 0px 1px black);
+}
+.CircleMarker {
+  z-index: 4;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 1px black);
+}
+
+
+.Yellow {
+  overflow: visible;
+  z-index: 5;
+  color: yellow;
+  font-size: 24px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.White {
+  overflow: visible;
+  z-index: 5;
+  color: white;
+  font-size: 24px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  transition: opacity 1.0s ease;
+}
+.Orange {
+  overflow: visible;
+  z-index: 5;
+  color: darkorange;
+  font-size: 24px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.Green {
+  overflow: visible;
+  z-index: 5;
+  color: darkgreen;
+  font-size: 24px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.BlueSky {
+  overflow: visible;
+  z-index: 5;
+  color: deepskyblue;
+  font-size: 24px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+
+
+/* Tabulator settings (Configuration) */
+.tabulator {
+  font-family: Cairo !important;
+  font-size: 20px !important;
+  border-radius: 6px;
+  border: 2px solid white;
+  opacity: 0.9;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  background-color: #222222 !important;
+}
+.tabulator-row.tabulator-row-even {
+ background-color: #333333 !important;
+}
+.tabulator-row.tabulator-row-odd {
+  background-color: #444444 !important;
+}
+.tabulator-cell {
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  border: none !important;
+}
+.tabulator-row > div:nth-child(1) {
+  color: deepskyblue;
+}
+.tabulator-row > div:nth-child(2) {
+  color: white;
+}
+.tabulator-row > div:nth-child(3) {
+  color: deepskyblue;
+}
+.tabulator-row > div:nth-child(4) {
+  color: white;
+}
+
+input {
+  color: white !important;
+}
+
+div.tabulator-cell.tabulator-editing {
+  border: 2px solid white !important;
+  border-radius: 6px;
+  background: black;
+  color: white !important;
+  outline-offset: 0px;
+  outline: 1px solid #FF0;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.tabulator-edit-list {
+  border: 2px solid white;
+  border-radius: 6px;
+  opacity: 0.9;
+  margin-top: -1px;
+  background: black;
+  min-width: 608px;
+  max-width: 608px;
+  width: 608px;
+  overflow-x: hidden;
+  transform: translate(-2px, 0px);
+}
+.tabulator-edit-list-item {
+  color: white !important;
+  font-size: 18px;
+  height: 28px;
+  padding: 0px 4px !important;
+}
+
+
+.PageIn {
+  opacity: 1 !important;
+}
+.PageOut {
+  opacity: 0 !important;
+}
+
