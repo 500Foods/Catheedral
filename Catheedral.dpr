@@ -1,4 +1,4 @@
-program Cathedral;
+program Catheedral;
 
 {$R *.dres}
 

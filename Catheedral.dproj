@@ -3,7 +3,7 @@
         <ProjectGuid>{833E22A1-BB3D-4295-8FEE-4EE4CCD0F529}</ProjectGuid>
         <ProjectVersion>18.7</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
-        <MainSource>Cathedral.dpr</MainSource>
+        <MainSource>Catheedral.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug-Win32</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -130,7 +130,7 @@
         <TMSWebMiletus>2</TMSWebMiletus>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
-        <SanitizedProjectName>Cathedral</SanitizedProjectName>
+        <SanitizedProjectName>Catheedral</SanitizedProjectName>
         <TMSWebMiletusResIconMacOSFile>MiletusMac.icns</TMSWebMiletusResIconMacOSFile>
         <TMSWebMiletusResIconLinuxFile>MiletusLinux.png</TMSWebMiletusResIconLinuxFile>
         <TMSWebMiletusResIconWindowsFile>MiletusWindows.ico</TMSWebMiletusResIconWindowsFile>
@@ -275,7 +275,7 @@
             <ResourceType>ICON</ResourceType>
             <ResourceId>Icon_1</ResourceId>
         </RcItem>
-        <None Include="cathedral.css"/>
+        <None Include="catheedral.css"/>
         <RcItem Include="images\background_cosmic_cliffs.jpg">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>JpgImage_1</ResourceId>
@@ -350,7 +350,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">Cathedral.dpr</Source>
+                    <Source Name="MainSource">Catheedral.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="C:\Program Files (x86)\Steema Software\Steema TeeChart Standard VCL FMX 2022.35\Delphi26\Delphi26.win32\Bin\DclTee926.bpl">TeeChart Standard 2022 Components</Excluded_Packages>
@@ -405,9 +405,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug-Win32\Cathedral.exe" Configuration="Debug-Win32" Class="ProjectOutput">
+                <DeployFile LocalName="Win32\Debug-Win32\Catheedral.exe" Configuration="Debug-Win32" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>Cathedral.exe</RemoteName>
+                        <RemoteName>Catheedral.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -435,9 +435,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\Cathedral.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="Win32\Debug\Catheedral.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>Cathedral.exe</RemoteName>
+                        <RemoteName>Catheedral.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
