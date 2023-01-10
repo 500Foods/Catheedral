@@ -1902,18 +1902,6 @@ object Form1: TForm1
       Caption = 'Rm'
       ChildOrder = 2
       ElementFont = efCSS
-      object WebLabel5: TWebLabel
-        Left = 288
-        Top = 216
-        Width = 32
-        Height = 13
-        Caption = 'Rooms'
-        ElementClassName = 'Label'
-        ElementFont = efCSS
-        HeightStyle = ssAuto
-        HeightPercent = 100.000000000000000000
-        WidthPercent = 100.000000000000000000
-      end
     end
     object pageScenes: TWebTabSheet
       Left = 0
@@ -1925,18 +1913,6 @@ object Form1: TForm1
       Caption = 'Sc'
       ChildOrder = 1
       ElementFont = efCSS
-      object WebLabel6: TWebLabel
-        Left = 296
-        Top = 224
-        Width = 34
-        Height = 13
-        Caption = 'Scenes'
-        ElementClassName = 'Label'
-        ElementFont = efCSS
-        HeightStyle = ssAuto
-        HeightPercent = 100.000000000000000000
-        WidthPercent = 100.000000000000000000
-      end
     end
     object pageHelpConfig: TWebTabSheet
       Left = 0

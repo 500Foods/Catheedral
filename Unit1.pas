@@ -142,8 +142,6 @@ type
     pageCustom2: TWebTabSheet;
     pageCustom3: TWebTabSheet;
     pageCustom4: TWebTabSheet;
-    WebLabel5: TWebLabel;
-    WebLabel6: TWebLabel;
     divCustom2: TWebHTMLDiv;
     divCustom1: TWebHTMLDiv;
     divCustom3: TWebHTMLDiv;
@@ -585,12 +583,14 @@ end;
 procedure TForm1.dataConfigSTATUSClick(Sender: TObject);
 begin
   HAWebSocket.Disconnect;
+  HAWebSocket.Active := False;
   dataConfigSTATUS.Caption := 'Not Connected';
   dataConfigSTATUS.ElementLabelClassName := 'StatusBad';
 
   ShowDisconnected;
 
   tmrConnect.Tag := 0;
+  tmrConnect.Enabled := False;
   tmrConnect.Enabled := True;
 
   ResetInactivityTimer(Sender);
@@ -2023,8 +2023,7 @@ begin
   // Configuration Information
   if (pages.TabIndex = 0) or (pages.TabIndex = 5) or (pages.TabIndex = 6) then
   begin
-    LoadConfiguration;
-    dataConfigSTATUSClick(Sender);
+    window.location.reload(true);
   end;
 
   ResetInactivityTimer(Sender);
