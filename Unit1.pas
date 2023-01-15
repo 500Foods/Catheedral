@@ -69,16 +69,16 @@ type
     labelTime: TWebLabel;
     labelDay: TWebLabel;
     tmrInactivity: TWebTimer;
-    circleMinute: TWebHTMLDiv;
-    circleHour: TWebHTMLDiv;
-    circleDay: TWebHTMLDiv;
+    circleSeconds: TWebHTMLDiv;
+    circleMinutes: TWebHTMLDiv;
+    circleHours: TWebHTMLDiv;
     circleDawnDusk: TWebHTMLDiv;
     circleRiseSet: TWebHTMLDiv;
-    circleHourMarker: TWebHTMLDiv;
-    labelHomeSet: TWebLabel;
+    circleMinutesMarker: TWebHTMLDiv;
+    labelHomeSetIcon: TWebLabel;
     dataHomeSet: TWebLabel;
     dataHomeDusk: TWebLabel;
-    labelHomeRise: TWebLabel;
+    labelHomeRiseIcon: TWebLabel;
     dataHomeRise: TWebLabel;
     dataHomeDawn: TWebLabel;
     labelHomeDusk: TWebLabel;
@@ -111,7 +111,7 @@ type
     circleCurrMark: TWebHTMLDiv;
     circleSetMarker: TWebHTMLDiv;
     circleHumMarker: TWebHTMLDiv;
-    circleMinuteMarker: TWebHTMLDiv;
+    circleSecondsMarker: TWebHTMLDiv;
     dataHomeLightLevel: TWebLabel;
     btnHomeTempDown: TWebButton;
     btnHomeTempUp: TWebButton;
@@ -240,13 +240,15 @@ type
     divHelpCustom: TWebHTMLDiv;
     pageHelpHome: TWebTabSheet;
     divHelpHome: TWebHTMLDiv;
-    WebLabel1: TWebLabel;
-    WebLabel2: TWebLabel;
+    labelHomeRise: TWebLabel;
+    labelHomeSet: TWebLabel;
     WebLabel3: TWebLabel;
-    circleDayMarker: TWebHTMLDiv;
+    circleHoursMarker: TWebHTMLDiv;
     divBackground: TWebHTMLDiv;
     labelHomeLights: TWebLabel;
     dataHomeLights: TWebLabel;
+    labelHomeDawnIcon: TWebLabel;
+    labelHomeDuskIcon: TWebLabel;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -323,10 +325,10 @@ type
     LightsCount: Integer;
     Lights: JSValue;
 
-    SunRise: String;
-    SunSet: String;
-    SunDawn: String;
-    SunDusk: String;
+    SunRise: TTime;
+    SunSet: TTime;
+    SunDawn: TTime;
+    SunDusk: TTime;
     MoonIcon: String;
 
     ClimateName: String;
@@ -420,9 +422,6 @@ end;
 procedure TForm1.Sparkline_Donut(CTop, CLeft, CWidth, CHeight: Integer; Chart: TWebHTMLDiv; ChartData: String; Fill: String; Rotation: String; InnerRadius: Double; DisplayText: String);
 var
   Element: TJSElement;
-  Width: Integer;
-  Height: Integer;
-
 begin
   // Set Dimensions of Chart
   Chart.Top := CTop;
@@ -437,25 +436,23 @@ begin
   Element := Chart.ElementHandle.firstElementChild;
   Element.innerHTML := ChartData;
 
-  // Get dimensions from size of encompassing DIV
-  Width := Chart.Width;
-  Height := Chart.Height;
-
   asm
     peity(Element, "pie", {
-      width: Width,
-      height: Height,
+      width: CWidth,
+      height: CHeight,
       fill: JSON.parse(Fill),
       innerRadius: InnerRadius
     });
 
     Element.parentElement.lastElementChild.style.transform = ' rotate('+Rotation+')';
 
-    const newdiv = document.createElement("div");
-    const newtxt = document.createTextNode(DisplayText);
-    newdiv.appendChild(newtxt);
-    newdiv.style.cssText = 'position:absolute; display:flex; align-items:center; justify-content:center; width:100%; height:100%; top:0px; left:0px; color:#fff; font-size:10px;';
-    Element.parentElement.appendChild(newdiv);
+    if (DisplayText !== '') {
+      const newdiv = document.createElement("div");
+      const newtxt = document.createTextNode(DisplayText);
+      newdiv.appendChild(newtxt);
+      newdiv.style.cssText = 'position:absolute; display:flex; align-items:center; justify-content:center; width:100%; height:100%; top:0px; left:0px; color:#fff; font-size:10px;';
+      Element.parentElement.appendChild(newdiv);
+    }
   end;
 end;
 
@@ -486,10 +483,17 @@ begin
   else if (Entity = SunSensor) then
   begin
     asm
-      this.SunRise = luxon.DateTime.fromISO(State.attributes.next_rising).toFormat('HH:mm');
-      this.SunSet = luxon.DateTime.fromISO(State.attributes.next_setting).toFormat('HH:mm');
-      this.SunDawn = luxon.DateTime.fromISO(State.attributes.next_dawn).toFormat('HH:mm');
-      this.SunDusk = luxon.DateTime.fromISO(State.attributes.next_dusk).toFormat('HH:mm');
+      var timestr = luxon.DateTime.fromISO(State.attributes.next_rising).toFormat('HH:mm:ss');
+      this.SunRise = (parseInt(timestr.substr(0,2))*3600 + parseInt(timestr.substr(3,2))*60 + parseInt(timestr.substr(6,2)))/86400;
+
+      timestr = luxon.DateTime.fromISO(State.attributes.next_setting).toFormat('HH:mm:ss');
+      this.SunSet = (parseInt(timestr.substr(0,2))*3600 + parseInt(timestr.substr(3,2))*60 + parseInt(timestr.substr(6,2)))/86400;
+
+      timestr = luxon.DateTime.fromISO(State.attributes.next_dawn).toFormat('HH:mm:ss');
+      this.SunDawn = (parseInt(timestr.substr(0,2))*3600 + parseInt(timestr.substr(3,2))*60 + parseInt(timestr.substr(6,2)))/86400;
+
+      timestr = luxon.DateTime.fromISO(State.attributes.next_dusk).toFormat('HH:mm:ss');
+      this.SunDusk = (parseInt(timestr.substr(0,2))*3600 + parseInt(timestr.substr(3,2))*60 + parseInt(timestr.substr(6,2)))/86400;
     end;
   end
 
@@ -513,6 +517,8 @@ begin
     tmrSeconds.Tag := 1;
     tmrSecondsTimer(nil);
   end;
+
+    console.log(formatdatetime('hh:nn:ss',SunRise));
 
 end;
 
@@ -988,18 +994,15 @@ begin
         if (hadata.event.data.entity_id.indexOf("light.") == 0) {
           var lightidx = this.Lights.findIndex(o => o.entity_id == hadata.event.data.entity_id);
           if (lightidx > -1) {
-            if ((this.Lights[lightidx].state == "off") && (hadata.event.data.new_state.state == "on")) {
-              if (!((hadata.event.data.new_state.attributes.lights !== undefined) || (hadata.event.data.entity_id.indexOf("_group") > -1))) {
-                this.LightsOn += 1;
-                this.LightsOff -= 1;
-              }
-            } else if ((this.Lights[lightidx].state == "on") && (hadata.event.data.new_state.state == "off")) {
-              if (!((hadata.event.data.new_state.attributes.lights !== undefined) || (hadata.event.data.entity_id.indexOf("_group") > -1))) {
-                this.LightsOn -= 1;
-                this.LightsOff += 1;
-              }
-            }
             this.Lights[lightidx] = hadata.event.data.new_state;
+            this.LightsOn = this.Lights.filter(
+              function(o) {
+               return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+              }).length;
+            this.LightsOff = this.Lights.filter(
+              function(o) {
+               return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+              }).length;
           }
         }
 
@@ -1358,10 +1361,10 @@ begin
   editConfigSHORTTIME.Text := 'hh:nn:ss';
 
   // Home Page - Time Panel
-  SunRise := '00:00';
-  SunSet := '00:00';
-  SunDawn := '00:00';
-  SunDusk := '00:00';
+  SunRise := Trunc(Now);
+  SunSet := Trunc(Now);
+  SunDawn := Trunc(Now);
+  SunDusk := Trunc(Now);
   MoonIcon := '';
 
 
@@ -1685,14 +1688,25 @@ end;
 procedure TForm1.tmrSecondsTimer(Sender: TObject);
 var
   current_seconds: Integer;
+  current_seconds_15: Integer;
+  current_seconds_60: Integer;
+  current_seconds_3600: Integer;
+
   segment_start: Integer;
   segment_end: Integer;
   segment: String;
   rotation: String;
   memory: integer;
   lights: String;
+  display: String;
 begin
-  // Stuff we want to update every second - should be a short list!
+
+  // Some easy calculations
+  current_seconds := SecondOfTheDay(Now);
+  current_seconds_15 := current_seconds mod 15;      // Zero every 15 seconds
+  current_seconds_60 := current_seconds mod 60;      // Zero every minute
+  current_seconds_3600 := current_seconds mod 3600;  // Zero every hour
+
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Entries on the Configuration Page
@@ -1726,19 +1740,27 @@ begin
 
   end;
 
+
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Entries on the Info Page
+  // Entries on the Configuration Information Page
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   if (pages.TabIndex = 6) or (tmrSeconds.Tag = 6) then
   begin
 
     dataInfoRunning.Caption := IntToStr(Trunc(Now-AppStarted))+'d '+FormatDateTime('h"h "n"m "s"s"', Now-AppStarted);
-    asm
-      memory = performance.memory.totalJSHeapSize;
+
+    if (current_seconds_15 = 0) or (tmrSeconds.Tag = 6) then
+    begin
+      asm
+        memory = performance.memory.totalJSHeapSize;
+      end;
+     dataInfoMemory.Caption := FloatToStrF(memory / (1024 * 1024), ffNumber, 6,1)+' MB';
     end;
-    dataInfoMemory.Caption := FloatToStrF(memory / (1024 * 1024), ffNumber, 6,1)+' MB';
   end;
+
+
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Entries on the Home Page
@@ -1751,36 +1773,30 @@ begin
    // Time Panel //////////////////////////////////////////////////////////////////////////////////
 
     try
-      labelDate.Caption := FormatDateTime(editConfigSHORTDATE.Text, Now);
+      display := FormatDateTime(editConfigSHORTDATE.Text, Now);
+      if labelDate.Caption <> display
+      then labelDate.Caption := display;
     except on E: Exception do
       labelDate.Caption := 'Invalid Format';
     end;
     try
-      LabelTime.Caption := FormatDateTime(editConfigSHORTTIME.Text, Now);
+      display := FormatDateTime(editConfigLONGTIME.Text, Now);
+      if labelTime.Caption <> display
+      then labelTime.Caption := display;
     except on E: Exception do
       labelTime.Caption := 'Invalid Format';
     end;
 
-    labelDay.Caption := FormatDateTime('dddd',Now);
+    display := FormatDateTime('dddd',Now);
+    if labelDay.Caption <> display
+    then labelDay.Caption := display;
 
 
-    current_seconds := SecondsBetween(Now, Trunc(Now));
-
-    // Rings: There are 5 Rings + 2 Markers (also Rings)
-    // From outer to inner:
-    //  - Minute
-    //  - Hour
-    //  - Day
-    //  - Dawn/Dusk
-    //  - SunRise / SunSet
-    //  - Minute Marker (like a second hand on a regular clock)
-    //  - Marker (same but for 24-hour period)
-
-    // Minute (Ring 1)
-    segment := IntToStr(current_seconds mod 60);
+    // Seconds (Ring 1)
+    segment := IntToStr(current_seconds_60);
     Sparkline_Donut(
       55, 5, 290, 290,                           // T, L, W, H
-      circleMinute,                              // TWebHTMLDiv
+      circleSeconds,                             // TWebHTMLDiv
       segment+'/60',                             // Data
       '["'+Circle1+'","'+CircleB+'"]',           // Fill
       '0deg',                                    // Rotation
@@ -1788,11 +1804,11 @@ begin
       ''                                         // Text
     );
 
-    // Minute Marker (Ring 1)
-    rotation := IntToStr(Trunc((current_seconds mod 60)*6)-2);
+    // Seconds Marker (Ring 1)
+    rotation := IntToStr((current_seconds_60 * 6) - 2);
     Sparkline_Donut(
       50, 0, 300, 300,                           // T, L, W, H
-      circleMinuteMarker,                        // TWebHTMLDiv
+      circleSecondsMarker,                       // TWebHTMLDiv
       '4/360',                                   // Data
       '["'+Circle1+'","transparent"]',           // Fill
       rotation+'deg',                            // Rotation
@@ -1800,20 +1816,15 @@ begin
       ''                                         // Text
     );
 
-    if ((current_seconds mod 60) = 0) or (tmrSeconds.Tag = 1) then
+    // Every minute we update the Minute and Hour rings
+    if (current_seconds_60 = 0) or (tmrSeconds.Tag = 1) then
     begin
-      // We don't need to update these every second
-      dataHomeRise.Caption := SunRise;
-      dataHomeSet.Caption := SunSet;
-      dataHomeDawn.Caption := SunDawn;
-      dataHomeDusk.Caption := SunDusk;
-      divHomeMoon.HTML.Text := '<img src="weather-icons-dev/production/fill/svg/moon'+StringReplace(StringReplace(MoonIcon,'_','-',[]),'mdi:moon','',[])+'.svg">';
 
-      // Hour (Ring 2)
-      segment := IntToStr(current_seconds mod 3600);
+      // Minutes (Ring 2)
+      segment := IntToStr(current_seconds_3600);
       Sparkline_Donut(
         65, 15, 270, 270,                        // T, L, W, H
-        circleHour,                              // TWebHTMLDiv
+        circleMinutes,                           // TWebHTMLDiv
         segment+'/3600',                         // Data
         '["'+Circle2+'","'+CircleB+'"]',         // Fill
         '0deg',                                  // Rotation
@@ -1821,55 +1832,11 @@ begin
         ''                                       // Text
       );
 
-      // Day (Ring 3)
-      segment := IntToStr(current_seconds);
-      Sparkline_Donut(
-        75,25,250,250,                           // T, L, W, H
-        circleDay,                               // TWebHTMLDiv
-        segment+'/86400',                        // Data
-        '["'+Circle3+'","'+CircleB+'"]',         // Fill
-        '0deg',                                  // Rotation
-        118,                                     // Inner Radius
-        ''                                       // Text
-      );
-
-      // Dawn/Dusk (Ring 4)
-      segment_start := Trunc((( StrToInt(Copy(SunDawn,1,2))*3600 + StrToInt(Copy(SunDawn,4,2))*60 )/86400)*360);
-      segment_end := ( StrToInt(Copy(SunDusk,1,2))*3600 + StrToInt(Copy(SunDusk,4,2))*60) - ( StrToInt(Copy(SunDawn,1,2))*3600 + StrToInt(Copy(SunDawn,4,2))*60 );
-      segment := IntToStr(segment_end);
-      rotation := IntToStr(segment_start);
-      dataHomeTwilight.Caption := FormatDateTime('hh:nn', segment_end/86400.0);
-      Sparkline_Donut(
-        85, 35, 230, 230,                        // T, L, W, H
-        circleDawnDusk,                          // TWebHTMLDiv
-        segment+'/86400',                        // Data
-        '["'+Circle4+'","transparent"]',         // Fill
-        rotation+'deg',                          // Rotation
-        108,                                     // Inner Radius
-        ''                                       // Text
-      );
-
-      // Rise/Set (Ring 5)
-      segment_start := Trunc((( StrToInt(Copy(SunRise,1,2))*3600 + StrToInt(Copy(SunRise,4,2))*60 )/86400)*360);
-      segment_end := ( StrToInt(Copy(SunSet,1,2))*3600 + StrToInt(Copy(SunSet,4,2))*60) - ( StrToInt(Copy(SunRise,1,2))*3600 + StrToInt(Copy(SunRise,4,2))*60 );
-      segment := IntToStr(segment_end);
-      rotation := IntToStr(segment_start);
-      dataHomeDaylight.Caption := FormatDateTime('hh:nn', segment_end/86400.0);
-      Sparkline_Donut(
-        95, 45, 210, 210,                        // T, L, W, H
-        circleRiseSet,                           // TWebHTMLDiv
-        segment+'/86400',                        // Data
-        '["'+Circle5+'","transparent"]',         // Fill
-        rotation+'deg',                          // Rotation
-        98,                                      // Inner Radius
-        ''                                       // Text
-      );
-
-      // Hour Marker (Ring 2)
-      rotation := IntToStr(Trunc((current_seconds mod 3600) / 10)-2);
+      // minutes Marker (Ring 2)
+      rotation := IntToStr((current_seconds_3600 div 10) - 2);
       Sparkline_Donut(
         50, 0, 300, 300,                         // T, L, W, H
-        circleHOurMarker,                        // TWebHTMLDiv
+        circleMinutesMarker,                     // TWebHTMLDiv
         '4/360',                                 // Data
         '["'+Circle2+'","transparent"]',         // Fill
         rotation+'deg',                          // Rotation
@@ -1877,33 +1844,147 @@ begin
         ''                                       // Text
       );
 
-      // Day Marker (Ring 3)
-      rotation := IntToStr(Trunc(((current_seconds)/86400)*360)-2);
+      // Hours (Ring 3)
+      segment := IntToStr(current_seconds);
+      Sparkline_Donut(
+        75,25,250,250,                           // T, L, W, H
+        circleHours,                             // TWebHTMLDiv
+        segment+'/86400',                        // Data
+        '["'+Circle3+'","'+CircleB+'"]',         // Fill
+        '0deg',                                  // Rotation
+        118,                                     // Inner Radius
+        ''                                       // Text
+      );
+
+      // Hours Marker (Ring 3)
+      // 86400s in day / 360deg = 240s/deg rotat
+      rotation := IntToStr((current_seconds div 240) - 2);
       Sparkline_Donut(
         50, 0, 300, 300,                         // T, L, W, H
-        circleDayMarker,                         // TWebHTMLDiv
+        circleHoursMarker,                       // TWebHTMLDiv
         '4/360',                                 // Data
         '["'+Circle3+'","transparent"]',         // Fill
         rotation+'deg',                          // Rotation
         93,                                      // Inner Radius
         ''                                       // Text
       );
+
+    end;
+
+
+    // Every minute we check to see if we need to update the Sunrise/Sunset and Dawn/Dusk information
+    if (current_seconds_60 = 0) or (tmrSeconds.Tag = 1) then
+    begin
+
+      try
+        display := FormatDateTime(editConfigSHORTTIME.Text, SunRise)+
+                   FormatDateTime(editConfigSHORTTIME.Text, SunSet)+
+                   FormatDateTime(editConfigSHORTTIME.Text, SunDawn)+
+                   FormatDateTime(editConfigSHORTTIME.Text, SunDusk);
+      except on E: Exception do
+        display := 'Invalid Format';
+      end;
+
+      segment := dataHomeRise.Caption+
+                 dataHomeSet.Caption+
+                 dataHomeDawn.Caption+
+                 dataHomeDusk.Caption;
+
+      // If any of these four values has changed, then update all of them
+      if (segment <> display) or (tmrSeconds.Tag = 1) then
+      begin
+
+        try
+          display := FormatDateTime(editConfigSHORTTIME.Text, SunRise);
+          if dataHomeRise.Caption <> display
+          then dataHomeRise.Caption := display;
+        except on E: Exception do
+          dataHomeRise.Caption := 'Invalid Format';
+        end;
+
+        try
+          display := FormatDateTime(editConfigSHORTTIME.Text, SunSet);
+          if dataHomeSet.Caption <> display
+          then dataHomeSet.Caption := display;
+        except on E: Exception do
+          dataHomeSet.Caption := 'Invalid Format';
+        end;
+
+        try
+          display := FormatDateTime(editConfigSHORTTIME.Text, SunDawn);
+          if dataHomeDawn.Caption <> display
+          then dataHomeDawn.Caption := display;
+        except on E: Exception do
+          dataHomeDawn.Caption := 'Invalid Format';
+        end;
+
+        try
+          display := FormatDateTime(editConfigSHORTTIME.Text, SunDusk);
+          if dataHomeDusk.Caption <> display
+          then dataHomeDusk.Caption := display;
+        except on E: Exception do
+          dataHomeDusk.Caption := 'Invalid Format';
+        end;
+
+
+        // Dawn/Dusk (Ring 4)
+        segment_start := Trunc(SunDawn * 360);
+        segment_end := Trunc(SunDusk * 360);
+        segment := IntToStr(segment_end - segment_start);
+        rotation := IntToStr(segment_start);
+        Sparkline_Donut(
+          85, 35, 230, 230,                        // T, L, W, H
+          circleDawnDusk,                          // TWebHTMLDiv
+          segment+'/360',                          // Data
+          '["'+Circle4+'","transparent"]',         // Fill
+          rotation+'deg',                          // Rotation
+          108,                                     // Inner Radius
+          ''                                       // Text
+        );
+
+        // Rise/Set (Ring 5)
+        segment_start := Trunc(SunRise * 360);
+        segment_end := Trunc(SunSet * 360);
+        segment := IntToStr(segment_end - segment_start);
+        rotation := IntToStr(segment_start);
+        Sparkline_Donut(
+          95, 45, 210, 210,                        // T, L, W, H
+          circleRiseSet,                           // TWebHTMLDiv
+          segment+'/360',                          // Data
+          '["'+Circle5+'","transparent"]',         // Fill
+          rotation+'deg',                          // Rotation
+          98,                                      // Inner Radius
+          ''                                       // Text
+        );
+
+//        dataHomeTwilight.Caption := FormatDateTime('h"h"n"m"s"s"', SunDusk - SunDawn);
+//        dataHomeDaylight.Caption := FormatDateTime('h"h"n"m"s"s"', SunRise - Sunset);
+        dataHomeTwilight.Caption := FormatDateTime('h"h "n"m"', SunDusk - SunDawn);
+        dataHomeDaylight.Caption := FormatDateTime('h"h "n"m"', SunRise - Sunset);
+      end;
+
+
+      // Moon Icon
+      display := '<img src="weather-icons-dev/production/fill/svg/moon'+StringReplace(StringReplace(StringReplace(MoonIcon,'_','-',[]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
+      if divHomeMoon.HTML.Text <> display
+      then divHomeMoon.HTML.Text := display;
+
     end;
 
 
     // Climate Panel //////////////////////////////////////////////////////////////////////////////////
 
-    // If lights have changed, then update them
 //    Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+
 //              IntToStr(LightsOff)+''+'<i class="fa-solid fa-lightbulb DarkGray fa-2xs px-2"></i>'+
 //              IntToStr(LightsCount)+'</div>';
-    Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+
-              IntToStr(LightsOff)+'</div>';
-     if dataHomeLights.HTML <> Lights
-     then dataHomeLights.HTML := Lights;
+
+    // If lights have changed, then update them, potentially every second
+    Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+IntToStr(LightsOff)+'</div>';
+    if dataHomeLights.HTML <> Lights
+    then dataHomeLights.HTML := Lights;
 
     // Updates once a minute at 15s mark
-    if ((current_seconds mod 60) = 15) or (tmrSeconds.Tag = 1) then
+    if (current_seconds_60 = 15) or (tmrSeconds.Tag = 1) then
     begin
 
       dataHomeMin.Caption := Trim(FloatToStrF(ClimateMin,ffNumber,5,0)+HATemperatureUnits);

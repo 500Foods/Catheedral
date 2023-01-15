@@ -25,10 +25,6 @@ object Form1: TForm1
     ChildOrder = 16
     ElementFont = efCSS
     Role = ''
-    ExplicitLeft = 546
-    ExplicitTop = -7
-    ExplicitWidth = 100
-    ExplicitHeight = 41
   end
   object pages: TWebPageControl
     Left = 0
@@ -40,11 +36,10 @@ object Form1: TForm1
     ElementID = 'pages'
     Align = alClient
     ElementFont = efCSS
-    TabIndex = 0
+    TabIndex = 1
     ShowTabs = False
     TabOrder = 0
     Visible = False
-    ExplicitLeft = 8
     object pageConfiguration: TWebTabSheet
       Tag = 4
       Left = 0
@@ -1273,7 +1268,7 @@ object Form1: TForm1
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
-        object labelHomeSet: TWebLabel
+        object labelHomeSetIcon: TWebLabel
           Left = 245
           Top = 40
           Width = 50
@@ -1283,7 +1278,7 @@ object Form1: TForm1
           Caption = 'Set'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Text TextLG White'
-          ElementID = 'labelHomeSet'
+          ElementID = 'labelHomeSetIcon'
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
@@ -1324,7 +1319,7 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           WidthPercent = 100.000000000000000000
         end
-        object labelHomeRise: TWebLabel
+        object labelHomeRiseIcon: TWebLabel
           Left = 5
           Top = 40
           Width = 50
@@ -1333,7 +1328,7 @@ object Form1: TForm1
           Caption = 'Rise'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Text TextLG White'
-          ElementID = 'labelHomeRise'
+          ElementID = 'labelHomeRiseIcon'
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
@@ -1467,7 +1462,7 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           WidthPercent = 100.000000000000000000
         end
-        object WebLabel1: TWebLabel
+        object labelHomeRise: TWebLabel
           Left = 10
           Top = 3
           Width = 100
@@ -1476,13 +1471,13 @@ object Form1: TForm1
           Caption = 'Sunrise'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Text TextSM White'
-          ElementID = 'labelHomeDaylight'
+          ElementID = 'labelHomeRise'
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           WidthPercent = 100.000000000000000000
         end
-        object WebLabel2: TWebLabel
+        object labelHomeSet: TWebLabel
           Left = 190
           Top = 3
           Width = 100
@@ -1492,41 +1487,77 @@ object Form1: TForm1
           Caption = 'Sunset'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Text TextSM White'
-          ElementID = 'labelHomeDaylight'
+          ElementID = 'labelHomeSet'
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           WidthPercent = 100.000000000000000000
         end
-        object circleMinute: TWebHTMLDiv
+        object labelHomeDawnIcon: TWebLabel
+          Left = 5
+          Top = 303
+          Width = 50
+          Height = 50
+          AutoSize = False
+          Caption = 'Rise'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextLG White'
+          ElementID = 'labelHomeDawnIcon'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          HTML = 
+            '<img style="transform: rotate(180deg);"width=50 height=50 src="w' +
+            'eather-icons-dev/production/fill/svg/sunset.svg">'
+          WidthPercent = 100.000000000000000000
+        end
+        object labelHomeDuskIcon: TWebLabel
+          Left = 245
+          Top = 303
+          Width = 50
+          Height = 50
+          AutoSize = False
+          Caption = 'Rise'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextLG White'
+          ElementID = 'labelHomeDuskIcon'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          HTML = 
+            '<img style="transform: rotate(180deg);"width=50 height=50 src="w' +
+            'eather-icons-dev/production/fill/svg/sunrise.svg">'
+          WidthPercent = 100.000000000000000000
+        end
+        object circleSeconds: TWebHTMLDiv
           Left = 179
           Top = 49
           Width = 70
           Height = 35
           ElementClassName = 'Circle'
-          ElementID = 'circleMinute'
+          ElementID = 'circleSeconds'
           ChildOrder = 3
           ElementFont = efCSS
           Role = ''
         end
-        object circleHour: TWebHTMLDiv
+        object circleMinutes: TWebHTMLDiv
           Left = 115
           Top = 49
           Width = 58
           Height = 35
           ElementClassName = 'Circle'
-          ElementID = 'circleHour'
+          ElementID = 'circleMinutes'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleDay: TWebHTMLDiv
+        object circleHours: TWebHTMLDiv
           Left = 42
           Top = 49
           Width = 67
           Height = 35
           ElementClassName = 'Circle'
-          ElementID = 'circleDay'
+          ElementID = 'circleHours'
           ChildOrder = 1
           ElementFont = efCSS
           Role = ''
@@ -1553,13 +1584,13 @@ object Form1: TForm1
           ElementFont = efCSS
           Role = ''
         end
-        object circleHourMarker: TWebHTMLDiv
+        object circleMinutesMarker: TWebHTMLDiv
           Left = 95
           Top = 279
           Width = 90
           Height = 35
           ElementClassName = 'CircleMarker'
-          ElementID = 'circleHourMarker'
+          ElementID = 'circleMinutesMarker'
           ChildOrder = 7
           ElementFont = efCSS
           Role = ''
@@ -1577,18 +1608,18 @@ object Form1: TForm1
           ElementFont = efCSS
           Role = ''
         end
-        object circleMinuteMarker: TWebHTMLDiv
+        object circleSecondsMarker: TWebHTMLDiv
           Left = 191
           Top = 279
           Width = 102
           Height = 35
           ElementClassName = 'CircleMarker'
-          ElementID = 'circleMinuteMarker'
+          ElementID = 'circleSecondsMarker'
           ChildOrder = 8
           ElementFont = efCSS
           Role = ''
         end
-        object circleDayMarker: TWebHTMLDiv
+        object circleHoursMarker: TWebHTMLDiv
           Left = 5
           Top = 279
           Width = 84

@@ -235,14 +235,13 @@ input[type=text]:focus-visible.ConfigEdit  {
   filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 }
 .CircleMarker {
-  z-index: 4;
   opacity: 0.65;
   filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 }
 /* Want faster moving markers to appear on top of slower moving circles */
 #circleDayMarker { z-index: 4; }
-#circleHourMarker { z-index: 5; }
-#circleMinuteMarker { z-index: 6; }
+#circleMinutesMarker { z-index: 5; }
+#circleSecondsMarker { z-index: 6; }
 
 
 /* Used for displaying various bits of Text on Home Page and elsewhere */
