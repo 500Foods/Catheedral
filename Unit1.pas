@@ -74,7 +74,7 @@ type
     circleDay: TWebHTMLDiv;
     circleDawnDusk: TWebHTMLDiv;
     circleRiseSet: TWebHTMLDiv;
-    circleMarker: TWebHTMLDiv;
+    circleHourMarker: TWebHTMLDiv;
     labelHomeSet: TWebLabel;
     dataHomeSet: TWebLabel;
     dataHomeDusk: TWebLabel;
@@ -117,7 +117,7 @@ type
     btnHomeTempUp: TWebButton;
     btnHALinks: TWebButton;
     btnHASaveConfiguration: TWebButton;
-    [async] btnHALoadConfiguration: TWebButton;
+    btnHALoadConfiguration: TWebButton;
     editConfigBACKGROUND: TWebEdit;
     btnListBackgrounds: TWebButton;
     listBackgrounds: TWebListBox;
@@ -237,7 +237,16 @@ type
     pageHelpConfigSensors: TWebTabSheet;
     divHelpConfigSensors: TWebHTMLDiv;
     pageHelpCustom: TWebTabSheet;
-    WebHTMLDiv1: TWebHTMLDiv;
+    divHelpCustom: TWebHTMLDiv;
+    pageHelpHome: TWebTabSheet;
+    divHelpHome: TWebHTMLDiv;
+    WebLabel1: TWebLabel;
+    WebLabel2: TWebLabel;
+    WebLabel3: TWebLabel;
+    circleDayMarker: TWebHTMLDiv;
+    divBackground: TWebHTMLDiv;
+    labelHomeLights: TWebLabel;
+    dataHomeLights: TWebLabel;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -284,6 +293,10 @@ type
     procedure tmrSwitchPageTimer(Sender: TObject);
     procedure tmrStartupTimer(Sender: TObject);
     procedure labelConfigSTATUSClick(Sender: TObject);
+    procedure MiletusFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure MiletusFormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure CopyPosition(src: TWebHTMLDiv; dest: TWebHTMLDiv);
+
   private
     { Private declarations }
   public
@@ -304,6 +317,11 @@ type
     ClimateSensor: String;
     MoonSensor: String;
     DaylightSensor: String;
+
+    LightsOn: Integer;
+    LightsOff: Integer;
+    LightsCount: Integer;
+    Lights: JSValue;
 
     SunRise: String;
     SunSet: String;
@@ -333,6 +351,19 @@ type
     tabConfigSensors: JSValue;
 
     Features: Integer;
+
+    PanelWidth: Integer;
+    PanelHeight: Integer;
+    MainButtonSize: Integer;
+    MainNavSize: Integer;
+    MainButtonPad: Integer;
+
+    Circle1: String;
+    Circle2: String;
+    Circle3: String;
+    Circle4: String;
+    Circle5: String;
+    CircleB: String;
   end;
 
 var
@@ -342,7 +373,6 @@ var
   AppVersion: String;
   AppRelease: String;
   AppBackground: String;
-
 
 implementation
 
@@ -364,8 +394,8 @@ end;
 procedure TForm1.ShowConnected;
 begin
   if pages.TabIndex = 1
-  then btnHome.Caption := '<i class="fa-solid fa-bolt fa-xl opacity-50 text-white"></i>'
-  else btnHome.Caption := '<i class="fa-solid fa-home fa-xl opacity-50 text-white"></i>';
+  then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
+  else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
 
   btnHALinks.Enabled := True;
   btnHALoadConfiguration.Enabled := True;
@@ -377,7 +407,7 @@ end;
 
 procedure TForm1.ShowDisconnected;
 begin
-  btnHome.Caption := '<i class="fa-solid fa-triangle-exclamation fa-xl opacity-100 text-warning"></i>';
+  btnHome.Caption := '<i class="fa-solid fa-triangle-exclamation fa-2x opacity-100 text-warning"></i>';
 
   btnHALinks.Enabled := False;
   btnHALoadConfiguration.Enabled := False;
@@ -496,7 +526,7 @@ begin
 
   // Change icon to indicate an update is happening.
   // Though in this case it might be too quick to be visible
-  btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-rotate fa-spin fa-fw pe-2" style="color:black; font-size:24px;"></i><div class="lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>';
+  btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-rotate fa-spin fa-fw" style="color:black; font-size:24px;"></i><div class="ps-2 lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>';
 
   // Set flag to indicate that when states arrive, we want to retrieve the configuration
   HALoadConfig := True;
@@ -507,10 +537,6 @@ begin
   HAWebSocket.Send('{"id":'+IntToStr(HAID)+',"type": "get_states"}');
 
   ResetInactivityTimer(Sender);
-
-  //Revert to Normal Icon
-  // btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw pe-2" style="color:black; font-size:24px;"></i><div class="lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>';
-  // We'll do this when we load the last config value
 end;
 
 procedure TForm1.btnHASaveConfigurationClick(Sender: TObject);
@@ -553,10 +579,10 @@ begin
     i := i + 1
   end;
 
-  ResetInactivityTimer(Sender);
-
   // Revert to normal icon
   btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row"><i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i><div class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div></div>';
+
+  ResetInactivityTimer(Sender);
 end;
 
 procedure TForm1.btnHomeClick(Sender: TObject);
@@ -585,7 +611,7 @@ begin
   HAWebSocket.Disconnect;
   HAWebSocket.Active := False;
   dataConfigSTATUS.Caption := 'Not Connected';
-  dataConfigSTATUS.ElementLabelClassName := 'StatusBad';
+  dataConfigSTATUS.ElementLabelClassName := 'Title StatusBad';
 
   ShowDisconnected;
 
@@ -610,7 +636,7 @@ begin
   if (Trim(editConfigBACKGROUND.Text) <> '') and (LowerCase(Trim(editConfigBACKGROUND.Text)) <> 'none') then
   begin
     AppBackground := editConfigBACKGROUND.Text;
-    pages.ElementHandle.style.setProperty('background', AppBackground);
+    divBackground.ElementHandle.style.setProperty('background', AppBackground);
   end;
 end;
 
@@ -638,7 +664,7 @@ begin
   // Kind of a pain to get it out of Tabulator, but it is an odd thing we're doing...
   FeatureKey := '';
   FeatureValue := '';
-  for i := 1 to 9 do
+  for i := 1 to Features do
   begin
 
     asm
@@ -711,8 +737,8 @@ begin
   dataConfigSTATUS.Caption := 'Connected';
 
   if pages.TabIndex = 1
-  then btnHome.Caption := '<i class="fa-solid fa-bolt fa-xl opacity-50 text-white"></i>'
-  else btnHome.Caption := '<i class="fa-solid fa-home fa-xl opacity-50 text-white"></i>';
+  then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
+  else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
 end;
 
 procedure TForm1.HAWebSocketDataReceived(Sender: TObject; Origin: string; SocketData: TJSObjectRecord);
@@ -741,6 +767,7 @@ begin
       if (hadata.id == this.HAGetConfig) {
 
         // Let's have a look at it, shall we??
+        console.log('Config Information: '+SocketData.jsobject.length+' bytes');
         console.log(hadata);
 
         this.HASystemName = hadata.result.location_name;
@@ -778,12 +805,12 @@ begin
         // But we'll call the same function that we call when handling events
         // so we don't have quite as much code duplication.
 
-        // Let's have a look at it, shall we??
-        console.log(hadata);
-
         // This is the state of all Home Assistant objects and their contents in detail
-        this.HAStates = hadata.result;
-//        console.log(this.HAStates);
+        this.HAStates = hadata.result.sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
+
+        // Let's have a look at it, shall we??
+        console.log('State Information: '+SocketData.jsobject.length+' bytes');
+        console.log(this.HAStates);
 
         // This is a list of the names of all the entities that have a state, sorted
         this.HAEntities = this.HAStates.map( obj => obj.entity_id ).sort();
@@ -821,6 +848,32 @@ begin
           }
         }
 
+        // There are FOUR lights
+        this.LightsOn = hadata.result.filter(
+          function(o) {
+           return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+          }).length;
+        this.LightsOff = hadata.result.filter(
+          function(o) {
+           return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+          }).length;
+        this.Lights = hadata.result.filter(
+          function(o) {
+           return ((o.entity_id.indexOf("light.") == 0) && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
+          }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
+        this.LightsCount = this.Lights.length;
+
+        // Lets include the groups so we can use them later, but not include them in the counts
+        var LightGroups = hadata.result.filter(
+          function(o) {
+           return ((o.entity_id.indexOf("light.") == 0) && ((o.attributes.lights !== undefined) || (o.entity_id.indexOf("_group") !== -1)) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
+          }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
+        this.Lights = [...this.Lights, ...LightGroups];
+
+        // Let's have a look at it, shall we??
+        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
+        console.log(this.Lights);
+
 
         // Load Configuration
         if (this.HALoadConfig == true) {
@@ -842,16 +895,17 @@ begin
               }
             }
           }
+
           // Reconnect to reload everything
           this.editConfigChange(null);
           this.editConfigBACKGROUNDChange(null);
           this.dataConfigSTATUSClick(null);
 
-          // Put back the normal icon
-          btnHALoadConfiguration.innerHTML = '<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i><div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>';
-
           // And don't run this again unless asked
           this.HALoadConfig = false;
+
+          // Put back the normal icon
+          this.btnHALoadConfiguration.SetCaption('<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i><div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>');
         }
       }
     }
@@ -869,7 +923,7 @@ begin
   begin
     if (dataConfigSTATUS.Caption <> 'Connected')
     then dataConfigSTATUS.Caption := 'Authenticating';
-    dataConfigSTATUS.ElementLabelClassName := 'StatusGood';
+    dataConfigSTATUS.ElementLabelClassName := 'Title StatusGood';
     HAWebSocket.Send('{"type": "auth","access_token":"'+editConfigTOKEN.Text+'"}');
   end
 
@@ -877,7 +931,7 @@ begin
   else if (ResponseType = 'auth_ok') then
   begin
     dataConfigSTATUS.Caption := 'Connected';
-    dataConfigSTATUS.ElementLabelClassName := 'StatusGood';
+    dataConfigSTATUS.ElementLabelClassName := 'Title StatusGood';
     tmrConnect.Enabled := False;
 
     ShowConnected;
@@ -893,15 +947,14 @@ begin
     HAGetEvents := HAID;
     HAWebSocket.Send('{"id":'+IntToStr(HAID)+',"type": "subscribe_events", "event_type":"state_changed"}');
 
-    // Make sure it is enabled (but don't reset it)
-    if not(tmrInActivity.Enabled) then tmrInActivity.Enabled := True;
+    ResetInactivityTimer(Sender);
   end
 
   // Failed to login with a valid token
   else if (ResponseType = 'auth_invalid') then
   begin
     dataConfigSTATUS.Caption := 'Invalid Token';
-    dataConfigSTATUS.ElementLabelClassName := 'StatusBad';
+    dataConfigSTATUS.ElementLabelClassName := 'Title StatusBad';
     tmrConnect.Enabled := False;
 
     // Stay on this page
@@ -926,6 +979,29 @@ begin
     asm
       var hadata = JSON.parse(SocketData.jsobject);
       if (hadata.event.event_type == 'state_changed') {
+
+        // Let's have a look at it, shall we??
+//        console.log('Event Information: '+SocketData.jsobject.length+' bytes');
+//        console.log(hadata);
+
+        // Update light counts
+        if (hadata.event.data.entity_id.indexOf("light.") == 0) {
+          var lightidx = this.Lights.findIndex(o => o.entity_id == hadata.event.data.entity_id);
+          if (lightidx > -1) {
+            if ((this.Lights[lightidx].state == "off") && (hadata.event.data.new_state.state == "on")) {
+              if (!((hadata.event.data.new_state.attributes.lights !== undefined) || (hadata.event.data.entity_id.indexOf("_group") > -1))) {
+                this.LightsOn += 1;
+                this.LightsOff -= 1;
+              }
+            } else if ((this.Lights[lightidx].state == "on") && (hadata.event.data.new_state.state == "off")) {
+              if (!((hadata.event.data.new_state.attributes.lights !== undefined) || (hadata.event.data.entity_id.indexOf("_group") > -1))) {
+                this.LightsOn -= 1;
+                this.LightsOff += 1;
+              }
+            }
+            this.Lights[lightidx] = hadata.event.data.new_state;
+          }
+        }
 
         if (hadata.event.data.entity_id == this.ClimateSensor) {
           this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
@@ -1032,6 +1108,11 @@ var
 const
   arches: TArray<String> = ['x86', 'x64','arm32','arm64'];
 begin
+  //  Console.log('Loading configuration');
+  AppINIFile := TMiletusINIFile.Create(StringReplace(ParamStr(0),'.exe','',[])+'.ini');
+
+
+  // Sort out a few other things while we're here
   os := Await(TMiletusOSVersion, GetOSVersionP);
   dataInfoPlatform.Caption := os.Name;
   dataInfoArch.Caption := arches[Integer(os.Architecture)];
@@ -1044,8 +1125,6 @@ begin
   end;
   dataInfoInternet.Caption := Internet;
 
-  //  Console.log('Loading configuration');
-  AppINIFile := TMiletusINIFile.Create(StringReplace(ParamStr(0),'.exe','',[])+'.ini');
 
   // Update the version in the INI file if it has changed
   StoredValue := await(String, AppINIFile.ReadString('Configuration', 'VERSION', 'UNKNOWN'));
@@ -1054,11 +1133,40 @@ begin
     AppINIFile.WriteString('Configuration', 'VERSION', AppVersion);
   end;
 
+  // Read in the Configuration Page values individually
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'URL', ''));
+  if StoredValue <> '' then editConfiguRL.Text := StoredValue;
+
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'TOKEN', ''));
+  if StoredValue <> '' then editConfigTOKEN.Text := StoredValue;
+
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'BACKGROUND', ''));
+  if StoredValue <> '' then editConfigBACKGROUND.Text := StoredValue;
+  if (Trim(editConfigBACKGROUND.Text) <> '') and (LowerCase(Trim(editConfigBACKGROUND.Text)) <> 'none') then
+  begin
+    AppBackground := editConfigBACKGROUND.Text;
+    divBackground.ElementHandle.style.setProperty('opacity', '1');
+    divBackground.ElementHandle.style.setProperty('background', AppBackground);
+  end;
+
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'LONGDATE', ''));
+  if StoredValue <> '' then editConfigLONGDATE.Text := StoredValue;
+
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'LONGTIME', ''));
+  if StoredValue <> '' then editConfigLONGTIME.Text := StoredValue;
+
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'SHORTDATE', ''));
+  if StoredValue <> '' then editConfigSHORTDATE.Text := StoredValue;
+
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'SHORTTIME', ''));
+  if StoredValue <> '' then editConfigSHORTTIME.Text := StoredValue;
+
+
   // Add each of the links for Home Assistant from the INI file as well
   // Kind of a pain to get it back into Tabulator, but it is an odd thing we're doing...
   FeatureKey := '';
   FeatureValue := '';
-  for i := 1 to 9 do
+  for i := 1 to Features do
   begin
     asm
       var table = this.tabConfigSensors;
@@ -1105,29 +1213,6 @@ begin
   CustomPage3Refresh := CustomPage1Refresh;
   CustomPage4Refresh := CustomPage1Refresh;
 
-  // Read in the Configuration Page values individually
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'URL', ''));
-  if StoredValue <> '' then editConfiguRL.Text := StoredValue;
-
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'TOKEN', ''));
-  if StoredValue <> '' then editConfigTOKEN.Text := StoredValue;
-
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'BACKGROUND', ''));
-  if StoredValue <> '' then editConfigBACKGROUND.Text := StoredValue;
-
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'LONGDATE', ''));
-  if StoredValue <> '' then editConfigLONGDATE.Text := StoredValue;
-
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'LONGTIME', ''));
-  if StoredValue <> '' then editConfigLONGTIME.Text := StoredValue;
-
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'SHORTDATE', ''));
-  if StoredValue <> '' then editConfigSHORTDATE.Text := StoredValue;
-
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'SHORTTIME', ''));
-  if StoredValue <> '' then editConfigSHORTTIME.Text := StoredValue;
-
-
   // Cleanup
   AppINIFile.Free;
 end;
@@ -1156,49 +1241,67 @@ begin
   ShowDisconnected;
   HALoadConfig := False;
 
+  // Let's start with this.  Will adjust later.
+  // Try to use these for all adjustments, so when we move to
+  // different form factors, these are all we have to consider.
+  PanelWidth := 1280;
+  PanelHeight := 400;
+  MainNavSize := 40;
+  MainButtonSize := 40;
+  MainButtonPad := 3;
 
-  // Everything is"faded out" to begin with
+  // Same goes for themes.  Probably lots that can be done,
+  // but for now let's start here.
+  Circle1 := 'darkred';
+  Circle2 := 'darkgreen';
+  Circle3 := 'royalblue';
+  Circle4 := 'orange';
+  Circle5 := 'yellow';
+  CircleB := '#FFFFFF40';
+
+  // Everything is "faded out" to begin with
+  pages.TabIndex := 11;  // start with init page
   pages.ElementHandle.style.setProperty('opacity','0');
-
   divCatheedral.ElementHandle.style.setProperty('opacity','0');
   divInit.ElementHandle.style.setProperty('opacity','0');
 
-  navLeft.Left := -40;
-  navRight.left := 1320;
+  // Set Starting positions of Main controls
+  // slide in from left
+  navLeft.Top := (PanelHeight - navLeft.Height) div 2;
+  navLeft.Left := -MainNavSize;
+  // slide in from right
+  navRight.Top := navLeft.Top;
+  navRight.left := PanelWidth + MainNavSize;
+  // slide in from left
+  btnHelp.Top := MainButtonPad;
+  btnHelp.Left := -MainButtonSize;
+  btnHelp.Width := MainButtonSize;
+  btnHelp.Height := MainButtonSize;
+  // slide in from top
+  btnChange.Top := -MainButtonSize;
+  btnChange.Left := PanelWidth - MainButtonSize - MainButtonPad;
+  btnChange.Width := MainButtonSize;
+  btnChange.Height := MainButtonSize;
+  // slide in from right
+  btnHome.Top := PanelHeight - MainButtonPad;
+  btnHome.Left := PanelWidth + MainButtonSize;
+  btnHome.Width := MainButtonSize;
+  btnHome.Height := MainButtonSize;
+  // slide in from bottom
+  btnConfiguration.top := PanelHeight + MainButtonSize;
+  btnConfiguration.Left := MainButtonPad;
+  btnConfiguration.Width := MainButtonSize;
+  btnConfiguration.Height := MainButtonSize;
 
-  btnHelp.ElementHandle.style.setProperty('opacity','0');
-  btnHelp.Top := -5;
-  btnHelp.Left := -50;
-  btnChange.ElementHandle.style.setProperty('opacity','0');
-  btnChange.Top := -50;
-  btnChange.Left := 1235;
-  btnHome.ElementHandle.style.setProperty('opacity','0');
-  btnHome.Top := 355;
-  btnHome.Left := 1330;
-  btnConfiguration.ElementHandle.style.setProperty('opacity','0');
-  btnConfiguration.top := 450;
-  btnConfiguration.Left := -5;
-
-  pageInit.ElementHandle.style.setProperty('opacity','0');
-  pageConfiguration.ElementHandle.style.setProperty('opacity','0');
-  pageConfigSensors.ElementHandle.style.setProperty('opacity','0');
-  pageConfigInfo.ElementHandle.style.setProperty('opacity','0');
-
-  pagehome.ElementHandle.style.setProperty('opacity','0');
-  pageRooms.ElementHandle.style.setProperty('opacity','0');
-  pageScenes.ElementHandle.style.setProperty('opacity','0');
-
-  pageCustom1.ElementHandle.style.setProperty('opacity','0');
-  pageCustom2.ElementHandle.style.setProperty('opacity','0');
-  pageCustom3.ElementHandle.style.setProperty('opacity','0');
-  pageCustom4.ElementHandle.style.setProperty('opacity','0');
-
-  pageHelpConfig.ElementHandle.style.setProperty('opacity','0');
-  pageHelpConfigInfo.ElementHandle.style.setProperty('opacity','0');
-  pageHelpConfigSensors.ElementHandle.style.setProperty('opacity','0');
-
-  pageHelpCustom.ElementHandle.style.setProperty('opacity','0');
-
+  // Make sure Help is sized appropriately
+//  divHelpHome.Top := 0;
+//  divHelpHome.Left := Trunc(MainNavSize * 1.5);
+//  divHelpHome.Width := Trunc(PanelWidth - (MainNavSize * 3));
+//  divHelpHome.Height := PanelHeight;
+//  CopyPosition(divHelpHome, divHelpConfig);
+//  CopyPosition(divHelpHome, divHelpConfigInfo);
+//  CopyPosition(divHelpHome, divHelpConfigSensors);
+//  CopyPosition(divHelpHome, divHelpCustom);
 
   // Update the main configuration page title
   titleCatheedral.Caption := 'Catheedral v'+AppVersion;
@@ -1261,6 +1364,12 @@ begin
   SunDusk := '00:00';
   MoonIcon := '';
 
+
+  // Light Counts
+  LightsOn := 0;
+  LightsOff := 0;
+  LightsCount := 0;
+
   // Home Page - Climate Panel
   ClimateName := 'Not Configured';
   ClimateMin := 0;
@@ -1279,7 +1388,50 @@ begin
 
   // Start the UI
   tmrStartup.Enabled := True;
+  tmrStartupTimer(Sender);
 
+end;
+
+procedure TForm1.MiletusFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+
+  if (document.activeElement.tagName <> 'INPUT') then
+  begin
+    if (char(Key) = '1') then
+    begin
+      btnHelpClick(Sender);
+    end
+    else if (char(Key) = '2') then
+    begin
+      btnChangeClick(Sender);
+    end
+    else if (char(Key) = '3') then
+    begin
+      btnHomeClick(Sender);
+    end
+    else if (char(Key) = '4') then
+    begin
+      btnConfigurationClick(Sender);
+    end
+    else if (Key = VK_LEFT) and (document.activeElement.tagName <> 'input') then
+    begin
+      navLeftclick(Sender);
+    end
+    else if (Key = VK_RIGHT) and (document.activeElement.tagName <> 'input') then
+    begin
+      navRightclick(Sender);
+    end;
+  end;
+
+  if tmrInactivity.Enabled
+  then ResetInactivityTimer(Sender);
+
+end;
+
+procedure TForm1.MiletusFormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+begin
+  if tmrInactivity.Enabled
+  then ResetInactivityTimer(Sender);
 end;
 
 procedure TForm1.navLeftClick(Sender: TObject);
@@ -1293,7 +1445,7 @@ begin
   // 01 - Home
   // 02 - Rooms
   // 03 - Scenes
-  // 04 - Configuration HELP
+  // 04 - HELP: Main Configuration
   // 05 - Configuration Sensors
   // 06 - Configuration Information
   // 07 - Custom URL 1
@@ -1301,7 +1453,10 @@ begin
   // 09 - Custom URL 3
   // 10 - Custom URL 4
   // 11 - Initialization - Should not appear again
-  // 12 - Configuration Information HELP
+  // 12 - HELP: Configuration Information
+  // 13 - HELP: Configuration Sensors
+  // 14 - HELP: Custom Pages
+  // 15 - HELP: Home Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -1314,17 +1469,17 @@ begin
   if Trim(CustomPage3URL) = '' then Custom3 := Custom2;
   if Trim(CustomPage4URL) = '' then Custom4 := Custom3;
 
-  // Configuration cycle
+  // Configuration cycle: 3
   // 06 - 00 - 05
   // Sensors - Config - Info
 
-  // Main Cycle
+  // Main Cycle: 7
   // 09 - 10 - 03 - 01 - 02 - 07 - 08
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
-  // Help Cycle
-  // 13 - 04 - 12 - 14
-  // Cs - Cf - Ci - C1
+  // Help Cycle: 5
+  // 13 - 04 - 12 - 14 - 15
+  // Cs - Cf - Ci - C1 - Hm
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,  5)
@@ -1341,10 +1496,11 @@ begin
   else if (pages.TabIndex =  8) then SwitchPages(  8, Custom1)
 
   // Help
-  else if (pages.TabIndex = 13) then SwitchPages( 13, 14)
+  else if (pages.TabIndex = 13) then SwitchPages( 13, 15)
   else if (pages.TabIndex =  4) then SwitchPages(  4, 13)
   else if (pages.TabIndex = 12) then SwitchPages( 12,  4)
-  else if (pages.TabIndex = 14) then SwitchPages( 14, 12);
+  else if (pages.TabIndex = 14) then SwitchPages( 14, 12)
+  else if (pages.TabIndex = 15) then SwitchPages( 15, 14);
 
   ResetInactivityTimer(Sender);
 end;
@@ -1360,7 +1516,7 @@ begin
   // 01 - Home
   // 02 - Rooms
   // 03 - Scenes
-  // 04 - Configuration HELP
+  // 04 - HELP: Main Configuration
   // 05 - Configuration Sensors
   // 06 - Configuration Information
   // 07 - Custom URL 1
@@ -1368,7 +1524,10 @@ begin
   // 09 - Custom URL 3
   // 10 - Custom URL 4
   // 11 - Initialization - Should not appear again
-  // 12 - Configuration Information HELP
+  // 12 - HELP: Configuration Information
+  // 13 - HELP: Configuration Sensors
+  // 14 - HELP: Custom Pages
+  // 15 - HELP: Home Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -1390,8 +1549,8 @@ begin
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
   // Help Cycle
-  // 13 - 04 - 12 - 14
-  // Cs - Cf - Ci - C1
+  // 13 - 04 - 12 - 14 - 15
+  // Cs - Cf - Ci - C1 - Hm
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,   0)
@@ -1411,11 +1570,13 @@ begin
   else if (pages.TabIndex = 13) then SwitchPages( 13,  4)
   else if (pages.TabIndex =  4) then SwitchPages(  4, 12)
   else if (pages.TabIndex = 12) then SwitchPages( 12, 14)
-  else if (pages.TabIndex = 12) then SwitchPages( 14, 13);
+  else if (pages.TabIndex = 14) then SwitchPages( 14, 15)
+  else if (pages.TabIndex = 15) then SwitchPages( 15, 13);
 
 
   ResetInactivityTimer(Sender);
 end;
+
 
 procedure TForm1.ResetInactivityTimer(Sender: TObject);
 begin
@@ -1425,11 +1586,9 @@ begin
 end;
 
 procedure TForm1.SwitchPages(StartPage, EndPage: Integer);
-var
-  CustomRefresh: String;
 begin
 
-  // This is in case we want to update the page when it is not visibile
+  // This is in case we want to update the page when it is not visible
   tmrSeconds.Tag := EndPage;
   tmrSecondsTimer(nil);
 
@@ -1442,8 +1601,8 @@ begin
 
   // configuration button on Configuration Page is Power On/Off otherwise it is a Gear
   if EndPage = 0
-  then btnConfiguration.Caption := '<i class="fa-solid fa-power-off fa-xl text-white opacity-50"></i>'
-  else btnConfiguration.Caption := '<i class="fa-solid fa-gear fa-xl text-white opacity-50"></i>';
+  then btnConfiguration.Caption := '<i class="fa-solid fa-power-off fa-2x"></i>'
+  else btnConfiguration.Caption := '<i class="fa-solid fa-gear fa-2x"></i>';
 
 
   // Home button on Home Page is bolt if connnected or
@@ -1451,8 +1610,8 @@ begin
   begin
     ShowConnected;
     if EndPage = 1
-    then btnHome.Caption := '<i class="fa-solid fa-bolt fa-xl opacity-50 text-white"></i>'
-    else btnHome.Caption := '<i class="fa-solid fa-home fa-xl opacity-50 text-white"></i>';
+    then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
+    else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
   end
   else
   begin
@@ -1531,6 +1690,7 @@ var
   segment: String;
   rotation: String;
   memory: integer;
+  lights: String;
 begin
   // Stuff we want to update every second - should be a short list!
 
@@ -1602,11 +1762,7 @@ begin
     end;
 
     labelDay.Caption := FormatDateTime('dddd',Now);
-    dataHomeRise.Caption := SunRise;
-    dataHomeSet.Caption := SunSet;
-    dataHomeDawn.Caption := SunDawn;
-    dataHomeDusk.Caption := SunDusk;
-    divHomeMoon.HTML.Text := '<div class="mdi '+StringReplace(MoonIcon,':','-',[rfReplaceAll])+'"></div>';
+
 
     current_seconds := SecondsBetween(Now, Trunc(Now));
 
@@ -1620,13 +1776,13 @@ begin
     //  - Minute Marker (like a second hand on a regular clock)
     //  - Marker (same but for 24-hour period)
 
-    // Minute (Ring 1 - Outermost)
+    // Minute (Ring 1)
     segment := IntToStr(current_seconds mod 60);
     Sparkline_Donut(
       55, 5, 290, 290,                           // T, L, W, H
       circleMinute,                              // TWebHTMLDiv
       segment+'/60',                             // Data
-      '["darkred","darkgray"]',                  // Fill
+      '["'+Circle1+'","'+CircleB+'"]',           // Fill
       '0deg',                                    // Rotation
       138,                                       // Inner Radius
       ''                                         // Text
@@ -1638,7 +1794,7 @@ begin
       50, 0, 300, 300,                           // T, L, W, H
       circleMinuteMarker,                        // TWebHTMLDiv
       '4/360',                                   // Data
-      '["darkred","transparent"]',               // Fill
+      '["'+Circle1+'","transparent"]',           // Fill
       rotation+'deg',                            // Rotation
       93,                                        // Inner Radius
       ''                                         // Text
@@ -1646,6 +1802,12 @@ begin
 
     if ((current_seconds mod 60) = 0) or (tmrSeconds.Tag = 1) then
     begin
+      // We don't need to update these every second
+      dataHomeRise.Caption := SunRise;
+      dataHomeSet.Caption := SunSet;
+      dataHomeDawn.Caption := SunDawn;
+      dataHomeDusk.Caption := SunDusk;
+      divHomeMoon.HTML.Text := '<img src="weather-icons-dev/production/fill/svg/moon'+StringReplace(StringReplace(MoonIcon,'_','-',[]),'mdi:moon','',[])+'.svg">';
 
       // Hour (Ring 2)
       segment := IntToStr(current_seconds mod 3600);
@@ -1653,7 +1815,7 @@ begin
         65, 15, 270, 270,                        // T, L, W, H
         circleHour,                              // TWebHTMLDiv
         segment+'/3600',                         // Data
-        '["darkblue","darkgray"]',               // Fill
+        '["'+Circle2+'","'+CircleB+'"]',         // Fill
         '0deg',                                  // Rotation
         128,                                     // Inner Radius
         ''                                       // Text
@@ -1665,7 +1827,7 @@ begin
         75,25,250,250,                           // T, L, W, H
         circleDay,                               // TWebHTMLDiv
         segment+'/86400',                        // Data
-        '["darkgreen","darkgray"]',              // Fill
+        '["'+Circle3+'","'+CircleB+'"]',         // Fill
         '0deg',                                  // Rotation
         118,                                     // Inner Radius
         ''                                       // Text
@@ -1681,7 +1843,7 @@ begin
         85, 35, 230, 230,                        // T, L, W, H
         circleDawnDusk,                          // TWebHTMLDiv
         segment+'/86400',                        // Data
-        '["orange","transparent"]',              // Fill
+        '["'+Circle4+'","transparent"]',         // Fill
         rotation+'deg',                          // Rotation
         108,                                     // Inner Radius
         ''                                       // Text
@@ -1697,19 +1859,31 @@ begin
         95, 45, 210, 210,                        // T, L, W, H
         circleRiseSet,                           // TWebHTMLDiv
         segment+'/86400',                        // Data
-        '["yellow","transparent"]',              // Fill
+        '["'+Circle5+'","transparent"]',         // Fill
         rotation+'deg',                          // Rotation
         98,                                      // Inner Radius
         ''                                       // Text
       );
 
-      // Update the circle marker
+      // Hour Marker (Ring 2)
+      rotation := IntToStr(Trunc((current_seconds mod 3600) / 10)-2);
+      Sparkline_Donut(
+        50, 0, 300, 300,                         // T, L, W, H
+        circleHOurMarker,                        // TWebHTMLDiv
+        '4/360',                                 // Data
+        '["'+Circle2+'","transparent"]',         // Fill
+        rotation+'deg',                          // Rotation
+        93,                                      // Inner Radius
+        ''                                       // Text
+      );
+
+      // Day Marker (Ring 3)
       rotation := IntToStr(Trunc(((current_seconds)/86400)*360)-2);
       Sparkline_Donut(
         50, 0, 300, 300,                         // T, L, W, H
-        circleMarker,                            // TWebHTMLDiv
+        circleDayMarker,                         // TWebHTMLDiv
         '4/360',                                 // Data
-        '["darkgreen","transparent"]',           // Fill
+        '["'+Circle3+'","transparent"]',         // Fill
         rotation+'deg',                          // Rotation
         93,                                      // Inner Radius
         ''                                       // Text
@@ -1718,16 +1892,26 @@ begin
 
 
     // Climate Panel //////////////////////////////////////////////////////////////////////////////////
+
+    // If lights have changed, then update them
+//    Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+
+//              IntToStr(LightsOff)+''+'<i class="fa-solid fa-lightbulb DarkGray fa-2xs px-2"></i>'+
+//              IntToStr(LightsCount)+'</div>';
+    Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+
+              IntToStr(LightsOff)+'</div>';
+     if dataHomeLights.HTML <> Lights
+     then dataHomeLights.HTML := Lights;
+
     // Updates once a minute at 15s mark
     if ((current_seconds mod 60) = 15) or (tmrSeconds.Tag = 1) then
     begin
 
-      dataHomeMin.Caption := Trim(FloatToStrF(ClimateMin,ffNumber,5,0)+'°C');
-      dataHomeMax.Caption := Trim(FloatToStrF(ClimateMax,ffNumber,5,0)+'°C');
+      dataHomeMin.Caption := Trim(FloatToStrF(ClimateMin,ffNumber,5,0)+HATemperatureUnits);
+      dataHomeMax.Caption := Trim(FloatToStrF(ClimateMax,ffNumber,5,0)+HATemperatureUnits);
       dataHomeHumidity.Caption := Trim(FloatToStrF(ClimateHumidity,ffNumber,5,0)+' %');
-      dataHomeSetPoint.Caption := Trim(FloatToStrF(ClimateSetPoint,ffNumber,5,0)+'°C');
+      dataHomeSetPoint.Caption := Trim(FloatToStrF(ClimateSetPoint,ffNumber,5,0)+HATemperatureUnits);
       labelHomeTempName.Caption := ClimateName;
-      dataHomeTemperature.Caption := Trim(FloatToStrF(ClimateCurrent,ffNumber,5,1)+'°C');
+      dataHomeTemperature.Caption := Trim(FloatToStrF(ClimateCurrent,ffNumber,5,1)+HATemperatureUnits);
       dataHomeMode.Caption := ClimateState;
       dataHomeAction.Caption := ClimateMode;
       dataHomeLightLevel.Caption := ClimateLight;
@@ -1756,7 +1940,7 @@ begin
         55, 5, 290, 290,                         // T, L, W, H
         circleCurrent,                           // TWebHTMLDiv
         segment,                                 // Data
-        '["darkred","darkgray","transparent"]',  // Fill
+        '["'+Circle1+'","'+CircleB+'","transparent"]',  // Fill
         '220deg',                                // Rotation
         138,                                     // Inner Radius
         ''                                       // Text
@@ -1769,7 +1953,7 @@ begin
         65, 15, 270, 270,                        // T, L, W, H
         circleSetPoint,                          // TWebHTMLDiv
         segment,                                 // Data
-        '["darkblue","darkgray","transparent"]', // Fill
+        '["'+Circle2+'","'+CircleB+'","transparent"]', // Fill
         '215deg',                                // Rotation
         128,                                     // Inner Radius
         ''                                       // Text
@@ -1782,7 +1966,7 @@ begin
         75, 25, 250, 250,                        // T, L, W, H
         circleHumidity,                          // TWebHTMLDiv
         segment,                                 // Data
-        '["yellow","darkgray","transparent"]',   // Fill
+        '["'+Circle3+'","'+CircleB+'","transparent"]',   // Fill
         '210deg',                                // Rotation
         118,                                     // Inner Radius
         ''                                       // Text
@@ -1794,7 +1978,7 @@ begin
         50, 0, 300, 300,                         // T, L, W, H
         circleCurrMark,                          // TWebHTMLDiv
         '4/360',                                 // Data
-        '["darkred","transparent"]',             // Fill
+        '["'+Circle1+'","transparent"]',             // Fill
         rotation+'deg',                          // Rotation
         113,                                     // Inner Radius
         ''                                       // Text
@@ -1806,7 +1990,7 @@ begin
         50, 0, 300, 300,                         // T, L, W, H
         circleSetMarker,                         // TWebHTMLDiv
         '4/360',                                 // Data
-        '["darkblue","transparent"]',            // Fill
+        '["'+Circle2+'","transparent"]',            // Fill
         rotation+'deg',                          // Rotation
         113,                                     // Inner Radius
         ''                                       // Text
@@ -1818,7 +2002,7 @@ begin
         50, 0, 300, 300,                         // T, L, W, H
         circleHumMarker,                         // TWebHTMLDiv
         '4/360',                                 // Data
-        '["yellow","transparent"]',              // Fill
+        '["'+Circle3+'","transparent"]',              // Fill
         rotation+'deg',                          // Rotation
         113,                                     // Inner Radius
         ''                                       // Text
@@ -1853,14 +2037,8 @@ begin
   // Stage 1: Display main TWebPageControl
   else if (tmrStartup.Tag = 1) then
   begin
-    // Set the background
-    AppBackground := editConfigBACKGROUND.Text;
-    pages.ElementHandle.style.setProperty('background', AppBackground);
-
-    pages.TabIndex := 11;
     pages.Visible := True;
     pages.ElementHandle.style.setProperty('opacity','1');
-
     pageInit.ElementHandle.style.setProperty('opacity','1');
   end
 
@@ -1877,47 +2055,35 @@ begin
     tmrConnect.Enabled := True;
   end
 
-  // Stage 4: Show corner icon - Help
+  // Stage 4: Show corner icons
   else if (tmrStartup.Tag = 4) then
   begin
-    btnHelp.ElementHandle.style.setProperty('opacity','1');
-    btnHelp.Top := -5;
-    btnHelp.Left := -5;
-//  end
-//
-//  // Stage 5: Show corner icon - Change
-//  else if (tmrStartup.Tag = 5) then
-//  begin
-    btnChange.ElementHandle.style.setProperty('opacity','1');
-    btnChange.Top := -5;
-    btnChange.Left := 1235;
-//  end
-//
-//  // Stage 6: Show corner icon - Home
-//  else if (tmrStartup.Tag = 6) then
-//  begin
-    btnHome.ElementHandle.style.setProperty('opacity','1');
-    btnHome.Top := 355;
-    btnHome.Left := 1235;
-//  end
-//
-//  // Stage 7: Show corner icon - Config
-//  else if (tmrStartup.Tag = 7) then
-//  begin
-    btnConfiguration.ElementHandle.style.setProperty('opacity','1');
-    btnConfiguration.Top := 355;
-    btnConfiguration.Left := -5;
+    btnHelp.ElementHandle.style.setProperty('opacity','0.25');
+    btnHelp.Top := MainButtonPad;
+    btnHelp.Left := MainButtonPad;
+
+    btnChange.ElementHandle.style.setProperty('opacity','0.25');
+    btnChange.Top := MainButtonPad;
+    btnChange.Left := PanelWidth - MainButtonSize - MainButtonPad;
+
+    btnHome.ElementHandle.style.setProperty('opacity','0.25');
+    btnHome.Top := PanelHeight - MainButtonSize - MainButtonPad;
+    btnHome.Left := PanelWidth - MainButtonSize - MainButtonPad;
+
+    btnConfiguration.ElementHandle.style.setProperty('opacity','0.25');
+    btnConfiguration.Top := PanelHeight - MainButtonSize - MainButtonPad;
+    btnConfiguration.Left := MainButtonPad;
   end
 
   // Stage 8: Show navigation arrows
-  else if (tmrStartup.Tag = 6) then
+  else if (tmrStartup.Tag = 5) then
   begin
     navLeft.Left := 0;
-    navRight.Left := 1240;
+    navRight.Left := PanelWidth - MainNavSize;
   end
 
   // All done with Startup
-  else if (tmrStartup.Tag = 9) then
+  else if (tmrStartup.Tag = 6) then
   begin
     tmrSecondsTimer(nil);  // No delay
     tmrSeconds.Enabled := True;
@@ -1925,7 +2091,7 @@ begin
 
   // Show the Home page if connected,
   // or the Configuration page if not
-  else if (tmrStartup.Tag >= 10) then
+  else if (tmrStartup.Tag >= 7) then
   begin
     tmrStartup.Enabled := False;
 
@@ -1957,7 +2123,8 @@ begin
 
   // Switch the page
   pages.TabIndex := EndPage;
-  pages.ElementHandle.style.setProperty('background', AppBackground);
+//  pages.ElementHandle.style.setProperty('background', AppBackground,'important');
+//  pages.ActivePage.ElementHandle.style.setProperty('background', AppBackground,'important');
   tmrSeconds.Tag := EndPage;
   tmrSecondsTimer(nil);
 
@@ -1973,7 +2140,7 @@ begin
   end
   else
   begin
-    btnHelp.Caption := '<i class="fa-solid fa-hand text-white fa-xl opacity-50"></i>';
+    btnHelp.Caption := '<i class="fa-solid fa-hand text-white fa-2x"></i>';
   end;
 
 
@@ -1987,8 +2154,8 @@ begin
 
   // Update Change Button
   if ((pages.TabIndex >= 5) and (pages.TabIndex <= 10)) or (pages.TabIndex = 0)
-  then btnChange.Caption := '<i class="fa-solid fa-rotate-right fa-xl text-white opacity-50"></i>'
-  else btnChange.Caption := '<i class="fa-solid fa-shuffle fa-xl text-white opacity-50"></i>';
+  then btnChange.Caption := '<i class="fa-solid fa-rotate-right fa-2x"></i>'
+  else btnChange.Caption := '<i class="fa-solid fa-shuffle fa-2x"></i>';
 
 
   ResetInactivityTimer(Sender);
@@ -2204,10 +2371,14 @@ begin
             },
             emptyValue: "",
             autocomplete: true,
+            verticalNavigation: "hybrid",
             freetext: true,
             clearable: true,
             placeholderEmpty: '"<span class="text-white">No Matching Home Assistant Entities Found</span>',
-            elementAttributes: {spellcheck: false}
+            elementAttributes: {
+              spellcheck: false,
+              maxlength: "255"
+            }
         }},
         { title: "Example", field: "example", width: 300 },
       ]
@@ -2222,6 +2393,14 @@ begin
       pas.Unit1.Form1.ResetInactivityTimer;
     });
   end;
+end;
+
+procedure TForm1.CopyPosition(src, dest: TWebHTMLDiv);
+begin
+  dest.Top := src.Top;
+  dest.Left := src.Left;
+  dest.Width := src.Width;
+  dest.Height := src.Height;
 end;
 
 initialization

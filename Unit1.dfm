@@ -1,18 +1,35 @@
 object Form1: TForm1
   Width = 1280
   Height = 400
-  Color = clBlack
+  Color = clNone
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
   FormStyle = fsStayOnTop
   Shadow = False
   ShowClose = False
   OnCreate = MiletusFormCreate
+  OnKeyDown = MiletusFormKeyDown
+  OnMouseMove = MiletusFormMouseMove
   ClientHeight = 400
   ClientWidth = 1280
   BorderStyle = bsNoneBorder
   Position = poScreenCenter
   BorderIcons = []
+  object divBackground: TWebHTMLDiv
+    Left = 0
+    Top = 0
+    Width = 1280
+    Height = 400
+    ElementID = 'divBackground'
+    Align = alClient
+    ChildOrder = 16
+    ElementFont = efCSS
+    Role = ''
+    ExplicitLeft = 546
+    ExplicitTop = -7
+    ExplicitWidth = 100
+    ExplicitHeight = 41
+  end
   object pages: TWebPageControl
     Left = 0
     Top = 0
@@ -27,6 +44,7 @@ object Form1: TForm1
     ShowTabs = False
     TabOrder = 0
     Visible = False
+    ExplicitLeft = 8
     object pageConfiguration: TWebTabSheet
       Tag = 4
       Left = 0
@@ -107,6 +125,7 @@ object Form1: TForm1
           ElementID = 'editConfigURL'
           ElementFont = efCSS
           HeightPercent = 100.000000000000000000
+          MaxLength = 255
           SpellCheck = False
           TabOrder = 100
           TextHint = 'Enter Home Assistant URL'
@@ -160,6 +179,7 @@ object Form1: TForm1
           ElementID = 'editConfigTOKEN'
           ElementFont = efCSS
           HeightPercent = 100.000000000000000000
+          MaxLength = 255
           PasswordChar = '*'
           SpellCheck = False
           TabOrder = 101
@@ -212,8 +232,9 @@ object Form1: TForm1
           ElementID = 'editConfigBACKGROUND'
           ElementFont = efCSS
           HeightPercent = 100.000000000000000000
+          MaxLength = 200
           SpellCheck = False
-          TabOrder = 100
+          TabOrder = 102
           TextHint = 'Enter Background CSS Style'
           WidthPercent = 100.000000000000000000
           OnChange = editConfigBACKGROUNDChange
@@ -230,6 +251,7 @@ object Form1: TForm1
           ElementID = 'btnListBackgrounds'
           ElementFont = efCSS
           HeightPercent = 100.000000000000000000
+          TabOrder = 103
           WidthPercent = 100.000000000000000000
           OnClick = btnListBackgroundsClick
         end
@@ -302,8 +324,9 @@ object Form1: TForm1
           ElementID = 'editConfigLONGDATE'
           ElementFont = efCSS
           HeightPercent = 100.000000000000000000
+          MaxLength = 50
           SpellCheck = False
-          TabOrder = 103
+          TabOrder = 104
           TextHint = 'Enter Long Date Format'
           WidthPercent = 100.000000000000000000
           OnChange = editConfigChange
@@ -320,8 +343,9 @@ object Form1: TForm1
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
+          MaxLength = 50
           SpellCheck = False
-          TabOrder = 104
+          TabOrder = 106
           TextHint = 'Long'
           WidthPercent = 100.000000000000000000
           OnChange = editConfigChange
@@ -339,6 +363,7 @@ object Form1: TForm1
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
+          TabOrder = 107
           WidthPercent = 100.000000000000000000
           OnClick = btnListTimesLongClick
         end
@@ -355,6 +380,7 @@ object Form1: TForm1
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
+          TabOrder = 105
           WidthPercent = 100.000000000000000000
           OnClick = btnListDatesLongClick
         end
@@ -426,8 +452,9 @@ object Form1: TForm1
           ElementID = 'editConfigSHORTDATE'
           ElementFont = efCSS
           HeightPercent = 100.000000000000000000
+          MaxLength = 50
           SpellCheck = False
-          TabOrder = 105
+          TabOrder = 108
           TextHint = 'Enter Short Date Format'
           WidthPercent = 100.000000000000000000
           OnChange = editConfigChange
@@ -444,8 +471,9 @@ object Form1: TForm1
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
+          MaxLength = 50
           SpellCheck = False
-          TabOrder = 106
+          TabOrder = 110
           TextHint = 'Short'
           WidthPercent = 100.000000000000000000
           OnChange = editConfigChange
@@ -463,6 +491,7 @@ object Form1: TForm1
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
+          TabOrder = 111
           WidthPercent = 100.000000000000000000
           OnClick = btnListTimesShortClick
         end
@@ -479,6 +508,7 @@ object Form1: TForm1
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
+          TabOrder = 109
           WidthPercent = 100.000000000000000000
           OnClick = btnListDatesShortClick
         end
@@ -734,7 +764,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Status'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Status'
+          ElementLabelClassName = 'Title Status'
           ElementID = 'lableConfigSTATUS'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -758,7 +788,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Offline'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'StatusBad'
+          ElementLabelClassName = 'Title StatusBad'
           ElementID = 'dataConfigSTATUS'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -969,6 +999,7 @@ object Form1: TForm1
         ElementFont = efCSS
         Enabled = False
         HeightPercent = 100.000000000000000000
+        TabOrder = 112
         WidthPercent = 100.000000000000000000
         OnClick = btnHALinksClick
       end
@@ -990,6 +1021,7 @@ object Form1: TForm1
         ElementFont = efCSS
         Enabled = False
         HeightPercent = 100.000000000000000000
+        TabOrder = 113
         WidthPercent = 100.000000000000000000
         OnClick = btnHASaveConfigurationClick
       end
@@ -1011,6 +1043,7 @@ object Form1: TForm1
         ElementFont = efCSS
         Enabled = False
         HeightPercent = 100.000000000000000000
+        TabOrder = 114
         WidthPercent = 100.000000000000000000
         OnClick = btnHALoadConfigurationClick
       end
@@ -1155,6 +1188,7 @@ object Form1: TForm1
       end
     end
     object pageHome: TWebTabSheet
+      Tag = 15
       Left = 0
       Top = 20
       Width = 1280
@@ -1165,7 +1199,7 @@ object Form1: TForm1
       Color = clBlack
       ElementFont = efCSS
       object divClock: TWebHTMLDiv
-        Left = 40
+        Left = 41
         Top = 0
         Width = 300
         Height = 400
@@ -1182,7 +1216,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'ShortDate'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Date'
+          ElementLabelClassName = 'Text TextLG Gray'
           ElementID = 'labelDate'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -1204,7 +1238,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'ShortTime'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Time'
+          ElementLabelClassName = 'Text TextXL White'
           ElementID = 'labelTime'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -1226,7 +1260,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'LongDay'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Date'
+          ElementLabelClassName = 'Text TextLG Gray'
           ElementID = 'labelDay'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -1240,32 +1274,34 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeSet: TWebLabel
-          Left = 95
-          Top = 20
-          Width = 40
-          Height = 20
+          Left = 245
+          Top = 40
+          Width = 50
+          Height = 50
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'Set'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextLG White'
           ElementID = 'labelHomeSet'
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
-          HTML = '<span class="mdi mdi-weather-sunset-down"></span>'
+          HTML = 
+            '<img width=50 height=50 src="weather-icons-dev/production/fill/s' +
+            'vg/sunset.svg">'
           WidthPercent = 100.000000000000000000
         end
         object dataHomeSet: TWebLabel
-          Left = 135
+          Left = 190
           Top = 20
-          Width = 40
+          Width = 100
           Height = 20
-          Alignment = taCenter
+          Alignment = taRightJustify
           AutoSize = False
           Caption = '00:00'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Yellow'
+          ElementLabelClassName = 'Text TextRG Yellow'
           ElementID = 'dataHomeSet'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1273,14 +1309,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeDusk: TWebLabel
-          Left = 10
-          Top = 350
-          Width = 75
+          Left = 190
+          Top = 343
+          Width = 100
           Height = 20
+          Alignment = taRightJustify
           AutoSize = False
           Caption = '00:00'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Orange'
+          ElementLabelClassName = 'Text TextRG Orange'
           ElementID = 'dataHomeDusk'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1288,32 +1325,32 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeRise: TWebLabel
-          Left = 95
-          Top = 350
-          Width = 40
-          Height = 20
-          Alignment = taRightJustify
+          Left = 5
+          Top = 40
+          Width = 50
+          Height = 50
           AutoSize = False
           Caption = 'Rise'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextLG White'
           ElementID = 'labelHomeRise'
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
-          HTML = '<span class="mdi mdi-weather-sunset-up"></span>'
+          HTML = 
+            '<img width=50 height=50 src="weather-icons-dev/production/fill/s' +
+            'vg/sunrise.svg">'
           WidthPercent = 100.000000000000000000
         end
         object dataHomeRise: TWebLabel
-          Left = 138
-          Top = 350
-          Width = 40
+          Left = 10
+          Top = 20
+          Width = 100
           Height = 20
-          Alignment = taCenter
           AutoSize = False
           Caption = '00:00'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Yellow'
+          ElementLabelClassName = 'Text TextRG Yellow'
           ElementID = 'dataHomeRise'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1321,15 +1358,14 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeDawn: TWebLabel
-          Left = 215
-          Top = 350
-          Width = 75
+          Left = 10
+          Top = 343
+          Width = 100
           Height = 20
-          Alignment = taRightJustify
           AutoSize = False
           Caption = '00:00'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Orange'
+          ElementLabelClassName = 'Text TextRG Orange'
           ElementID = 'dataHomeDawn'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1337,14 +1373,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeDusk: TWebLabel
-          Left = 10
-          Top = 325
-          Width = 75
+          Left = 190
+          Top = 369
+          Width = 100
           Height = 20
+          Alignment = taRightJustify
           AutoSize = False
           Caption = 'Dusk'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeDusk'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1352,15 +1389,14 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeDawn: TWebLabel
-          Left = 215
-          Top = 325
-          Width = 75
+          Left = 10
+          Top = 369
+          Width = 100
           Height = 20
-          Alignment = taRightJustify
           AutoSize = False
           Caption = 'Dawn'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeDawn'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1368,14 +1404,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeDaylight: TWebLabel
-          Left = 10
-          Top = 20
+          Left = 100
+          Top = 3
           Width = 100
           Height = 20
+          Alignment = taCenter
           AutoSize = False
           Caption = 'Daylight'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeDaylight'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1383,14 +1420,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeDaylight: TWebLabel
-          Left = 10
-          Top = 45
+          Left = 100
+          Top = 20
           Width = 100
           Height = 20
+          Alignment = taCenter
           AutoSize = False
           Caption = '00:00'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Yellow'
+          ElementLabelClassName = 'Text TextRG Yellow'
           ElementID = 'dataHomeDaylight'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1398,15 +1436,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeTwilight: TWebLabel
-          Left = 190
-          Top = 45
+          Left = 100
+          Top = 343
           Width = 100
           Height = 20
-          Alignment = taRightJustify
+          Alignment = taCenter
           AutoSize = False
           Caption = '00:00'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Orange'
+          ElementLabelClassName = 'Text TextRG Orange'
           ElementID = 'dataHomeTwilight'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1414,34 +1452,65 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeTwilight: TWebLabel
-          Left = 190
-          Top = 20
+          Left = 100
+          Top = 369
           Width = 100
           Height = 20
-          Alignment = taRightJustify
+          Alignment = taCenter
           AutoSize = False
           Caption = 'Twilight'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeTwilight'
           ElementFont = efCSS
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           WidthPercent = 100.000000000000000000
         end
-        object circleMinute: TWebHTMLDiv
+        object WebLabel1: TWebLabel
+          Left = 10
+          Top = 3
+          Width = 100
+          Height = 20
+          AutoSize = False
+          Caption = 'Sunrise'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextSM White'
+          ElementID = 'labelHomeDaylight'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object WebLabel2: TWebLabel
           Left = 190
+          Top = 3
+          Width = 100
+          Height = 20
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Sunset'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextSM White'
+          ElementID = 'labelHomeDaylight'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object circleMinute: TWebHTMLDiv
+          Left = 179
           Top = 49
-          Width = 56
+          Width = 70
           Height = 35
           ElementClassName = 'Circle'
           ElementID = 'circleMinute'
-          ChildOrder = 2
+          ChildOrder = 3
           ElementFont = efCSS
           Role = ''
         end
         object circleHour: TWebHTMLDiv
-          Left = 126
+          Left = 115
           Top = 49
           Width = 58
           Height = 35
@@ -1452,70 +1521,81 @@ object Form1: TForm1
           Role = ''
         end
         object circleDay: TWebHTMLDiv
-          Left = 55
+          Left = 42
           Top = 49
           Width = 67
           Height = 35
           ElementClassName = 'Circle'
           ElementID = 'circleDay'
-          ChildOrder = 2
+          ChildOrder = 1
           ElementFont = efCSS
           Role = ''
         end
         object circleDawnDusk: TWebHTMLDiv
           Left = 191
-          Top = 272
-          Width = 58
+          Top = 90
+          Width = 84
           Height = 35
           ElementClassName = 'Circle'
           ElementID = 'circleDawnDusk'
-          ChildOrder = 2
+          ChildOrder = 5
           ElementFont = efCSS
           Role = ''
         end
         object circleRiseSet: TWebHTMLDiv
-          Left = 127
-          Top = 272
-          Width = 58
+          Left = 23
+          Top = 90
+          Width = 86
           Height = 35
           ElementClassName = 'Circle'
           ElementID = 'circleRiseSet'
-          ChildOrder = 2
+          ChildOrder = 4
           ElementFont = efCSS
           Role = ''
         end
-        object circleMarker: TWebHTMLDiv
-          Left = 54
-          Top = 272
-          Width = 67
+        object circleHourMarker: TWebHTMLDiv
+          Left = 95
+          Top = 279
+          Width = 90
           Height = 35
           ElementClassName = 'CircleMarker'
-          ElementID = 'circleMarker'
-          ChildOrder = 2
+          ElementID = 'circleHourMarker'
+          ChildOrder = 7
           ElementFont = efCSS
           Role = ''
         end
         object divHomeMoon: TWebHTMLDiv
-          Left = 125
-          Top = 95
-          Width = 50
-          Height = 35
+          Left = 115
+          Top = 90
+          Width = 70
+          Height = 50
           ElementClassName = 
-            'overflow-visible Moon d-flex align-items-center justify-content-' +
-            'center'
+            'Text TextLG Blue d-flex align-items-center justify-content-cente' +
+            'r'
           ElementID = 'divHomeMoon'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
         object circleMinuteMarker: TWebHTMLDiv
-          Left = 31
-          Top = 90
-          Width = 67
+          Left = 191
+          Top = 279
+          Width = 102
           Height = 35
           ElementClassName = 'CircleMarker'
           ElementID = 'circleMinuteMarker'
-          ChildOrder = 2
+          ChildOrder = 8
+          ElementFont = efCSS
+          Role = ''
+        end
+        object circleDayMarker: TWebHTMLDiv
+          Left = 5
+          Top = 279
+          Width = 84
+          Height = 35
+          ElementClassName = 'CircleMarker'
+          ElementID = 'circleDayMarker'
+          ChildOrder = 6
           ElementFont = efCSS
           Role = ''
         end
@@ -1530,6 +1610,24 @@ object Form1: TForm1
         ChildOrder = 1
         ElementFont = efCSS
         Role = ''
+        object WebLabel3: TWebLabel
+          Left = 108
+          Top = 288
+          Width = 80
+          Height = 80
+          AutoSize = False
+          Caption = 'Rise'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextLG White'
+          ElementID = 'labelHomeRise'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          HTML = 
+            '<img width=80 height=80 src="weather-icons-dev/production/fill/s' +
+            'vg/humidity.svg">'
+          WidthPercent = 100.000000000000000000
+        end
         object dataHomeTemperature: TWebLabel
           Left = 0
           Top = 165
@@ -1539,7 +1637,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Temp'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Time'
+          ElementLabelClassName = 'Text TextXL White'
           ElementID = 'dataHomeTemperature'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -1553,14 +1651,14 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeMin: TWebLabel
-          Left = 30
-          Top = 325
+          Left = 10
+          Top = 369
           Width = 75
           Height = 20
           AutoSize = False
           Caption = 'Min'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeMin'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1568,15 +1666,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeMax: TWebLabel
-          Left = 195
-          Top = 324
+          Left = 215
+          Top = 369
           Width = 75
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'Max'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeMax'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1584,15 +1682,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeMax: TWebLabel
-          Left = 195
-          Top = 350
+          Left = 215
+          Top = 343
           Width = 75
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
           Caption = '0'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Orange'
+          ElementLabelClassName = 'Text TextRG Yellow'
           ElementID = 'dataHomeMax'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1600,14 +1698,14 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeMin: TWebLabel
-          Left = 30
-          Top = 350
+          Left = 10
+          Top = 343
           Width = 75
           Height = 20
           AutoSize = False
           Caption = '0'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Orange'
+          ElementLabelClassName = 'Text TextRG Yellow'
           ElementID = 'dataHomeMin'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1616,14 +1714,14 @@ object Form1: TForm1
         end
         object labelHomeHumidity: TWebLabel
           Left = 100
-          Top = 325
+          Top = 369
           Width = 100
-          Height = 13
+          Height = 20
           Alignment = taCenter
           AutoSize = False
           Caption = 'Humidity'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeHumidity'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1633,14 +1731,14 @@ object Form1: TForm1
         end
         object dataHomeHumidity: TWebLabel
           Left = 100
-          Top = 350
+          Top = 343
           Width = 100
-          Height = 13
+          Height = 20
           Alignment = taCenter
           AutoSize = False
           Caption = '0'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Yellow'
+          ElementLabelClassName = 'Text TextRG Blue'
           ElementID = 'dataHomeHumidity'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1657,7 +1755,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = '20C'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Date'
+          ElementLabelClassName = 'Text TextLG Green'
           ElementID = 'dataHomeSetPoint'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -1679,7 +1777,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Location'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Date'
+          ElementLabelClassName = 'Text TextLG Gray'
           ElementID = 'labelHomeTempName'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -1701,7 +1799,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Set Point'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeSetPoint'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1710,13 +1808,13 @@ object Form1: TForm1
         end
         object labelHomeMode: TWebLabel
           Left = 10
-          Top = 45
+          Top = 3
           Width = 100
           Height = 20
           AutoSize = False
           Caption = 'Mode'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeMode'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1731,7 +1829,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Orange'
+          ElementLabelClassName = 'Text TextRG Orange'
           ElementID = 'dataHomeMode'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1747,7 +1845,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Orange'
+          ElementLabelClassName = 'Text TextRG Orange'
           ElementID = 'dataHomeAction'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1756,14 +1854,14 @@ object Form1: TForm1
         end
         object labelHomeAction: TWebLabel
           Left = 190
-          Top = 45
+          Top = 3
           Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'State'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'White'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeAction'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1772,24 +1870,56 @@ object Form1: TForm1
         end
         object dataHomeLightLevel: TWebLabel
           Left = 0
-          Top = 97
+          Top = 100
           Width = 300
           Height = 62
           Alignment = taCenter
           AutoSize = False
           Caption = 'Light'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'BlueSky'
+          ElementLabelClassName = 'Text TextRG Yellow'
           ElementID = 'dataHomeLightLevel'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
-          Font.Height = -43
+          Font.Height = -32
           Font.Name = 'Tahoma'
           Font.Style = []
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           ParentFont = False
+          WidthPercent = 100.000000000000000000
+        end
+        object labelHomeLights: TWebLabel
+          Left = 100
+          Top = 3
+          Width = 100
+          Height = 20
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Lights'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextSM White'
+          ElementID = 'labelHomeLights'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataHomeLights: TWebLabel
+          Left = 100
+          Top = 20
+          Width = 100
+          Height = 20
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Unknown'
+          ElementClassName = 'overflow-visible d-flex justify-content-center'
+          ElementLabelClassName = 'Text TextRG Gray'
+          ElementID = 'dataHomeLights'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
           WidthPercent = 100.000000000000000000
         end
         object circleCurrent: TWebHTMLDiv
@@ -1866,7 +1996,7 @@ object Form1: TForm1
           HelpType = htKeyword
           Caption = '<i class="fa-solid fa-caret-left fa-xl"></i>'
           ChildOrder = 21
-          ElementClassName = 'btn btn-link White text-decoration-none'
+          ElementClassName = 'Text TextLG White btn btn-link text-decoration-none'
           ElementID = 'btnHomeTempDown'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1882,7 +2012,7 @@ object Form1: TForm1
           HelpType = htKeyword
           Caption = '<i class="fa-solid fa-caret-right fa-xl"></i>'
           ChildOrder = 21
-          ElementClassName = 'btn btn-link White text-decoration-none'
+          ElementClassName = 'Text TextLG White btn btn-link text-decoration-none'
           ElementID = 'btnHomeTempUp'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -1919,7 +2049,7 @@ object Form1: TForm1
       Top = 20
       Width = 1280
       Height = 380
-      ElementClassName = 'Page Help'
+      ElementClassName = 'Page'
       Caption = 'Help-Cf'
       ChildOrder = 4
       ElementFont = efCSS
@@ -1928,12 +2058,10 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
+        ElementClassName = 'Help'
         ElementID = 'divHelpConfig'
         ElementFont = efCSS
         HTML.Strings = (
-          
-            '<div style="overflow-y: auto; overflow-x: hidden; height: 360px;' +
-            '">'
           '<div class="HelpTitle">'
           'Home Assistant URL'
           '</div>'
@@ -2083,7 +2211,6 @@ object Form1: TForm1
             'uk/RTL.php?Name=formatdatetime">http://www.delphibasics.co.uk/RT' +
             'L.php?'
           'Name=formatdatetime</a>'
-          '</div>'
           '</div>')
         Role = ''
         OnClick = ResetInactivityTimer
@@ -2679,7 +2806,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoSystem'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2736,7 +2863,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoHAVersion'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2793,7 +2920,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoLatitude'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2850,7 +2977,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoLongitude'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2907,7 +3034,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoElevation'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2964,7 +3091,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoCountry'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3021,7 +3148,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoTimeZone'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3078,7 +3205,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoInternal'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3135,7 +3262,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoExternal'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3192,7 +3319,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoLanguage'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3249,7 +3376,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoCurrency'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3306,7 +3433,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoTemperature'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3363,7 +3490,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoMass'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3420,7 +3547,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoDistance'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3477,7 +3604,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoVolume'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3534,7 +3661,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoPressure'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3591,7 +3718,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoPrecipitation'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3648,7 +3775,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Unknown'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label YellowData'
+          ElementLabelClassName = 'Label HAData'
           ElementID = 'dataInfoWindSpeed'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -3770,7 +3897,7 @@ object Form1: TForm1
         Alignment = taCenter
         AutoSize = False
         Caption = 'Welcome to Catheedral'
-        ElementClassName = 'SplashTitle'
+        ElementClassName = 'Title Splash'
         ElementID = 'divCatheedral'
         ElementFont = efCSS
         HeightPercent = 100.000000000000000000
@@ -3785,7 +3912,7 @@ object Form1: TForm1
         Alignment = taCenter
         AutoSize = False
         Caption = 'Initializing - Please Wait'
-        ElementClassName = 'SplashSubtitle'
+        ElementClassName = 'Title SplashSub'
         ElementID = 'divInit'
         ElementFont = efCSS
         HeightStyle = ssAuto
@@ -3800,7 +3927,7 @@ object Form1: TForm1
       Top = 20
       Width = 1280
       Height = 380
-      ElementClassName = 'Page Help'
+      ElementClassName = 'Page'
       ElementID = 'pageHelpConfigInfo'
       Caption = 'Help-Ci'
       ChildOrder = 12
@@ -3810,12 +3937,10 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
+        ElementClassName = 'Help'
         ElementID = 'divHelpConfigInfo'
         ElementFont = efCSS
         HTML.Strings = (
-          
-            '<div style="overflow-y: auto; overflow-x: hidden; height: 360px;' +
-            '">'
           '<div class="HelpTitle">'
           'Configuration Information'
           '</div>'
@@ -3844,7 +3969,6 @@ object Form1: TForm1
             'be reflected here by restarting the Cathedral app or by refreshi' +
             'ng it from the main Configuration '
           'screen using the "Refresh" icon in the top-right corner.'
-          '</div>'
           '</div>')
         Role = ''
         OnClick = ResetInactivityTimer
@@ -3856,7 +3980,8 @@ object Form1: TForm1
       Top = 20
       Width = 1280
       Height = 380
-      ElementClassName = 'Page Help'
+      ElementClassName = 'Page'
+      ElementID = 'pageHelpConfiguSensors'
       Caption = 'Help-Cs'
       ChildOrder = 13
       ElementFont = efCSS
@@ -3865,12 +3990,10 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
+        ElementClassName = 'Help'
         ElementID = 'divHelpConfigSensors'
         ElementFont = efCSS
         HTML.Strings = (
-          
-            '<div style="overflow-y:auto; overflow-x: hidden; height: 360px;"' +
-            '>'
           '<div class="HelpTitle">'
           'Home Assistant Links'
           '</div>'
@@ -3902,7 +4025,7 @@ object Form1: TForm1
             'ote website) to work within the confines of Catheral'#39's 1280w by ' +
             '400h display.'
           '</div>'
-          '</div>')
+          '')
         Role = ''
         OnClick = ResetInactivityTimer
         OnMouseMove = divHelpConfigMouseMove
@@ -3913,22 +4036,20 @@ object Form1: TForm1
       Top = 20
       Width = 1280
       Height = 380
-      ElementClassName = 'Page Help'
+      ElementClassName = 'Page'
       ElementID = 'pageHelpCustom'
       Caption = 'Help-C1'
       ChildOrder = 14
       ElementFont = efCSS
-      object WebHTMLDiv1: TWebHTMLDiv
+      object divHelpCustom: TWebHTMLDiv
         Left = 50
         Top = 20
         Width = 1180
         Height = 360
-        ElementID = 'divHelpConfigSensors'
+        ElementClassName = 'Help'
+        ElementID = 'divHelpCustom'
         ElementFont = efCSS
         HTML.Strings = (
-          
-            '<div style="overflow-y:auto; overflow-x: hidden; height: 360px;"' +
-            '>'
           '<div class="HelpTitle">'
           'Custom Web Content'
           '</div>'
@@ -3946,7 +4067,166 @@ object Form1: TForm1
             'can be added to Cathedral.  These are set in the Home Assistant ' +
             'Links section within the '
           'Configuratino pages.'
+          '</div>')
+        Role = ''
+        OnClick = ResetInactivityTimer
+        OnMouseMove = divHelpConfigMouseMove
+      end
+    end
+    object pageHelpHome: TWebTabSheet
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageHelpHome'
+      Caption = 'Help-Hm'
+      ChildOrder = 15
+      ElementFont = efCSS
+      object divHelpHome: TWebHTMLDiv
+        Left = 50
+        Top = 0
+        Width = 1180
+        Height = 400
+        ElementClassName = 'Help'
+        ElementID = 'divHelpHome'
+        ElementFont = efCSS
+        HTML.Strings = (
+          '<div class="HelpTitle">'
+          'Welcome to Catheedral!'
           '</div>'
+          '<div class="HelpBody">'
+          
+            'The Catheedral Home page has four main components:  <span class=' +
+            '"HelpHighlight">Time</span>, <span class="HelpHighlight">Climate' +
+            '</span>, <span '
+          
+            'class="HelpHighlight">Weather</span>, and <span class="HelpHighl' +
+            'ight">People</span>. In addition, there are <span class="HelpHig' +
+            'hlight">Navigation '
+          'Controls</span> '
+          
+            'for moving left and right between pages, and four <span class="H' +
+            'elpHighlight">Main Buttons</span>, one in each corner.'
+          '</div>'
+          '<div class="HelpTitle">'
+          'Time'
+          '</div>'
+          '<div class="HelpBody">'
+          
+            '  This displays the current time for your locale. Additional inf' +
+            'ormation, such as sunrise/sunset and the current phase of the mo' +
+            'on, may also be available if Home '
+          'Assistant has '
+          
+            'been configured to provide this information to Catheedral.  Ther' +
+            'e are as many as five rings in this panel.<br /><br />'
+          
+            '<ul><li><strong>Seconds</strong> shows the current second, much ' +
+            'like a second hand on a traditional clock.</li>'
+          
+            '<li><strong>Minutes</strong> shows the current minute, much like' +
+            ' the minutes hand on a traditional clock.</li>'
+          
+            '<li><strong>Hours</strong> shows the current hour, but unlike a ' +
+            'traditional clock, this is calibrated for 24 hours.</li>'
+          
+            '<li><strong>Dawn/Dusk</strong> shows the portion of the day betw' +
+            'een Dawn and dusk, using the same 24-hour calibration as <strong' +
+            '>Hours</strong>.</li>'
+          
+            '<li><strong>Sunrise/Sunset</strong> shows the portion of the day' +
+            ' between Sunrise and Sunset, using the same 24-hour calibration ' +
+            'as '
+          '<strong>Hours</strong>.</li>'
+          '</ul>'
+          
+            'In addition, the length of time between Sunrise/Sunset is displa' +
+            'yed as <strong>Daylight</strong> and the the length of time betw' +
+            'een Dawn/Dusk is displayed as '
+          '<strong>Twilight</strong>.'
+          '</div>'
+          '<div class="HelpTitle">'
+          'Navigation Controls'
+          '</div>'
+          '<div class="HelpBody">'
+          
+            'At the very left and very right of the Catheedral interface are ' +
+            'the <span class="HelpHighlight">Navigation Controls</span> that ' +
+            'let you move back and forth between '
+          'related '
+          'pages. '
+          '</div>'
+          '<div class="HelpTitle">'
+          'Main Buttons'
+          '</div>'
+          '<div class="HelpBody">'
+          
+            'There are four buttons, one in each corner, that are always visi' +
+            'ble within Catheedral.  These are referred to as <span class="He' +
+            'lpHighlight">Main '
+          'Buttons</span>.<br />'
+          '<br /> '
+          
+            'The <span class="HelpHighlight"><i class="fa-solid fa-hand pe-1"' +
+            '></i>Help</span> button in the top left corner will present you ' +
+            'with information related to the page '
+          'you'#39're currently '
+          
+            'viewing.  You can also view other <span class="HelpHighlight"><i' +
+            ' class="fa-solid fa-hand pe-1"></i>Help</span>  pages by using t' +
+            'he <span '
+          
+            'class="HelpHighlight">Navigation Controls</span> while viewing a' +
+            'ny <span class="HelpHighlight"><i class="fa-solid fa-hand pe-1">' +
+            '</i>Help</span> page.<br />'
+          '<br />'
+          
+            'The <span class="HelpHighlight"><i class="fa-solid fa-shuffle pe' +
+            '-1"></i>Change</span> button in the top right corner provides ac' +
+            'cess to additional settings for the '
+          
+            'page.  In some instances, this will change to a <span class="Hel' +
+            'pHighlight"><i class="fa-solid fa-rotate-right pe-1"></i>Refresh' +
+            '</span> button that will allow you to '
+          'reload '
+          'that particular page.<br />'
+          '<br />'
+          
+            'The <span class="HelpHighlight"><i class="fa-solid fa-home pe-1"' +
+            '></i>Home</span> button in the bottom right corner will bring yo' +
+            'u back to the Catheedral Home '
+          'page.  If you'#39're already on '
+          'the '
+          'Catheedral '
+          
+            'Home page, this changes to a <span class="HelpHighlight"><i clas' +
+            's="fa-solid fa-bolt pe-1"></i>Connected</span>  button, which ca' +
+            'n be used to reset the '
+          'connection '
+          
+            'between Catheedral and your Home Assistant server. If the connec' +
+            'tion between Catheedral and your Home Assistant server is lost, ' +
+            'this will change to a <span '
+          
+            'class="HelpHighlight"><i class="fa-solid fa-triangle-exclamation' +
+            ' pe-1 text-warning"></i>Disconnected</span> button.<br />'
+          '<br />'
+          
+            'The <span class="HelpHighlight"><i class="fa-solid fa-gear pe-1"' +
+            '></i>Configuration</span> button in the bottom left corner bring' +
+            's up additional pages that allow you '
+          'to '
+          
+            'make changes to how Catheedral works.  If you'#39're already on the ' +
+            '<span class="HelpHighlight"><i class="fa-solid fa-gear pe-1"></i' +
+            '>Configuration</span> page, this '
+          
+            'button will instead change to a <span class="HelpHighlight"><i c' +
+            'lass="fa-solid fa-power-off pe-1"></i>Power Off</span> button th' +
+            'at will allow you to exit the '
+          'Catheedral '
+          'application completely.'
           '</div>')
         Role = ''
         OnClick = ResetInactivityTimer
@@ -4004,60 +4284,64 @@ object Form1: TForm1
     end
   end
   object btnHelp: TWebButton
-    Left = -5
-    Top = 20
-    Width = 50
-    Height = 50
-    Caption = '<i class="fa-solid fa-hand text-white fa-xl opacity-50"></i>'
+    Left = -6
+    Top = 28
+    Width = 40
+    Height = 40
+    Caption = '<i class="fa-solid fa-hand fa-2x"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHelp'
     ElementFont = efCSS
     HeightPercent = 100.000000000000000000
+    TabOrder = 1
     WidthPercent = 100.000000000000000000
     OnClick = btnHelpClick
   end
   object btnHome: TWebButton
     Left = 1235
     Top = 355
-    Width = 50
-    Height = 50
+    Width = 40
+    Height = 40
     Caption = 
-      '<i class="fa-solid fa-triangle-exclamation fa-xl opacity-100 tex' +
-      't-warning"></i>'
+      '<i class="fa-solid fa-triangle-exclamation fa-2x text-warning"><' +
+      '/i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHome'
     ElementFont = efCSS
     HeightPercent = 100.000000000000000000
+    TabOrder = 3
     WidthPercent = 100.000000000000000000
     OnClick = btnHomeClick
   end
   object btnChange: TWebButton
     Left = 1236
-    Top = -6
-    Width = 50
-    Height = 50
-    Caption = '<i class="fa-solid fa-shuffle fa-xl text-white opacity-50"></i>'
+    Top = -11
+    Width = 40
+    Height = 40
+    Caption = '<i class="fa-solid fa-shuffle fa-2x"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnChange'
     ElementFont = efCSS
     HeightPercent = 100.000000000000000000
+    TabOrder = 2
     WidthPercent = 100.000000000000000000
     OnClick = btnChangeClick
   end
   object btnConfiguration: TWebButton
     Left = -5
     Top = 355
-    Width = 50
-    Height = 50
-    Caption = '<i class="fa-solid fa-gear text-white fa-xl opacity-50"></i>'
+    Width = 40
+    Height = 40
+    Caption = '<i class="fa-solid fa-gear fa-2x"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnConfiguration'
     ElementFont = efCSS
     HeightPercent = 100.000000000000000000
+    TabOrder = 4
     WidthPercent = 100.000000000000000000
     OnClick = btnConfigurationClick
   end
