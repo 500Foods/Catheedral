@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Catheedral.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug-Win32</Config>
+        <Config Condition="'$(Config)'==''">Build-Win32</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -520,9 +520,9 @@
         <None Include="weather-icons-dev\production\fill\svg\wind-snow.svg"/>
         <None Include="weather-icons-dev\production\fill\svg\windsock.svg"/>
         <None Include="weather-icons-dev\production\fill\svg\windsock-weak.svg"/>
-        <RcItem Include="images\blank.png">
+        <RcItem Include="images\background_protostar.jpg">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>PngImage_2</ResourceId>
+            <ResourceId>JpgImage_3</ResourceId>
         </RcItem>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -700,6 +700,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\uv-index-3.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="images\background_protostar.jpg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

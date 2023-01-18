@@ -243,11 +243,21 @@ input[type=text]:focus-visible.ConfigEdit  {
 #circleMinutesMarker { z-index: 5; }
 #circleSecondsMarker { z-index: 6; }
 
+#circleClimateHumidityMarker { z-index: 4; }
+#circleSetPointMarker { z-index: 5; }
+#circleClimateTemperatureMarker { z-index: 6; }
+
+#circleWeatherHumidityMarker { z-index: 4; }
+#circleWeatherPressureMarker { z-index: 5; }
+#circleWeatherTemperatureMarker { z-index: 6; }
 
 /* Used for displaying various bits of Text on Home Page and elsewhere */
 .Text {
   overflow: visible;
   filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
+}
+.TextCover {
+  z-index: 15;
 }
 .TextSM {
   font-size: 18px;
@@ -361,8 +371,8 @@ div.tabulator-cell.tabulator-editing {
 
 /* Customize scrollbars */
 ::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
+  width: 30px;
+  height: 30px;
 }
 ::-webkit-scrollbar-corner {
   background-color: #00000040;
@@ -372,8 +382,48 @@ div.tabulator-cell.tabulator-editing {
   border-radius: 200px;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #4169E180; /* royal blue @ 50% */
+  background-color: #4169E1B0; /* royal blue @ 75% */
   border-radius: 200px;
   border: 3px solid #00000080;
 }
 
+/* Lights Page */
+.LightButton {
+  font-size: 20px;
+  line-height: 1.1;
+  white-space: normal;
+  width: 140px;
+  height: 68px;
+  border-radius: 15px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  opacity: 0.75;
+  transition: opacity 0.4s ease;
+  background-color: #4169E1;
+  color: white;
+}
+.LightButton:hover {
+  opacity: 1;
+}
+.LightOn {
+  border: 1px solid darkgray;
+  color: black;
+  background-color: white;
+}
+.LightOff {
+  border: 1px solid darkgray;
+  color: white;
+  background-color: black;
+}
+.LightOther {
+  border: 1px solid darkgray;
+  color: white;
+  background-color: black;
+  opacity: 0.25;
+}
+#divAllLights {
+  gap: 5px;
+  padding-left:5px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  transition: opacity 0.4s ease;
+}

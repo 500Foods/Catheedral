@@ -3,7 +3,7 @@ unit Unit1;
 interface
 
 uses
-  System.SysUtils, System.Classes, System.DateUtils, JS, Web, WEBLib.Graphics, WEBLib.Controls, jsdelphisystem,
+  System.SysUtils, System.Classes, System.DateUtils, JS, Web, WEBLib.Graphics, WEBLib.Controls, jsdelphisystem, System.Math,
   WEBLib.Forms, WEBLib.Miletus, WEBLib.Dialogs, Vcl.Controls, Vcl.StdCtrls,
   WEBLib.StdCtrls, WEBLib.ComCtrls, WEBLib.WebCtrls, WEBLib.Storage,
   WEBLib.ExtCtrls, WEBLib.WebSocketClient, VCL.TMSFNCCustomControl,
@@ -103,14 +103,14 @@ type
     labelSetPoint: TWebLabel;
     labelHomeMode: TWebLabel;
     dataHomeMode: TWebLabel;
-    dataHomeAction: TWebLabel;
-    labelHomeAction: TWebLabel;
-    circleCurrent: TWebHTMLDiv;
+    dataHomeState: TWebLabel;
+    labelHomeState: TWebLabel;
+    circleClimateTemperature: TWebHTMLDiv;
     circleSetPoint: TWebHTMLDiv;
-    circleHumidity: TWebHTMLDiv;
-    circleCurrMark: TWebHTMLDiv;
-    circleSetMarker: TWebHTMLDiv;
-    circleHumMarker: TWebHTMLDiv;
+    circleClimateHumidity: TWebHTMLDiv;
+    circleClimateTemperatureMarker: TWebHTMLDiv;
+    circleSetPointMarker: TWebHTMLDiv;
+    circleClimateHumidityMarker: TWebHTMLDiv;
     circleSecondsMarker: TWebHTMLDiv;
     dataHomeLightLevel: TWebLabel;
     btnHomeTempDown: TWebButton;
@@ -242,13 +242,47 @@ type
     divHelpHome: TWebHTMLDiv;
     labelHomeRise: TWebLabel;
     labelHomeSet: TWebLabel;
-    WebLabel3: TWebLabel;
     circleHoursMarker: TWebHTMLDiv;
     divBackground: TWebHTMLDiv;
     labelHomeLights: TWebLabel;
     dataHomeLights: TWebLabel;
     labelHomeDawnIcon: TWebLabel;
     labelHomeDuskIcon: TWebLabel;
+    tmrRefresh: TWebTimer;
+    pageLights: TWebTabSheet;
+    WebButton1: TWebButton;
+    WebButton2: TWebButton;
+    WebButton3: TWebButton;
+    WebButton4: TWebButton;
+    WebButton5: TWebButton;
+    divAllLights: TWebHTMLDiv;
+    pageHelpLights: TWebTabSheet;
+    divHomeLightsCover: TWebHTMLDiv;
+    divWeather: TWebHTMLDiv;
+    circleWeatherHumidity: TWebHTMLDiv;
+    circleWeatherHumidityMarker: TWebHTMLDiv;
+    labelWeatherMin: TWebLabel;
+    labelWeatherHumidity: TWebLabel;
+    labelWeatherMax: TWebLabel;
+    dataWeatherHumidity: TWebLabel;
+    dataWeatherTemperature: TWebLabel;
+    dataWeatherMin: TWebLabel;
+    dataWeatherMax: TWebLabel;
+    circleWeatherTemperature: TWebHTMLDiv;
+    circleWeatherTemperatureMarker: TWebHTMLDiv;
+    dataWeatherMinPressure: TWebLabel;
+    dataWeatherMaxPressure: TWebLabel;
+    circleWeatherPressure: TWebHTMLDiv;
+    circleWeatherPressureMarker: TWebHTMLDiv;
+    labelWeatherPressure: TWebLabel;
+    labelWeatherUV: TWebLabel;
+    dataWeatherUV: TWebLabel;
+    labelWeatherWind: TWebLabel;
+    dataWeatherWind: TWebLabel;
+    labelWeatherAQHI: TWebLabel;
+    dataWeatherAQHI: TWebLabel;
+    divWeatherIcon: TWebHTMLDiv;
+    dataWeatherCondition: TWebLabel;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -298,6 +332,9 @@ type
     procedure MiletusFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure MiletusFormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure CopyPosition(src: TWebHTMLDiv; dest: TWebHTMLDiv);
+    procedure UpdateNow;
+    procedure tmrRefreshTimer(Sender: TObject);
+    procedure divHomeLightsCoverClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -312,13 +349,29 @@ type
     HAStates: JSValue;
     HAEntities: JSValue;
     HALoadConfig: Boolean;
+    HAStatesLoaded: Boolean;
 
     HATemperatureUnits: String;
+    HAPressureUnits: String;
 
+    // Sensors we're reading from Home Assistant
     SunSensor: String;
     ClimateSensor: String;
     MoonSensor: String;
     DaylightSensor: String;
+    ClimateMinTempSensor: String;
+    ClimateMaxTempSensor: String;
+    ClimateMinHumiditySensor: String;
+    ClimateMaxHumiditySensor: String;
+    WeatherSensor: String;
+    WeatherMinTempSensor: String;
+    WeatherMaxTempSensor: String;
+    WeatherMinPressureSensor: String;
+    WeatherMaxPressureSensor: String;
+    WeatherMinHumiditySensor: String;
+    WeatherMaxHumiditySensor: String;
+    WeatherUVSensor: String;
+    WeatherAQHISensor: String;
 
     LightsOn: Integer;
     LightsOff: Integer;
@@ -330,6 +383,13 @@ type
     SunDawn: TTime;
     SunDusk: TTime;
     MoonIcon: String;
+
+    ClimateMinTemp: Double;
+    ClimateMaxTemp: Double;
+    ClimateMinTempRange: Double;
+    ClimateMaxTempRange: Double;
+    ClimateMinHumidity: Double;
+    ClimateMaxHumidity: Double;
 
     ClimateName: String;
     ClimateMin: Double;
@@ -366,8 +426,32 @@ type
     Circle4: String;
     Circle5: String;
     CircleB: String;
-  end;
 
+    ConfigTableReady: Boolean;
+    ConfigurationLoaded: Boolean;
+
+    LightsAll: string;
+
+    WeatherIcon: String;
+    WeatherCondition: String;
+    WeatherWind: String;
+    WeatherTemperature: Double;
+    WeatherHumidity: Double;
+    WeatherPressure: Double;
+    WeatherPressureUnit: String;
+    WeatherMinTemp: Double;
+    WeatherMaxTemp: Double;
+    WeatherMinPressure: Double;
+    WeatherMaxPressure: Double;
+    WeatherMinHumidity: Double;
+    WeatherMaxHumidity: Double;
+    WeatherMinTempRange: Double;
+    WeatherMaxTempRange: Double;
+    WeatherMinPressureRange: Double;
+    WeatherMaxPressureRange: Double;
+    WeatherUV: String;
+    WeatherAQHI: String;
+  end;
 var
   Form1: TForm1;
 
@@ -395,7 +479,7 @@ end;
 
 procedure TForm1.ShowConnected;
 begin
-  if pages.TabIndex = 1
+  if (pages.TabIndex = 1) or (pages.TabIndex = 11)
   then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
   else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
 
@@ -463,7 +547,7 @@ begin
   // This is used to convert data coming from Home Assistant into something that we can use.
   // We also take the opporutnity to try and filter or adjust the data to meet our needs, such
   // as capitalizing words, removing superfluous words, trimming text, and so on.  Though much
-  // of the time this can be done in Home Assistant directly.  Insert your preferences here!
+  // of the time this can be done in Home Assistant directly.
 
 
   if (Entity = ClimateSensor) then
@@ -497,28 +581,64 @@ begin
     end;
   end
 
-  else if (Entity = MoonSensor) then
+
+  else if (Entity = WeatherSensor) then
   begin
     asm
-      this.MoonIcon = State.attributes.icon;
+      this.WeatherTemperature = State.attributes.temperature;
+      this.WeatherPressure = State.attributes.pressure;
+      this.WeatherHumidity = State.attributes.humidity;
+      this.WeatherPressureUnit = State.attributes.pressure_unit;
+      this.WeatherCondition = window.CapWords(State.state);
+
+      var wind_bearing = parseInt(State.attributes.wind_bearing);
+      var wind_heading = Math.round(((wind_bearing %= 360) < 0 ? wind_bearing + 360 : wind_bearing) / 22.5) % 16;
+      var headings = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SWS','SW','WSW','W','WNW','NW','NWW'];
+      this.WeatherWind = State.attributes.wind_speed+' '+State.attributes.wind_speed_unit+' '+headings[wind_heading];
     end;
+
+    WeatherIcon := 'not_available';
+
+    // Environment Canada Contitions - other data sources may be very different!!
+    // https://github.com/home-assistant/core/blob/dev/homeassistant/components/environment_canada/weather.py
+    if WeatherCondition = 'Partlycloudy' then WeatherCondition := 'Partly Cloudy';
+    if      WeatherCondition = 'Sunny' then WeatherIcon := 'clear-day'
+    else if WeatherCondition = 'Clear Night' then WeatherIcon := 'clear-night'
+    else if WeatherCondition = 'Partly Cloudy' then WeatherIcon := 'partly-cloudy-day'
+    else if WeatherCondition = 'Cloudy' then WeatherIcon := 'cloudy'
+    else if WeatherCondition = 'Rainy' then WeatherIcon := 'rain'
+    else if WeatherCondition = 'Lightning Rainy' then WeatherIcon := 'thunderstorms-rain'
+    else if WeatherCondition = 'Pouring' then WeatherIcon := 'extreme-rain'
+    else if WeatherCondition = 'Snowy Rainy' then WeatherIcon := 'thunderstorms-snow'
+    else if WeatherCondition = 'Snowy' then WeatherIcon := 'snow'
+    else if WeatherCondition = 'Windy' then WeatherIcon := 'wind'
+    else if WeatherCondition = 'Fog' then WeatherIcon := 'fog'
+    else if WeatherCondition = 'Hail' then WeatherIcon := 'hail'
   end
 
-  else if (Entity = DaylightSensor) then
+  // Entities where we're just looking for a single value
+  else if (Entity = MoonSensor) then asm this.MoonIcon = State.attributes.icon end
+  else if (Entity = ClimateMinTempSensor) then asm this.ClimateMinTemp = parseFloat(State.state) end
+  else if (Entity = ClimateMaxTempSensor) then asm this.ClimateMaxTemp = parseFloat(State.state) end
+  else if (Entity = ClimateMinHumiditySensor) then asm this.ClimateMinHumidity = parseFloat(State.state) end
+  else if (Entity = ClimateMaxHumiditySensor) then asm this.ClimateMaxHumidity = parseFloat(State.state) end
+  else if (Entity = DaylightSensor) then asm this.ClimateLight = (State.attributes.light_level+' '+State.attributes.unit_of_measurement).replace('lx','lux') end
+  else if (Entity = WeatherMinTempSensor) then asm this.WeatherMinTemp = parseFloat(State.state) end
+  else if (Entity = WeatherMaxTempSensor) then asm this.WeatherMaxTemp = parseFloat(State.state) end
+  else if (Entity = WeatherMinPressureSensor) then asm this.WeatherMinPressure = parseFloat(State.state) end
+  else if (Entity = WeatherMaxPressureSensor) then asm this.WeatherMaxPressure = parseFloat(State.state) end
+  else if (Entity = WeatherMinHumiditySensor) then asm this.WeatherMinHumidity = parseFloat(State.state) end
+  else if (Entity = WeatherMaxHumiditySensor) then asm this.WeatherMaxHumidity = parseFloat(State.state) end
+  else if (Entity = WeatherUVSensor) then asm this.WeatherUV = State.state end
+  else if (Entity = WeatherAQHISensor) then asm this.WeatherAQHI = State.state end
+
+  else
   begin
-    asm
-      this.ClimateLight = (State.attributes.light_level+' '+State.attributes.unit_of_measurement).replace('lx','lux');
-    end;
+//    console.log('Misconfigured/Unexpected State Change Entity: '+Entity);
   end;
 
   // Update entire Home Page right away
-  if (pages.TabIndex = 1) then
-  begin
-    tmrSeconds.Tag := 1;
-    tmrSecondsTimer(nil);
-  end;
-
-    console.log(formatdatetime('hh:nn:ss',SunRise));
+  UpdateNow;
 
 end;
 
@@ -532,7 +652,11 @@ begin
 
   // Change icon to indicate an update is happening.
   // Though in this case it might be too quick to be visible
-  btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-rotate fa-spin fa-fw" style="color:black; font-size:24px;"></i><div class="ps-2 lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>';
+  btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
+                                      '<div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<i class="fa-solid fa-rotate fa-spin fa-fw" style="color:black; font-size:24px;"></i>'+
+                                      '<div class="ps-2 lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
+                                    '</div>';
 
   // Set flag to indicate that when states arrive, we want to retrieve the configuration
   HALoadConfig := True;
@@ -554,15 +678,19 @@ begin
 
   // Change icon to indicate an update is happening.
   // Though in this case it might be too quick to be visible
-  btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row"><i class="fa-solid fa-rotate fa-fw fa-spin" style="color:black; font-size:24px;"></i><div class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div></div>';
+  btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
+                                      '<i class="fa-solid fa-rotate fa-fw fa-spin" style="color:black; font-size:24px;"></i>'+
+                                      '<div class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
+                                    '</div>';
 
   // Update version information
   HAID := HAID + 1;
-  Data := 'Catheedral: Version '+dataConfigVersion.Caption+', Released '+dataConfigRelease.Caption+' (Saved: '+FormatDateTime('yyyy-MMM-dd hh:nn:ss',Now)+ ')';
-  Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_config_version","value":"'+Data+'"}}';
+  Data := 'Catheedral: Version '+dataConfigVersion.Caption+', Released '+dataConfigRelease.Caption;
+  Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_version","value":"'+Data+'"}}';
   HAWebSocket.Send(Command);
 
-  // Update Var 000: Date and Time Formats, Background as JSON object
+  // Update Configuration var as JSON
   HAID := HAID + 1;
   Data := '{"LD":"'+editConfigLongDate.Text+'",'+
            '"SD":"'+editConfigShortDate.Text+'",'+
@@ -570,23 +698,28 @@ begin
            '"ST":"'+editConfigShortTime.Text+'",'+
            '"BG":"'+editConfigBackground.Text+'"}';
   asm Data = JSON.stringify(Data); end;
-  Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_config_var_000","value":'+Data+'}}';
-  HAWebSocket.Send(Command);
+  Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_configuration","value":"'+FormatDateTime('yyyy-mm-dd hh:nn:ss',Now)+'","attributes":{"feature_000":'+Data+',';
 
   // Update var 001+ values from table, where the number of entries in the table
   // should match the number of var entries in Home Assistant, ideally
   i := 1;
   while (i <= Features) do
   begin
-    HAID := HAID + 1;
     asm Data = this.tabConfigSensors.getRow(i).getCell('entity_id').getValue(); end;
-    Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_config_var_'+Format('%.*d',[3,i])+'","value":"'+Data+'"}}';
-    HAWebSocket.Send(Command);
+    Command := Command+'"feature_'+Format('%.*d',[3,i])+'":"'+Data+'"';
+    if (i < Features)  then Command := Command+','
+    else Command := Command+'}}}';
     i := i + 1
   end;
+//  console.log(command);
+  HAWebSocket.Send(Command);
 
   // Revert to normal icon
-  btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row"><i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i><div class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div></div>';
+  btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
+                                      '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
+                                      '<div class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
+                                    '</div>';
 
   ResetInactivityTimer(Sender);
 end;
@@ -635,14 +768,19 @@ begin
 end;
 
 procedure TForm1.editConfigBACKGROUNDChange(Sender: TObject);
-var
-  StoredValue: String;
 begin
   editConfigChange(nil);
   if (Trim(editConfigBACKGROUND.Text) <> '') and (LowerCase(Trim(editConfigBACKGROUND.Text)) <> 'none') then
   begin
     AppBackground := editConfigBACKGROUND.Text;
-    divBackground.ElementHandle.style.setProperty('background', AppBackground);
+    if Pos(';', AppBackground) > 0
+    then divBackground.ElementHandle.style.cssText := AppBackground
+    else divBackground.ElementHandle.style.setProperty('background', AppBackground);
+    divBackground.ElementHandle.style.setProperty('top', '0px');
+    divBackground.ElementHandle.style.setProperty('left', '0px');
+    divBackground.ElementHandle.style.setProperty('width', IntToStr(PanelWidth)+'px');
+    divBackground.ElementHandle.style.setProperty('height', IntToStr(PanelHeight)+'px');
+    divBackground.ElementHandle.style.setProperty('opacity', '1');
   end;
 end;
 
@@ -690,13 +828,28 @@ begin
 
     this.SunSensor = table.getRow(1).getCell('entity_id').getValue();
     this.MoonSensor = table.getRow(2).getCell('entity_id').getValue();
-    this.ClimateSensor = table.getRow(7).getCell('entity_id').getValue();
-    this.DaylightSensor = table.getRow(8).getCell('entity_id').getValue();
 
     this.CustomPage1URL = table.getRow(3).getCell('entity_id').getValue();
     this.CustomPage2URL = table.getRow(4).getCell('entity_id').getValue();
     this.CustomPage3URL = table.getRow(5).getCell('entity_id').getValue();
     this.CustomPage4URL = table.getRow(6).getCell('entity_id').getValue();
+
+    this.ClimateSensor = table.getRow(7).getCell('entity_id').getValue();
+    this.DaylightSensor = table.getRow(8).getCell('entity_id').getValue();
+    this.ClimateMinTempSensor = table.getRow(9).getCell('entity_id').getValue();
+    this.ClimateMaxTempSensor = table.getRow(10).getCell('entity_id').getValue();
+    this.ClimateMinHumiditySensor = table.getRow(11).getCell('entity_id').getValue();
+    this.ClimateMaxHumiditySensor = table.getRow(12).getCell('entity_id').getValue();
+
+    this.WeatherSensor = table.getRow(13).getCell('entity_id').getValue();
+    this.WeatherMinTempSensor = table.getRow(14).getCell('entity_id').getValue();
+    this.WeatherMaxTempSensor = table.getRow(15).getCell('entity_id').getValue();
+    this.WeatherMinPressureSensor = table.getRow(16).getCell('entity_id').getValue();
+    this.WeatherMaxPressureSensor = table.getRow(17).getCell('entity_id').getValue();
+    this.WeatherMinHumiditySensor = table.getRow(18).getCell('entity_id').getValue();
+    this.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
+    this.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
+    this.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
   end;
 
   // Might as well load these up right away
@@ -742,17 +895,21 @@ procedure TForm1.HAWebSocketConnect(Sender: TObject);
 begin
   dataConfigSTATUS.Caption := 'Connected';
 
-  if pages.TabIndex = 1
+  if (pages.TabIndex = 1) or (pages.TabIndex = 11)
   then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
   else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
+
+  // Once connected, refresh the data again in a minute in case some of the
+  // data didn't get updated properly after a Home Assistant Server restart
+  tmrRefresh.Enabled := False;
+  tmrRefresh.Tag := 10;  // Refresh every 30s for 5 minutes
+  tmrRefresh.Enabled := True;
 end;
 
 procedure TForm1.HAWebSocketDataReceived(Sender: TObject; Origin: string; SocketData: TJSObjectRecord);
 var
   ResponseType: String;
   ResponseID: Integer;
-
-  LocationName: String;
 begin
   ResponseType := 'unknown';
   ResponseID := 0;
@@ -773,8 +930,8 @@ begin
       if (hadata.id == this.HAGetConfig) {
 
         // Let's have a look at it, shall we??
-        console.log('Config Information: '+SocketData.jsobject.length+' bytes');
-        console.log(hadata);
+//        console.log('Config Information: '+SocketData.jsobject.length+' bytes');
+//        console.log(hadata);
 
         this.HASystemName = hadata.result.location_name;
         this.HATimeZone = hadata.result.time_zone;
@@ -792,8 +949,11 @@ begin
         dataInfoLanguage.firstElementChild.innerHTML = hadata.result.language;
         dataInfoCurrency.firstElementChild.innerHTML = hadata.result.currency;
 
-        // We might care about these
+        // We might care about these more than the others
         this.HATemperatureUnits = hadata.result.unit_system.temperature;
+        this.HAPressureUnits = hadata.result.unit_system.pressure;
+
+        // Display the rest anyway
         dataInfoTemperature.firstElementChild.innerHTML = hadata.result.unit_system.temperature;
         dataInfoMass.firstElementChild.innerHTML = hadata.result.unit_system.mass;
         dataInfoDistance.firstElementChild.innerHTML = hadata.result.unit_system.length;
@@ -815,12 +975,15 @@ begin
         this.HAStates = hadata.result.sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
 
         // Let's have a look at it, shall we??
-        console.log('State Information: '+SocketData.jsobject.length+' bytes');
-        console.log(this.HAStates);
+//        console.log('State Information: '+SocketData.jsobject.length+' bytes');
+//        console.log(this.HAStates);
 
         // This is a list of the names of all the entities that have a state, sorted
         this.HAEntities = this.HAStates.map( obj => obj.entity_id ).sort();
 //        console.log(this.HAEntities);
+
+
+        // TIME PANEL
 
         // Sun Information
         if (this.SunSensor !== '') {
@@ -838,6 +1001,9 @@ begin
           }
         }
 
+
+        // CLIMATE PANEL
+
         // Climate Information
         if (this.ClimateSensor !== '') {
           var climate = hadata.result.find(o => o.entity_id === this.ClimateSensor);
@@ -846,11 +1012,118 @@ begin
           }
         }
 
-        // Dayight Information
+        // Climate Minimum Temperature
+        if (this.ClimateMinTempSensor !== '') {
+          var climate = hadata.result.find(o => o.entity_id === this.ClimateMinTempSensor);
+          if (climate !== undefined) {
+            this.StateChanged(this.ClimateMinTempSensor, climate);
+          }
+        }
+
+        // Climate Maximum Temperature
+        if (this.ClimateMaxTempSensor !== '') {
+          var climate = hadata.result.find(o => o.entity_id === this.ClimateMaxTempSensor);
+          if (climate !== undefined) {
+            this.StateChanged(this.ClimateMaxTempSensor, climate);
+          }
+        }
+
+        // Climate Minimum Humidity
+        if (this.ClimateMinHumiditySensor !== '') {
+          var climate = hadata.result.find(o => o.entity_id === this.ClimateMinHumiditySensor);
+          if (climate !== undefined) {
+            this.StateChanged(this.ClimateMinHumiditySensor, climate);
+          }
+        }
+
+        // Climate Maximum Humidity
+        if (this.ClimateMaxHumiditySensor !== '') {
+          var climate = hadata.result.find(o => o.entity_id === this.ClimateMaxHumiditySensor);
+          if (climate !== undefined) {
+            this.StateChanged(this.ClimateMaxHumiditySensor, climate);
+          }
+        }
+
+        // Daylight Information
         if (this.DaylightSensor !== '') {
           var daylight = hadata.result.find(o => o.entity_id === this.DaylightSensor);
           if (daylight !== undefined) {
             this.StateChanged(this.DaylightSensor, daylight);
+          }
+        }
+
+
+        // WEATHER PANEL
+
+        // Weather Information
+        if (this.WeatherSensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherSensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherSensor, weather);
+          }
+        }
+
+        // Weather UV Index
+        if (this.WeatherUVSensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherUVSensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherUVSensor, weather);
+          }
+        }
+
+        // Weather AQHI
+        if (this.WeatherAQHISensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherAQHISensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherAQHISensor, weather);
+          }
+        }
+
+        // Weather Minimum Temperature
+        if (this.WeatherMinTempSensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherMinTempSensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherMinTempSensor, weather);
+          }
+        }
+
+        // Weather Maximum Temperature
+        if (this.WeatherMaxTempSensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherMaxTempSensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherMaxTempSensor, weather);
+          }
+        }
+
+        // Weather Minimum Pressure
+        if (this.WeatherMinPressureSensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherMinPressureSensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherMinPressureSensor, weather);
+          }
+        }
+
+        // Weather Maximum Pressure
+        if (this.WeatherMaxPressureSensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherMaxPressureSensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherMaxPressureSensor, weather);
+          }
+        }
+
+        // Weather Minimum Humidity
+        if (this.WeatherMinHumiditySensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherMinHumiditySensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherMinHumiditySensor, weather);
+          }
+        }
+
+        // Weather Maximum Humidity
+        if (this.WeatherMaxHumiditySensor !== '') {
+          var weather = hadata.result.find(o => o.entity_id === this.WeatherMaxHumiditySensor);
+          if (weather !== undefined) {
+            this.StateChanged(this.WeatherMaxHumiditySensor, weather);
           }
         }
 
@@ -867,37 +1140,38 @@ begin
           function(o) {
            return ((o.entity_id.indexOf("light.") == 0) && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
           }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
-        this.LightsCount = this.Lights.length;
-
         // Lets include the groups so we can use them later, but not include them in the counts
         var LightGroups = hadata.result.filter(
           function(o) {
            return ((o.entity_id.indexOf("light.") == 0) && ((o.attributes.lights !== undefined) || (o.entity_id.indexOf("_group") !== -1)) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
           }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
         this.Lights = [...this.Lights, ...LightGroups];
-
+        this.LightsCount = this.LightsOn + this.LightsOff;
         // Let's have a look at it, shall we??
-        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
-        console.log(this.Lights);
+//        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
+//        console.log(this.Lights);
 
 
-        // Load Configuration
+
+        // Load Configuration from Home Assistant Data (triggered by button click - not automatic)
         if (this.HALoadConfig == true) {
-          for (var i = 0; i <= this.Features; i++) {
-            var param = hadata.result.find(o => o.entity_id === 'var.catheedral_config_var_'+String(i).padStart(3,'0'));
-            if (param.state !== undefined) {
-              // Date/TimeFormats and Background as JSON stored in 000
-              if (i == 0) {
-                var params = JSON.parse(param.state);
-                editConfigLONGDATE.value = params.LD;
-                editConfigSHORTDATE.value = params.SD;
-                editConfigLONGTIME.value = params.LT;
-                editConfigSHORTTIME.value = params.ST;
-                editConfigBACKGROUND.value = params.BG;
-              }
-              // List of sensors stored in 001..Features
-              else {
-                this.tabConfigSensors.getRow(i).getCell('entity_id').setValue(param.state);
+          var config = hadata.result.find(o => o.entity_id === 'var.catheedral_configuration');
+          if (config !== undefined) {
+            for (var i = 0; i <= this.Features; i++) {
+              var param = config.attributes['feature_'+String(i).padStart(3,'0')];
+              if (param !== undefined) {
+                // Date/TimeFormats and Background as JSON stored in 000
+                if (i == 0) {
+                  editConfigLONGDATE.value = param.LD;
+                  editConfigSHORTDATE.value = param.SD;
+                  editConfigLONGTIME.value = param.LT;
+                  editConfigSHORTTIME.value = param.ST;
+                  editConfigBACKGROUND.value = param.BG;
+                }
+                // List of sensors stored in 001..Features
+                else {
+                  this.tabConfigSensors.getRow(i).getCell('entity_id').setValue(param);
+                }
               }
             }
           }
@@ -913,10 +1187,13 @@ begin
           // Put back the normal icon
           this.btnHALoadConfiguration.SetCaption('<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i><div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>');
         }
+
+        this.HAStatesLoaded = true;
+
       }
     }
     else if ((ResponseType == 'result') && (hadata.success == false)) {
-      console.log(hadata);
+//      console.log(hadata);
     }
     else if ((ResponseType == 'event') && (hadata.id == this.HAGetEvents)) {
       ResponseID = hadata.id;
@@ -995,15 +1272,19 @@ begin
           var lightidx = this.Lights.findIndex(o => o.entity_id == hadata.event.data.entity_id);
           if (lightidx > -1) {
             this.Lights[lightidx] = hadata.event.data.new_state;
-            this.LightsOn = this.Lights.filter(
-              function(o) {
-               return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
-              }).length;
-            this.LightsOff = this.Lights.filter(
-              function(o) {
-               return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
-              }).length;
-          }
+          } else {
+            // Got a new light??
+            this.Lights.push(hadata.event.data.new_state);                             }
+          this.LightsOn = this.Lights.filter(
+            function(o) {
+             return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+            }).length;
+          this.LightsOff = this.Lights.filter(
+            function(o) {
+             return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+            }).length;
+          this.LightsCount = this.LightsOn + this.LightsOff;
+          pas.Unit1.Form1.UpdateNow();
         }
 
         if (hadata.event.data.entity_id == this.ClimateSensor) {
@@ -1128,14 +1409,6 @@ begin
   end;
   dataInfoInternet.Caption := Internet;
 
-
-  // Update the version in the INI file if it has changed
-  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'VERSION', 'UNKNOWN'));
-  if AppVersion <> StoredValue then
-  begin
-    AppINIFile.WriteString('Configuration', 'VERSION', AppVersion);
-  end;
-
   // Read in the Configuration Page values individually
   StoredValue := await(String, AppINIFile.ReadString('Configuration', 'URL', ''));
   if StoredValue <> '' then editConfiguRL.Text := StoredValue;
@@ -1148,8 +1421,14 @@ begin
   if (Trim(editConfigBACKGROUND.Text) <> '') and (LowerCase(Trim(editConfigBACKGROUND.Text)) <> 'none') then
   begin
     AppBackground := editConfigBACKGROUND.Text;
+    if Pos(';',AppBackground) > 0
+    then divBackground.ElementHandle.style.cssText := AppBackground
+    else divBackground.ElementHandle.style.setProperty('background', AppBackground);
+    divBackground.ElementHandle.style.setProperty('top', '0px');
+    divBackground.ElementHandle.style.setProperty('left', '0px');
+    divBackground.ElementHandle.style.setProperty('width', IntToStr(PanelWidth)+'px');
+    divBackground.ElementHandle.style.setProperty('height', IntToStr(PanelHeight)+'px');
     divBackground.ElementHandle.style.setProperty('opacity', '1');
-    divBackground.ElementHandle.style.setProperty('background', AppBackground);
   end;
 
   StoredValue := await(String, AppINIFile.ReadString('Configuration', 'LONGDATE', ''));
@@ -1196,6 +1475,23 @@ begin
     this.CustomPage2URL = table.getRow(4).getCell('entity_id').getValue();
     this.CustomPage3URL = table.getRow(5).getCell('entity_id').getValue();
     this.CustomPage4URL = table.getRow(6).getCell('entity_id').getValue();
+
+    this.ClimateSensor = table.getRow(7).getCell('entity_id').getValue();
+    this.DaylightSensor = table.getRow(8).getCell('entity_id').getValue();
+    this.ClimateMinTempSensor = table.getRow(9).getCell('entity_id').getValue();
+    this.ClimateMaxTempSensor = table.getRow(10).getCell('entity_id').getValue();
+    this.ClimateMinHumiditySensor = table.getRow(11).getCell('entity_id').getValue();
+    this.ClimateMaxHumiditySensor = table.getRow(12).getCell('entity_id').getValue();
+
+    this.WeatherSensor = table.getRow(13).getCell('entity_id').getValue();
+    this.WeatherMinTempSensor = table.getRow(14).getCell('entity_id').getValue();
+    this.WeatherMaxTempSensor = table.getRow(15).getCell('entity_id').getValue();
+    this.WeatherMinPressureSensor = table.getRow(16).getCell('entity_id').getValue();
+    this.WeatherMaxPressureSensor = table.getRow(17).getCell('entity_id').getValue();
+    this.WeatherMinHumiditySensor = table.getRow(18).getCell('entity_id').getValue();
+    this.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
+    this.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
+    this.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
   end;
 
   // Might as well load these up right away
@@ -1218,6 +1514,8 @@ begin
 
   // Cleanup
   AppINIFile.Free;
+
+  ConfigurationLoaded := True;
 end;
 
 procedure TForm1.MiletusFormCreate(Sender: TObject);
@@ -1229,6 +1527,9 @@ begin
   AppVersion := '1.0.3';
   AppRelease := '2023-Jan-03';
   AppStarted := Now;
+
+  ConfigTableReady := False;
+  ConfigurationLoaded := False;
 
   datafile := StringReplace(ParamStr(0),'.exe','',[])+'.ini';
   asm
@@ -1243,6 +1544,7 @@ begin
   HAID := 0;
   ShowDisconnected;
   HALoadConfig := False;
+  HAStatesLoaded := False;
 
   // Let's start with this.  Will adjust later.
   // Try to use these for all adjustments, so when we move to
@@ -1350,6 +1652,19 @@ begin
   ClimateSensor := '';
   MoonSensor := '';
   DaylightSensor := '';
+  ClimateMinTempSensor := '';
+  ClimateMaxTempSensor := '';
+  ClimateMinHumiditySensor := '';
+  ClimateMaxHumiditySensor := '';
+  WeatherSensor := '';
+  WeatherMinTempSensor := '';
+  WeatherMaxTempSensor := '';
+  WeatherMinPressureSensor := '';
+  WeatherMaxPressureSensor := '';
+  WeatherMinHumiditySensor := '';
+  WeatherMaxHumiditySensor := '';
+  WeatherUVSensor := '';
+  WeatherAQHISensor := '';
 
   // Config Page Defaults
   editConfigURL.Text := 'http://homeassistant.local:8123';
@@ -1367,22 +1682,27 @@ begin
   SunDusk := Trunc(Now);
   MoonIcon := '';
 
-
-  // Light Counts
+  // Home Page - Climate Panel
   LightsOn := 0;
   LightsOff := 0;
   LightsCount := 0;
-
-  // Home Page - Climate Panel
   ClimateName := 'Not Configured';
   ClimateMin := 0;
-  ClimateMax := 40;
+  ClimateMax := 0;
   ClimateHumidity := 0;
   ClimateCurrent := 0;
   ClimateSetPoint := 0;
   ClimateState := 'None';
   ClimateMode := 'None';
   ClimateLight := '';
+  ClimateMinTemp := 0;
+  ClimateMaxTemp := 100;
+  ClimateMinTempRange := 0;
+  ClimateMaxTempRange := 100;
+  ClimateMinHumidity := 0;
+  ClimateMaxHumidity := 0;
+  btnHomeTempDown.ElementHandle.style.setProperty('opacity','1');
+  btnHomeTempUp.ElementHandle.style.setProperty('opacity','1');
 
 
   // Got JavaScript functions we want to use?  Not sure where to put them.
@@ -1637,6 +1957,10 @@ end;
 
 procedure TForm1.tmrConnectTimer(Sender: TObject);
 begin
+
+  // We're not ready yet
+  if  ConfigurationLoaded = False then exit;
+
   if (HAWebSocket.Active = False) then
   begin
 
@@ -1685,6 +2009,36 @@ begin
   tmrInactivity.Enabled := False;
 end;
 
+procedure TForm1.tmrRefreshTimer(Sender: TObject);
+begin
+  // Send a request for all the data periodically (and quietly)
+
+  // Request full set of states again (no option to limit what is returned
+  HAID := HAID + 1;
+  HAGetStates := HAID;
+  try
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+',"type": "get_states"}');
+  except on E:Exception do
+    begin
+      // Probably should do something here?
+    end;
+  end;
+
+  tmrRefresh.Tag := tmrRefresh.Tag - 1;
+  if tmrRefresh.Tag <= 0 then
+  begin
+    tmrRefresh.Interval := 1800000; // 30 minutes
+    tmrRefresh.Enabled := False;
+    tmrRefresh.Enabled := True;
+  end
+  else
+  begin
+    tmrRefresh.Interval := 30000; // 30 seconds
+    tmrRefresh.Enabled := False;
+    tmrRefresh.Enabled := True;
+  end;
+end;
+
 procedure TForm1.tmrSecondsTimer(Sender: TObject);
 var
   current_seconds: Integer;
@@ -1699,7 +2053,19 @@ var
   memory: integer;
   lights: String;
   display: String;
+
+  UpdateRing1,
+  UpdateRing2,
+  UpdateRing3,
+  UpdateRing4,
+  UpdateRing5: Boolean;
+
+//  ElapsedTime: TDateTime;
 begin
+  tmrSeconds.Enabled := False;
+
+  // How long does it take to run an update?
+//  ElapsedTime := Now;
 
   // Some easy calculations
   current_seconds := SecondOfTheDay(Now);
@@ -1974,130 +2340,486 @@ begin
 
     // Climate Panel //////////////////////////////////////////////////////////////////////////////////
 
-//    Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+
-//              IntToStr(LightsOff)+''+'<i class="fa-solid fa-lightbulb DarkGray fa-2xs px-2"></i>'+
-//              IntToStr(LightsCount)+'</div>';
-
-    // If lights have changed, then update them, potentially every second
-    Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+IntToStr(LightsOff)+'</div>';
-    if dataHomeLights.HTML <> Lights
-    then dataHomeLights.HTML := Lights;
-
     // Updates once a minute at 15s mark
     if (current_seconds_60 = 15) or (tmrSeconds.Tag = 1) then
     begin
 
-      dataHomeMin.Caption := Trim(FloatToStrF(ClimateMin,ffNumber,5,0)+HATemperatureUnits);
-      dataHomeMax.Caption := Trim(FloatToStrF(ClimateMax,ffNumber,5,0)+HATemperatureUnits);
-      dataHomeHumidity.Caption := Trim(FloatToStrF(ClimateHumidity,ffNumber,5,0)+' %');
-      dataHomeSetPoint.Caption := Trim(FloatToStrF(ClimateSetPoint,ffNumber,5,0)+HATemperatureUnits);
-      labelHomeTempName.Caption := ClimateName;
-      dataHomeTemperature.Caption := Trim(FloatToStrF(ClimateCurrent,ffNumber,5,1)+HATemperatureUnits);
-      dataHomeMode.Caption := ClimateState;
-      dataHomeAction.Caption := ClimateMode;
-      dataHomeLightLevel.Caption := ClimateLight;
+      UpdateRing1 := False;
+      UpdateRing2 := False;
+      UpdateRing3 := False;
+
+      // Main Temperature Display
+      if labelHomeTempName.Caption <> ClimateName
+      then labelHomeTempName.Caption := ClimateName;
+      display := Trim(FloatToStrF(ClimateCurrent,ffNumber,5,1)+HATemperatureUnits);
+      if dataHomeTemperature.Caption <> display then
+      begin
+        dataHomeTemperature.Caption := display;
+        UpdateRing1 := True;
+      end;
+
+      // If lights have changed, then update them
+//      Lights := '<div>'+IntToStr(LightsOn)+'<i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i>'+
+//                 IntToStr(LightsOff)+''+'<i class="fa-solid fa-lightbulb DarkGray fa-2xs px-2"></i>'+
+//                 IntToStr(LightsCount)+'</div>';
+      Lights := '<div class="d-flex justify-content-center">'+
+                  '<div class="Text TextRG Gray text-end" style="width:50px;">'+IntToStr(LightsOn)+'</div>'+
+                  '<div><i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i></div>'+
+                  '<div class="Text TextRG Gray text-start" style="width:50px;">'+IntToStr(LightsOff)+'</div>'+
+                '</div>';
+      if dataHomeLights.HTML <> Lights
+      then dataHomeLights.HTML := Lights;
+
+      // Temp rounded to 5, then +/- 5 to get Range
+      ClimateMinTempRange := (Round(ClimateMinTemp / 5) * 5) - 5;
+      ClimateMaxTempRange := (Round(ClimateMaxTemp / 5) * 5) + 5;
+
+      if not(HAStatesLoaded) then
+      begin
+        ClimateMinTempRange := 0;
+        ClimateMaxTempRange := 100;
+      end;
+
+      // Minimum Climate Temperature
+//      display := Trim(FloatToStrF(ClimateMinTemp,ffNumber,5,1)+HATemperatureUnits);
+      display := Trim(FloatToStrF(ClimateMinTemp,ffNumber,5,1));
+      if DataHomeMin.Caption <> display then
+      begin
+        DataHomeMin.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+      display := 'Min '+FloatToStr(ClimateMinTempRange)+HATemperatureUnits;
+      if LabelHomeMin.Caption <> display then
+      begin
+        LabelHomeMin.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+
+      // Maximum Climate Temperature
+//      display := Trim(FloatToStrF(ClimateMaxTemp,ffNumber,5,1)+HATemperatureUnits);
+      display := Trim(FloatToStrF(ClimateMaxTemp,ffNumber,5,1));
+      if DataHomeMax.Caption <> display then
+      begin
+        DataHomeMax.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+      display := FloatToStr(ClimateMaxTempRange)+HATemperatureUnits+' Max';
+      if LabelHomeMax.Caption <> display then
+      begin
+        LabelHomeMax.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+
+      // Humidity
+      display := '<div class="d-flex flex-wrap w-100 align-items-center justify-content-center">'+
+                   '<div class="w-100 m-auto"><img style="width:80px; height:80px; margin-bottom:-25px;" src="weather-icons-dev/production/fill/svg/humidity.svg"></div>'+
+                   '<div style="width:60px; text-align: right;" class="TextSM Gray">'+Trim(FloatToStrF(ClimateMinHumidity,ffNumber,5,0))+'</div>'+
+                   '<div style="width:60px; text-align: center;">'+Trim(FloatToStrF(ClimateHumidity,ffNumber,5,0))+'</div>'+
+                   '<div style="width:60px; text-align: left;" class="TextSM Gray">'+Trim(FloatToStrF(ClimateMaxHumidity,ffNumber,5,0))+'</div>'+
+                 '</div>';
+      if dataHomeHumidity.HTML <> display then
+      begin
+        dataHomeHumidity.HTML := display;
+        UpdateRing3 := True;
+      end;
+
+      // SetPoint UI
+      display := Trim(FloatToStrF(ClimateSetPoint,ffNumber,5,0)+HATemperatureUnits);
+      if dataHomeSetPoint.Caption <> display then
+      begin
+        dataHomeSetPoint.Caption := display;
+        UpdateRing2 := True;
+      end;
 
       // Decide whether buttons should be enabled
-      if (ClimateSetPoint <= ClimateMin) or (labelHomeTempName.Caption = 'Not Configured')
+      // Note ClimateMin/Max = Thermostat SetPoint Min/Max
+      if (ClimateSetPoint <= Max(ClimateMin, ClimateMinTempRange)) or (labelHomeTempName.Caption = 'Not Configured')
       then btnHOmeTempDown.Enabled := False
       else btnHomeTempDown.Enabled := True;
-
-      if (ClimateSetPoint >= ClimateMax) or (labelHomeTempName.Caption = 'Not Configured')
+      if (ClimateSetPoint >= Min(ClimateMax, ClimateMaxTempRange)) or (labelHomeTempName.Caption = 'Not Configured')
       then btnHOmeTempUp.Enabled := False
       else btnHomeTempUp.Enabled := True;
 
-      // Three Rings this time out, plus Three more as Markers
-      // - Temperature
-      // - Setpoint
-      // - Humidity
-      // - Temperature Marker
-      // - Setpoint Marker
-      // - Humidity Marker
+      // Thermostat State / Mode
+      if dataHomeState.Caption <> ClimateState
+      then dataHomeState.Caption := ClimateState;
+      if dataHomeMode.Caption <> ClimateMode
+      then dataHomeMode.Caption := ClimateMode;
 
-      // Temperature (Ring 1)
-      segment_start := Trunc(((ClimateCurrent-ClimateMin)*280) / (ClimateMax-ClimateMin));
-      segment := IntToStr(segment_start)+','+IntToStr(280-segment_start)+',80';
-      Sparkline_Donut(
-        55, 5, 290, 290,                         // T, L, W, H
-        circleCurrent,                           // TWebHTMLDiv
-        segment,                                 // Data
-        '["'+Circle1+'","'+CircleB+'","transparent"]',  // Fill
-        '220deg',                                // Rotation
-        138,                                     // Inner Radius
-        ''                                       // Text
-      );
+      // Daylight Sensor
+      if dataHomeLightLevel.Caption <> ClimateLight
+      then dataHomeLightLevel.Caption := ClimateLight;
 
-      // Setpoint (Ring 2)
-      segment_start := Trunc(((ClimateSetPoint-ClimateMin)*290) / (ClimateMax-ClimateMin));
-      segment := IntToStr(segment_start)+','+IntToStr(290-segment_start)+',70';
-      Sparkline_Donut(
-        65, 15, 270, 270,                        // T, L, W, H
-        circleSetPoint,                          // TWebHTMLDiv
-        segment,                                 // Data
-        '["'+Circle2+'","'+CircleB+'","transparent"]', // Fill
-        '215deg',                                // Rotation
-        128,                                     // Inner Radius
-        ''                                       // Text
-      );
+      if (UpdateRing1 = True) or  ((tmrSeconds.Tag = 1) and (circleClimateTemperature.Tag <= 5)) then
+      begin
+        circleClimateTemperature.Tag := circleClimateTemperature.Tag + 1;
 
-      // Humidity (Ring 3)
-      segment_start := Trunc((ClimateHumidity*300) / 100);
-      segment := IntToStr(segment_start)+','+IntToStr(300-segment_start)+',60';
-      Sparkline_Donut(
-        75, 25, 250, 250,                        // T, L, W, H
-        circleHumidity,                          // TWebHTMLDiv
-        segment,                                 // Data
-        '["'+Circle3+'","'+CircleB+'","transparent"]',   // Fill
-        '210deg',                                // Rotation
-        118,                                     // Inner Radius
-        ''                                       // Text
-      );
+        // Climate Temperature (Ring 1)
+        segment_start := Trunc(((ClimateCurrent-ClimateMinTempRange)*280) / (ClimateMaxTempRange-ClimateMinTempRange));
+        segment := IntToStr(segment_start)+','+IntToStr(280-segment_start)+',80';
+        Sparkline_Donut(
+          55, 5, 290, 290,                                // T, L, W, H
+          circleClimateTemperature,                       // TWebHTMLDiv
+          segment,                                        // Data
+          '["'+Circle5+'","'+CircleB+'","transparent"]',  // Fill
+          '220deg',                                       // Rotation
+          138,                                            // Inner Radius
+          ''                                              // Text
+        );
 
-      // Temperature Marker (Ring 1)
-      rotation := IntToStr(220+Trunc(((ClimateCurrent-ClimateMin)*280) / (ClimateMax-ClimateMin))-2);
-      Sparkline_Donut(
-        50, 0, 300, 300,                         // T, L, W, H
-        circleCurrMark,                          // TWebHTMLDiv
-        '4/360',                                 // Data
-        '["'+Circle1+'","transparent"]',             // Fill
-        rotation+'deg',                          // Rotation
-        113,                                     // Inner Radius
-        ''                                       // Text
-      );
+        // Climate Temperature Marker (Ring 1)
+        rotation := IntToStr(220+Trunc(((ClimateCurrent-ClimateMinTempRange)*280) / (ClimateMaxTempRange-ClimateMinTempRange))-2);
+        Sparkline_Donut(
+          50, 0, 300, 300,                                // T, L, W, H
+          circleClimateTemperatureMarker,                 // TWebHTMLDiv
+          '4/360',                                        // Data
+          '["'+Circle5+'","transparent"]',                // Fill
+          rotation+'deg',                                 // Rotation
+          113,                                            // Inner Radius
+          ''                                              // Text
+        );
+      end;
 
-      // SetPoint Marker (Ring 2)
-      rotation := IntToStr(215+Trunc(((ClimateSetpoint-ClimateMin)*290) / (ClimateMax-ClimateMin))-2);
-      Sparkline_Donut(
-        50, 0, 300, 300,                         // T, L, W, H
-        circleSetMarker,                         // TWebHTMLDiv
-        '4/360',                                 // Data
-        '["'+Circle2+'","transparent"]',            // Fill
-        rotation+'deg',                          // Rotation
-        113,                                     // Inner Radius
-        ''                                       // Text
-      );
+      if (UpdateRing2 = True) or ((tmrSeconds.Tag = 1) and (circleSetPoint.Tag <= 5)) then
+      begin
+        circleSetPoint.Tag := circleSetPoint.Tag + 1;
 
-      // Humidity Marker (Ring 3)
-      rotation := IntToStr(210+Trunc((ClimateHumidity*300) / 100)-2);
-      Sparkline_Donut(
-        50, 0, 300, 300,                         // T, L, W, H
-        circleHumMarker,                         // TWebHTMLDiv
-        '4/360',                                 // Data
-        '["'+Circle3+'","transparent"]',              // Fill
-        rotation+'deg',                          // Rotation
-        113,                                     // Inner Radius
-        ''                                       // Text
-      );
+        // Setpoint (Ring 2)
+        segment_start := Trunc(((ClimateSetPoint-ClimateMinTempRange)*290) / (ClimateMaxTempRange-ClimateMinTempRange));
+        segment := IntToStr(segment_start)+','+IntToStr(290-segment_start)+',70';
+        Sparkline_Donut(
+          65, 15, 270, 270,                               // T, L, W, H
+          circleSetPoint,                                 // TWebHTMLDiv
+          segment,                                        // Data
+          '["'+Circle2+'","'+CircleB+'","transparent"]',  // Fill
+          '215deg',                                       // Rotation
+          128,                                            // Inner Radius
+          ''                                              // Text
+        );
 
+        // SetPoint Marker (Ring 2)
+        rotation := IntToStr(215+Trunc(((ClimateSetpoint-ClimateMinTempRange)*290) / (ClimateMaxTempRange-ClimateMinTempRange))-2);
+        Sparkline_Donut(
+          50, 0, 300, 300,                                // T, L, W, H
+          circleSetPointMarker,                           // TWebHTMLDiv
+          '4/360',                                        // Data
+          '["'+Circle2+'","transparent"]',                // Fill
+          rotation+'deg',                                 // Rotation
+          113,                                            // Inner Radius
+          ''                                              // Text
+        );
+      end;
+
+      if (UpdateRing3 = True) or ((tmrSeconds.Tag = 1) and (circleClimateHumidity.Tag <= 5))  then
+      begin
+        circleClimateHumidity.Tag := circleClimateHumidity.Tag + 1;
+
+        // Humidity (Ring 3)
+        segment_start := Trunc((ClimateHumidity*300) / 100);
+        segment := IntToStr(segment_start)+','+IntToStr(300-segment_start)+',60';
+        Sparkline_Donut(
+          75, 25, 250, 250,                               // T, L, W, H
+          circleClimateHumidity,                          // TWebHTMLDiv
+          segment,                                        // Data
+          '["'+Circle3+'","'+CircleB+'","transparent"]',  // Fill
+          '210deg',                                       // Rotation
+          118,                                            // Inner Radius
+          ''                                              // Text
+        );
+
+        // Humidity Marker (Ring 3)
+        rotation := IntToStr(210+Trunc((ClimateHumidity*300) / 100)-2);
+        Sparkline_Donut(
+          50, 0, 300, 300,                                // T, L, W, H
+          circleClimateHumidityMarker,                    // TWebHTMLDiv
+          '4/360',                                        // Data
+          '["'+Circle3+'","transparent"]',                // Fill
+          rotation+'deg',                                 // Rotation
+          113,                                            // Inner Radius
+          ''                                              // Text
+        );
+      end;
 
     end;
 
 
+    // Weather Panel //////////////////////////////////////////////////////////////////////////////////
 
-    tmrSeconds.Tag := -1;
+    // Updates once a minute at 15s mark
+    if (current_seconds_60 = 15) or (tmrSeconds.Tag = 1) then
+    begin
+      UpdateRing1 := False;
+      UpdateRing2 := False;
+      UpdateRing3 := False;
+
+      // Weather Icon
+      display := '<img src="weather-icons-dev/production/fill/svg/'+WeatherIcon+'.svg">';
+      if divWeatherIcon.HTML.Text <> display
+      then divWeatherIcon.HTML.Text := display;
+
+      // Weather Condition
+      if dataWeatherCondition.Caption <> WeatherCondition
+      then dataWeatherCondition.Caption := WeatherCondition;
+
+      // Main Temperature Display
+      display := Trim(FloatToStrF(WeatherTemperature,ffNumber,5,1)+HATemperatureUnits);
+      if dataWeatherTemperature.Caption <> display then
+      begin
+        dataWeatherTemperature.Caption := display;
+        UpdateRing1 := True;
+      end;
+
+      // Main Pressure Display
+      display := Trim(FloatToStrF(WeatherPressure,ffGeneral,5,0)+' '+WeatherPressureUnit);
+      if labelWeatherPressure.Caption <> display then
+      begin
+        labelWeatherPressure.Caption := display;
+        UpdateRing2 := True;
+      end;
+
+      // UV Index Display
+      if dataWeatherWind.Caption <> WeatherWind
+      then dataWeatherWind.Caption := WeatherWind;
+
+      // UV Index Display
+      if WeatherUV = 'unknown' then WeatherUV := 'N/A';
+      if dataWeatherUV.Caption <> WeatherUV
+      then dataWeatherUV.Caption := WeatherUV;
+
+      // AQHI  Display
+      if WeatherUV = 'unknown' then WeatherAQHI := 'N/A';
+      if dataWeatherAQHI.Caption <> WeatherAQHI
+      then dataWeatherAQHI.Caption := WeatherAQHI;
+
+      // Temp rounded to 5, then +/- 5 to get Range
+      WeatherMinTempRange := (Round(WeatherMinTemp / 5) * 5) - 5;
+      WeatherMaxTempRange := (Round(WeatherMaxTemp / 5) * 5) + 5;
+
+      // Temp rounded to 20, then +/- 20 to get Range
+      WeatherMinPressureRange := (Round(WeatherMinPressure / 20) * 20) - 20;
+      WeatherMaxPressureRange := (Round(WeatherMaxPressure / 20) * 20) + 20;
+
+      if not(HAStatesLoaded) then
+      begin
+        WeatherMinTempRange := 0;
+        WeatherMaxTempRange := 100;
+        WeatherMinPressureRange := 0;
+        WeatherMaxPressureRange := 100;
+      end;
+
+      // Minimum Weather Temperature
+//      display := Trim(FloatToStrF(WeatherMinTemp,ffNumber,5,1)+HATemperatureUnits);
+      display := Trim(FloatToStrF(WeatherMinTemp,ffNumber,5,1));
+      if DataWeatherMin.Caption <> display then
+      begin
+        DataWeatherMin.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+      display := 'Min '+FloatToStr(WeatherMinTempRange)+HATemperatureUnits;
+      if LabelWeatherMin.Caption <> display then
+      begin
+        LabelWeatherMin.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+
+      // Maximum Weather Temperature
+//      display := Trim(FloatToStrF(WeatherMaxTemp,ffNumber,5,1)+HATemperatureUnits);
+      display := Trim(FloatToStrF(WeatherMaxTemp,ffNumber,5,1));
+      if DataWeatherMax.Caption <> display then
+      begin
+        DataWeatherMax.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+      display := FloatToStr(WeatherMaxTempRange)+HATemperatureUnits+' Max';
+      if LabelWeatherMax.Caption <> display then
+      begin
+        LabelWeatherMax.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+
+
+      // Minimum Weather Pressure
+      display := Trim(FloatToStrF(WeatherMinPressure,ffGeneral,5,0)+' '+WeatherPressureUnit);
+//      display := Trim(FloatToStrF(WeatherMinTPressure,ffGeneral,5,0);
+      if DataWeatherMinPressure.Caption <> display then
+      begin
+        DataWeatherMinPressure.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+
+      // Maximum Weather Pressure
+      display := Trim(FloatToStrF(WeatherMaxPressure,ffGeneral,5,0)+' '+WeatherPressureUnit);
+ //     display := Trim(FloatToStrF(WeatherMaxPressure,ffNumber,5,0));
+      if DataWeatherMaxPressure.Caption <> display then
+      begin
+        DataWeatherMaxPressure.Caption := display;
+        UpdateRing1 := True;
+        UpdateRing2 := True;
+      end;
+
+      // Humidity
+      display := '<div class="d-flex flex-wrap w-100 align-items-center justify-content-center">'+
+                   '<div class="w-100 m-auto"><img style="width:80px; height:80px; margin-bottom:-25px;" src="weather-icons-dev/production/fill/svg/humidity.svg"></div>'+
+                   '<div style="width:60px; text-align: right;" class="TextSM Gray">'+Trim(FloatToStrF(WeatherMinHumidity,ffNumber,5,0))+'</div>'+
+                   '<div style="width:60px; text-align: center;">'+Trim(FloatToStrF(WeatherHumidity,ffNumber,5,0))+'</div>'+
+                   '<div style="width:60px; text-align: left;" class="TextSM Gray">'+Trim(FloatToStrF(WeatherMaxHumidity,ffNumber,5,0))+'</div>'+
+                 '</div>';
+      if dataWeatherHumidity.HTML <> display then
+      begin
+        dataWeatherHumidity.HTML := display;
+        UpdateRing3 := True;
+      end;
+
+
+      if (UpdateRing1 = True) or  ((tmrSeconds.Tag = 1) and (circleWeatherTemperature.Tag <= 5)) then
+      begin
+        circleWeatherTemperature.Tag := circleWeatherTemperature.Tag + 1;
+
+        // Weather Temperature (Ring 1)
+        segment_start := Trunc(((WeatherTemperature-WeatherMinTempRange)*280) / (WeatherMaxTempRange-WeatherMinTempRange));
+        segment := IntToStr(segment_start)+','+IntToStr(280-segment_start)+',80';
+        Sparkline_Donut(
+          55, 5, 290, 290,                                // T, L, W, H
+          circleWeatherTemperature,                       // TWebHTMLDiv
+          segment,                                        // Data
+          '["'+Circle4+'","'+CircleB+'","transparent"]',  // Fill
+          '220deg',                                       // Rotation
+          138,                                            // Inner Radius
+          ''                                              // Text
+        );
+
+        // Weather Temperature Marker (Ring 1)
+        rotation := IntToStr(220+Trunc(((WeatherTemperature-WeatherMinTempRange)*280) / (WeatherMaxTempRange-WeatherMinTempRange))-2);
+        Sparkline_Donut(
+          50, 0, 300, 300,                                // T, L, W, H
+          circleWeatherTemperatureMarker,                 // TWebHTMLDiv
+          '4/360',                                        // Data
+          '["'+Circle4+'","transparent"]',                // Fill
+          rotation+'deg',                                 // Rotation
+          113,                                            // Inner Radius
+          ''                                              // Text
+        );
+      end;
+
+      if (UpdateRing2 = True) or ((tmrSeconds.Tag = 1) and (circleWeatherPressure.Tag <= 5)) then
+      begin
+        circleWeatherPressure.Tag := circleWeatherPressure.Tag + 1;
+
+        // Pressure (Ring 2)
+        segment_start := Trunc(((WeatherPressure-WeatherMinPressureRange)*290) / (WeatherMaxPressureRange-WeatherMinPressureRange));
+        segment := IntToStr(segment_start)+','+IntToStr(290-segment_start)+',70';
+        Sparkline_Donut(
+          65, 15, 270, 270,                               // T, L, W, H
+          circleWeatherPressure,                          // TWebHTMLDiv
+          segment,                                        // Data
+          '["'+Circle5+'","'+CircleB+'","transparent"]',  // Fill
+          '215deg',                                       // Rotation
+          128,                                            // Inner Radius
+          ''                                              // Text
+        );
+
+        // Pressure Marker (Ring 2)
+        rotation := IntToStr(215+Trunc(((WeatherPressure-WeatherMinPressureRange)*290) / (WeatherMaxPressureRange-WeatherMinPressureRange))-2);
+        Sparkline_Donut(
+          50, 0, 300, 300,                                // T, L, W, H
+          circleWeatherPressureMarker,                    // TWebHTMLDiv
+          '4/360',                                        // Data
+          '["'+Circle5+'","transparent"]',                // Fill
+          rotation+'deg',                                 // Rotation
+          113,                                            // Inner Radius
+          ''                                              // Text
+        );
+      end;
+
+      if (UpdateRing3 = True) or ((tmrSeconds.Tag = 1) and (circleWeatherHumidity.Tag <= 5))  then
+      begin
+        circleWeatherHumidity.Tag := circleClimateHumidity.Tag + 1;
+
+        // Humidity (Ring 3)
+        segment_start := Trunc((WeatherHumidity*300) / 100);
+        segment := IntToStr(segment_start)+','+IntToStr(300-segment_start)+',60';
+        Sparkline_Donut(
+          75, 25, 250, 250,                               // T, L, W, H
+          circleWeatherHumidity,                          // TWebHTMLDiv
+          segment,                                        // Data
+          '["'+Circle3+'","'+CircleB+'","transparent"]',  // Fill
+          '210deg',                                       // Rotation
+          118,                                            // Inner Radius
+          ''                                              // Text
+        );
+
+        // Humidity Marker (Ring 3)
+        rotation := IntToStr(210+Trunc((WeatherHumidity*300) / 100)-2);
+        Sparkline_Donut(
+          50, 0, 300, 300,                                // T, L, W, H
+          circleWeatherHumidityMarker,                    // TWebHTMLDiv
+          '4/360',                                        // Data
+          '["'+Circle3+'","transparent"]',                // Fill
+          rotation+'deg',                                 // Rotation
+          113,                                            // Inner Radius
+          ''                                              // Text
+        );
+      end;
+    end;
 
   end;
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Entries on the Home Page
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  if (pages.TabIndex = 16) or (tmrSeconds.Tag = 16) then
+  begin
+
+    asm
+      var lights = JSON.stringify(this.Lights);
+      if (lights !== this.LightsAll) {
+        this.LightsAll = lights;
+        var all = this.Lights.sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
+        divAllLights.innerHTML = '';
+        for (var i = 0; i < all.length; i++) {
+          var lightbtn = document.createElement("button");
+          lightbtn.innerHTML = all[i].attributes["friendly_name"];
+          lightbtn.classList.add('LightButton');
+          if (i < 7) {
+            lightbtn.style.setProperty("margin-top","18px");
+          }
+          else if (i >= (Math.trunc(all.length / 7) * 7)) {
+            lightbtn.style.setProperty("margin-bottom","18px")
+          }
+          if (all[i].state == "on") {
+            lightbtn.classList.add('LightOn');
+          }
+          else if (all[i].state == "off") {
+            lightbtn.classList.add('LightOff');
+          }
+          else {
+            lightbtn.classList.add('LightOther');
+          }
+          divAllLights.appendChild(lightbtn);
+        }
+      }
+    end;
+  end;
+
+
+
+
+
+//  console.log('Display: '+FormatDateTime('hh:nn:ss.zzz',ElapsedTime)+' '+FormatDateTime('hh:nn:ss.zzz',Now)+' '+IntToStr(MillisecondsBetween(Now,ElapsedTime))+'ms');
+
+  tmrSeconds.Tag := -1;
+  tmrSeconds.Interval :=  1000-MilliSecondOftheSecond(Now);
+  tmrSeconds.Enabled := True;
 
 end;
 
@@ -2108,6 +2830,9 @@ begin
   // a bit more dramatic effect, but also to try and ensure
   // things appear in an orderly fashion
 
+  // We don't want to do anything if Tabulator hasn't
+  // been initialized yet.  Normally this doesn't take long.
+  if ConfigTableReady = false then exit;
 
   // Stage 0: Load Configuration
   if (tmrStartup.Tag = 0) then
@@ -2115,8 +2840,14 @@ begin
     LoadConfiguration;
   end
 
-  // Stage 1: Display main TWebPageControl
+  // Stage 1: Kick off Home Assistant Connection
   else if (tmrStartup.Tag = 1) then
+  begin
+    tmrConnect.Enabled := True;
+  end
+
+  // Stage 1: Display main TWebPageControl
+  else if (tmrStartup.Tag = 2) then
   begin
     pages.Visible := True;
     pages.ElementHandle.style.setProperty('opacity','1');
@@ -2124,20 +2855,19 @@ begin
   end
 
   // Stage 2: Show title
-  else if (tmrStartup.Tag = 2) then
+  else if (tmrStartup.Tag = 3) then
   begin
     divCatheedral.ElementHandle.style.setProperty('opacity','1');
   end
 
   // Stage 3: Show subtitle
-  else if (tmrStartup.Tag = 3) then
+  else if (tmrStartup.Tag = 4) then
   begin
     divInit.ElementHandle.style.setProperty('opacity','1');
-    tmrConnect.Enabled := True;
   end
 
   // Stage 4: Show corner icons
-  else if (tmrStartup.Tag = 4) then
+  else if (tmrStartup.Tag = 5) then
   begin
     btnHelp.ElementHandle.style.setProperty('opacity','0.25');
     btnHelp.Top := MainButtonPad;
@@ -2156,15 +2886,15 @@ begin
     btnConfiguration.Left := MainButtonPad;
   end
 
-  // Stage 8: Show navigation arrows
-  else if (tmrStartup.Tag = 5) then
+  // Stage 5: Show navigation arrows
+  else if (tmrStartup.Tag = 6) then
   begin
     navLeft.Left := 0;
     navRight.Left := PanelWidth - MainNavSize;
   end
 
   // All done with Startup
-  else if (tmrStartup.Tag = 6) then
+  else if (tmrStartup.Tag = 7) then
   begin
     tmrSecondsTimer(nil);  // No delay
     tmrSeconds.Enabled := True;
@@ -2172,7 +2902,7 @@ begin
 
   // Show the Home page if connected,
   // or the Configuration page if not
-  else if (tmrStartup.Tag >= 7) then
+  else if (tmrStartup.Tag >= 8) then
   begin
     tmrStartup.Enabled := False;
 
@@ -2240,6 +2970,21 @@ begin
 
 
   ResetInactivityTimer(Sender);
+end;
+
+procedure TForm1.UpdateNow;
+begin
+  if tmrSeconds.Enabled then
+  begin
+    tmrSeconds.Tag := pages.TabIndex;
+    tmrSecondsTimer(nil);
+  end;
+end;
+
+procedure TForm1.divHomeLightsCoverClick(Sender: TObject);
+begin
+  // Home Page -> Lights
+  SwitchPages(1,16);
 end;
 
 procedure TForm1.btnChangeClick(Sender: TObject);
@@ -2428,7 +3173,19 @@ begin
       {"id":  6, "feature":"Custom Page 4"        , "example":"eg: http://www.example.com" },
       {"id":  7, "feature":"Climate Sensor"       , "example":"eg: climate.room_thermostat" },
       {"id":  8, "feature":"Indoor Light Sensor"  , "example":"eg: sensor.motion_illuminance" },
-      {"id":  9, "feature":"Weather Sensor"       , "example":"eg: weather.city_forecast" }
+      {"id":  9, "feature":"Min Climate Temp"     , "example":"eg: sensor.climate_minimum_temperature" },
+      {"id": 10, "feature":"Max Climate Temp"     , "example":"eg: sensor.climate_maximum_temperature" },
+      {"id": 11, "feature":"Min Climate Humidity" , "example":"eg: sensor.climate_minimum_humidity" },
+      {"id": 12, "feature":"Max Climate Humidity" , "example":"eg: sensor.climate_maximum_humidity" },
+      {"id": 13, "feature":"Weather Sensor"       , "example":"eg: weather.city_forecast" },
+      {"id": 14, "feature":"Min Weather Temp"     , "example":"eg: sensor.weather.minimum_temperature" },
+      {"id": 15, "feature":"Max Weather Temp"     , "example":"eg: sensor.weather.maximum_temperature" },
+      {"id": 16, "feature":"Min Weather Pressure" , "example":"eg: sensor.weather.minimum_pressure" },
+      {"id": 17, "feature":"Max Weather Pressure" , "example":"eg: sensor.weather.maximum_pressure" },
+      {"id": 18, "feature":"Min Weather Humidity" , "example":"eg: sensor.weather.minimum_humidity" },
+      {"id": 19, "feature":"Max Weather Humidity" , "example":"eg: sensor.weather.maximum_humidity" },
+      {"id": 20, "feature":"UV Index"             , "example":"eg: sensor.city_uv_index" },
+      {"id": 21, "feature":"Air Quality Index"    , "example":"eg: sensor.city_aqhi" }
     ];
     pas.Unit1.Form1.Features = FeatureData.length;
 
@@ -2445,7 +3202,7 @@ begin
       },
       columns: [
         { title: "#", field: "id", width: 50, hozAlign: "center" },
-        { title: "Feature", field: "feature", width: 200 },
+        { title: "Feature", field: "feature", width: 225 },
         { title: "Entity", field: "entity_id",  editor: "list", editorParams:{
             valuesLookup:function(cell, filterTerm) {
               return pas.Unit1.Form1.HAEntities
@@ -2458,11 +3215,13 @@ begin
             placeholderEmpty: '"<span class="text-white">No Matching Home Assistant Entities Found</span>',
             elementAttributes: {
               spellcheck: false,
-              maxlength: "255"
             }
         }},
-        { title: "Example", field: "example", width: 300 },
+        { title: "Example", field: "example", width: 400 },
       ]
+    });
+    this.tabConfigSensors.on("tableBuilt", function(){
+      pas.Unit1.Form1.ConfigTableReady = true;
     });
     this.tabConfigSensors.on("cellEditing", function(cell){
       pas.Unit1.Form1.ResetInactivityTimer;
