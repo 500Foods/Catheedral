@@ -131,10 +131,10 @@
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <SanitizedProjectName>Catheedral</SanitizedProjectName>
-        <TMSWebMiletusResIconMacOSFile>MiletusMac.icns</TMSWebMiletusResIconMacOSFile>
-        <TMSWebMiletusResIconLinuxFile>MiletusLinux.png</TMSWebMiletusResIconLinuxFile>
         <TMSWebMiletusResIconWindowsFile>MiletusWindows.ico</TMSWebMiletusResIconWindowsFile>
+        <TMSWebMiletusResIconLinuxFile>MiletusLinux.png</TMSWebMiletusResIconLinuxFile>
         <TMSWebHTMLFile>Project1.html</TMSWebHTMLFile>
+        <TMSWebMiletusResIconMacOSFile>MiletusMac.icns</TMSWebMiletusResIconMacOSFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;RESTComponents;fmxase;DBXDb2Driver;DBXInterBaseDriver;FmxTeeUI926;VCLTMSFNCChartPkgDXE12;vclactnband;vclFireDAC;emsclientfiredac;tethering;svnui;DataSnapFireDAC;FireDACADSDriver;DBXMSSQLDriver;TMSQueryStudio;DatasnapConnectorsFreePascal;FireDACMSSQLDriver;JSExtend;vcltouch;rbUSERDesign2126;FMXTMSFNCUIPackPkgDXE12;vcldb;bindcompfmx;svn;TMSWEBCorePkgLibDXE12;DBXOracleDriver;inetdb;IcsFmxD103Run;CEF4Delphi;IcsVclD103Run;rbTC2126;FMXTMSFNCWXPackPkgDXE12;emsedge;fmx;FireDACIBDriver;fmxdae;vclib;rbBDE2126;FireDACDBXDriver;dbexpress;IndyCore;DCEF_XE5;xdata;vclx;dsnap;emsclient;DataSnapCommon;rbRCL2126;FireDACCommon;VCLTMSFNCUIPackPkgDXE12;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;soapserver;vclie;FMXTeeDB926;bindengine;DBXMySQLDriver;CloudService;FireDACOracleDriver;FireDACMySQLDriver;DBXFirebirdDriver;CData.QuickBooksOnline.D26;FireDACCommonODBC;FireDACCommonDriver;VCLTMSFNCCorePkgDXE12;DataSnapClient;inet;rbTCUI2126;IndyIPCommon;bindcompdbx;vcl;IndyIPServer;DBXSybaseASEDriver;sparkle;tmsbcl;IndySystem;FireDACDb2Driver;VCLTMSFNCDashboardPackPkgDXE12;FMXTee926;dsnapcon;VCLTMSFNCMapsPkgDXE12;FMXTMSFNCCorePkgDXE12;TMSWorkflow;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;FireDAC;FMXTMSFNCMapsPkgDXE12;emshosting;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;FireDACASADriver;advmemopkgdXE12;DBXOdbcDriver;FireDACTDataDriver;TMSDiagram;soaprtl;DbxCommonDriver;FMXTMSFNCDashboardPackPkgDXE12;ibxpress;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;vclwinx;FireDACDSDriver;rtl;emsserverresource;DbxClientDriver;ibxbindings;DBXSybaseASADriver;CustomIPTransport;vcldsnap;rbIDE2126;bindcomp;appanalytics;DBXInformixDriver;IndyIPClient;EurekaLogCore;rbCloudSC2126;bindcompvcl;IcsCommonD103Run;rbUSER2126;TMSCryptoPkgDXE12;dclTMSQueryStudio;TMSWEBCorePkgDXE12;dbxcds;VclSmp;adortl;FireDACODBCDriver;VCLTMSFNCWXPackPkgDXE12;DataSnapIndy10ServerTransport;aurelius;dsnapxml;DataSnapProviderClient;dbrtl;IndyProtocols;inetdbxpress;FireDACMongoDBDriver;TMSCryptoPkgDEDXE12;FMXTMSFNCChartPkgDXE12;DataSnapServerMidas;$(DCC_UsePackage)</DCC_UsePackage>
@@ -165,7 +165,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <TMSVersionAuto>2</TMSVersionAuto>
-        <TMSVersion>1.0.5</TMSVersion>
+        <TMSVersion>1.0.6</TMSVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -524,6 +524,19 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>JpgImage_3</ResourceId>
         </RcItem>
+        <None Include="weather-icons-dev\production\fill\svg-static\humidity.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\sunrise.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\sunset.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-first-quarter.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-full.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-last-quarter.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-new.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moonrise.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moonset.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-waning-crescent.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-waning-gibbous.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-waxing-crescent.svg"/>
+        <None Include="weather-icons-dev\production\fill\svg-static\moon-waxing-gibbous.svg"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -825,6 +838,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moonrise.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\partly-cloudy-night-hail.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -945,6 +964,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-first-quarter.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\dust-day.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -1053,6 +1078,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waning-gibbous.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thermometer-snow.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -1132,6 +1163,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\wind-beaufort-8.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waxing-crescent.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -1270,6 +1307,18 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\dust.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-full.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-last-quarter.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -1516,6 +1565,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\wind-beaufort-6.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\humidity.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -2163,6 +2218,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waxing-gibbous.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\moon-first-quarter.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -2176,6 +2237,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\overcast-day-snow.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\sunset.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -2517,6 +2584,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-new.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\fog.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -2583,13 +2656,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="images\blank.png" Configuration="Debug-Win32" Class="ProjectFile">
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg\time-late-morning.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="weather-icons-dev\production\fill\svg\time-late-morning.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moonset.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -2745,6 +2818,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\sunrise.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\overcast-day-hail.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -2752,6 +2831,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thunderstorms-extreme-rain.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="images\background_protostar.jpg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -3538,6 +3623,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thermometer-mercury.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waning-crescent.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

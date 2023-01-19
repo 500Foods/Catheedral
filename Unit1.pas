@@ -248,13 +248,12 @@ type
     dataHomeLights: TWebLabel;
     labelHomeDawnIcon: TWebLabel;
     labelHomeDuskIcon: TWebLabel;
-    tmrRefresh: TWebTimer;
     pageLights: TWebTabSheet;
-    WebButton1: TWebButton;
-    WebButton2: TWebButton;
-    WebButton3: TWebButton;
-    WebButton4: TWebButton;
-    WebButton5: TWebButton;
+    btnLioghtsShowAll: TWebButton;
+    btnLightsGroups: TWebButton;
+    btnLightsNoGroups: TWebButton;
+    btnLightsAllOn: TWebButton;
+    btnLightsAllOff: TWebButton;
     divAllLights: TWebHTMLDiv;
     pageHelpLights: TWebTabSheet;
     divHomeLightsCover: TWebHTMLDiv;
@@ -283,6 +282,30 @@ type
     dataWeatherAQHI: TWebLabel;
     divWeatherIcon: TWebHTMLDiv;
     dataWeatherCondition: TWebLabel;
+    divEnergy: TWebHTMLDiv;
+    labelBattery1: TWebLabel;
+    labelBattery2: TWebLabel;
+    labelBattery3: TWebLabel;
+    labelBattery4: TWebLabel;
+    dataEnergyUse: TWebLabel;
+    dataBattery1Status: TWebLabel;
+    dataBattery2Status: TWebLabel;
+    dataBattery3Status: TWebLabel;
+    dataBattery4Status: TWebLabel;
+    dataBattery1: TWebLabel;
+    dataBattery2: TWebLabel;
+    dataBattery3: TWebLabel;
+    dataBattery4: TWebLabel;
+    circleEnergyUse: TWebHTMLDiv;
+    circleEnergyUseMarker: TWebHTMLDiv;
+    divPerson1: TWebHTMLDiv;
+    divPerson2: TWebHTMLDiv;
+    dataPerson1Location: TWebLabel;
+    dataPerson2Location: TWebLabel;
+    circleEnergyToday: TWebHTMLDiv;
+    circleEnergyTodayMarker: TWebHTMLDiv;
+    circleEnergyYesterday: TWebHTMLDiv;
+    circleEnergyYesterdayMarker: TWebHTMLDiv;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -333,8 +356,13 @@ type
     procedure MiletusFormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure CopyPosition(src: TWebHTMLDiv; dest: TWebHTMLDiv);
     procedure UpdateNow;
-    procedure tmrRefreshTimer(Sender: TObject);
     procedure divHomeLightsCoverClick(Sender: TObject);
+    procedure btnLightsAllOffClick(Sender: TObject);
+    procedure LightButtonClicked(light: String);
+    procedure btnLioghtsShowAllClick(Sender: TObject);
+    procedure btnLightsGroupsClick(Sender: TObject);
+    procedure btnLightsNoGroupsClick(Sender: TObject);
+    procedure btnLightsAllOnClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -372,11 +400,18 @@ type
     WeatherMaxHumiditySensor: String;
     WeatherUVSensor: String;
     WeatherAQHISensor: String;
+    Battery1Sensor: String;
+    Battery2Sensor: String;
+    Battery3Sensor: String;
+    Battery4Sensor: String;
+    Person1Sensor: String;
+    Person2Sensor: String;
 
     LightsOn: Integer;
     LightsOff: Integer;
     LightsCount: Integer;
     Lights: JSValue;
+    LightsMode: Integer;
 
     SunRise: TTime;
     SunSet: TTime;
@@ -429,6 +464,8 @@ type
 
     ConfigTableReady: Boolean;
     ConfigurationLoaded: Boolean;
+    LastRefresh: TDateTime;
+    UpdatePending: Boolean;
 
     LightsAll: string;
 
@@ -451,6 +488,29 @@ type
     WeatherMaxPressureRange: Double;
     WeatherUV: String;
     WeatherAQHI: String;
+
+    Person1Name: String;
+    Person1Photo: String;
+    Person1Location: String;
+    Person2Name: String;
+    Person2Photo: String;
+    Person2Location: String;
+
+    Battery1Name: String;
+    Battery2Name: String;
+    Battery3Name: String;
+    Battery4Name: String;
+    Battery1: String;
+    Battery2: String;
+    Battery3: String;
+    Battery4: String;
+    Battery1Status: String;
+    Battery2Status: String;
+    Battery3Status: String;
+    Battery4Status: String;
+
+    EnergyUse: Integer;
+
   end;
 var
   Form1: TForm1;
@@ -506,7 +566,13 @@ end;
 procedure TForm1.Sparkline_Donut(CTop, CLeft, CWidth, CHeight: Integer; Chart: TWebHTMLDiv; ChartData: String; Fill: String; Rotation: String; InnerRadius: Double; DisplayText: String);
 var
   Element: TJSElement;
+  ChartName: String;
 begin
+  ChartName := StringReplace(StringReplace(Chart.ElementID,'circle','',[]),'Marker','M',[]);
+  asm
+    console.log('Drawing Chart: '+ChartName+' ['+CTop+','+CLeft+','+CWidth+','+CHeight+'] '+InnerRadius+': '+ChartData);
+  end;
+
   // Set Dimensions of Chart
   Chart.Top := CTop;
   Chart.Left := CLeft;
@@ -597,11 +663,12 @@ begin
       this.WeatherWind = State.attributes.wind_speed+' '+State.attributes.wind_speed_unit+' '+headings[wind_heading];
     end;
 
-    WeatherIcon := 'not_available';
+    WeatherIcon := 'not-available';
 
     // Environment Canada Contitions - other data sources may be very different!!
     // https://github.com/home-assistant/core/blob/dev/homeassistant/components/environment_canada/weather.py
     if WeatherCondition = 'Partlycloudy' then WeatherCondition := 'Partly Cloudy';
+    if WeatherCondition = 'Clear-night' then WeatherCondition := 'Clear Night';
     if      WeatherCondition = 'Sunny' then WeatherIcon := 'clear-day'
     else if WeatherCondition = 'Clear Night' then WeatherIcon := 'clear-night'
     else if WeatherCondition = 'Partly Cloudy' then WeatherIcon := 'partly-cloudy-day'
@@ -616,21 +683,165 @@ begin
     else if WeatherCondition = 'Hail' then WeatherIcon := 'hail'
   end
 
+  else if (Entity = Battery1Sensor) then
+  begin
+    asm
+      if (State.attributes["name"] !== undefined) {
+        this.Battery1Name = State.attributes["name"];
+      }
+      if ((State.attributes["battery"] !== undefined) && (State.attributes["battery"] !== "") && (State.attributes["battery"] !== 0)) {
+        this.Battery1 = State.attributes["battery"]+'%';
+      }
+      else {
+        this.Battery1 = '';
+      }
+      if ((State.attributes["battery_status"] !== undefined) && (State.attributes["battery_status"] !== 'Unknown') && (State.attributes["battery_status"] !== "")) {
+        if (State.attributes["battery_status"] == 'NotCharging') {
+          this.Battery1Status = 'Idle';
+        }
+        else {
+          this.Battery1Status = State.attributes["battery_status"];
+        }
+      }
+      else {
+        this.Battery1Status = 'N/A';
+      }
+    end;
+    if Battery1 = '100%'
+    then dataBattery1.ElementLabelClassName := 'Text TextRG Orange'
+    else dataBattery1.ElementLabelClassName := 'Text TextRG Yellow';
+  end
+  else if (Entity = Battery2Sensor) then
+  begin
+    asm
+      if (State.attributes["name"] !== undefined) {
+        this.Battery2Name = State.attributes["name"];
+      }
+      if ((State.attributes["battery"] !== undefined) && (State.attributes["battery"] !== "") && (State.attributes["battery"] !== 0)) {
+        this.Battery2 = State.attributes["battery"]+'%';
+      }
+      else {
+        this.Battery2 = '';
+      }
+      if ((State.attributes["battery_status"] !== undefined) && (State.attributes["battery_status"] !== 'Unknown') && (State.attributes["battery_status"] !== "")) {
+        if (State.attributes["battery_status"] == 'NotCharging') {
+          this.Battery2Status = 'Idle';
+        }
+        else {
+          this.Battery2Status = State.attributes["battery_status"];
+        }
+      }
+      else {
+        this.Battery2Status = 'N/A';
+      }
+    end;
+    if Battery2 = '100%'
+    then dataBattery2.ElementLabelClassName := 'Text TextRG Orange'
+    else dataBattery2.ElementLabelClassName := 'Text TextRG Yellow';
+  end
+  else if (Entity = Battery3Sensor) then
+  begin
+    asm
+      if (State.attributes["name"] !== undefined) {
+        this.Battery3Name = State.attributes["name"];
+      }
+      if ((State.attributes["battery"] !== undefined) && (State.attributes["battery"] !== "") && (State.attributes["battery"] !== 0)) {
+        this.Battery3 = State.attributes["battery"]+'%';
+      }
+      else {
+        this.Battery3 = '';
+      }
+      if ((State.attributes["battery_status"] !== undefined) && (State.attributes["battery_status"] !== 'Unknown') && (State.attributes["battery_status"] !== "")) {
+        if (State.attributes["battery_status"] == 'NotCharging') {
+          this.Battery3Status = 'Idle';
+        }
+        else {
+          this.Battery3Status = State.attributes["battery_status"];
+        }
+      }
+      else {
+        this.Battery3Status = 'N/A';
+      }
+    end;
+    if Battery3 = '100%'
+    then dataBattery3.ElementLabelClassName := 'Text TextRG Orange'
+    else dataBattery3.ElementLabelClassName := 'Text TextRG Yellow';
+  end
+  else if (Entity = Battery4Sensor) then
+  begin
+    asm
+      if (State.attributes["name"] !== undefined) {
+        this.Battery4Name = State.attributes["name"];
+      }
+      if ((State.attributes["battery"] !== undefined) && (State.attributes["battery"] !== "") && (State.attributes["battery"] !== 0)) {
+        this.Battery4 = State.attributes["battery"]+'%';
+      }
+      else {
+        this.Battery4 = '';
+      }
+      if ((State.attributes["battery_status"] !== undefined) && (State.attributes["battery_status"] !== 'Unknown') && (State.attributes["battery_status"] !== "")) {
+        if (State.attributes["battery_status"] == 'NotCharging') {
+          this.Battery4Status = 'Idle';
+        }
+        else {
+          this.Battery4Status = State.attributes["battery_status"];
+        }
+      }
+      else {
+        this.Battery4Status = 'N/A';
+      }
+    end;
+    if Battery4 = '100%'
+    then dataBattery4.ElementLabelClassName := 'Text TextRG Orange'
+    else dataBattery4.ElementLabelClassName := 'Text TextRG Yellow';
+  end
+
+  else if (Entity = Person1Sensor) then
+  begin
+    asm
+      if (State.attributes["friendly_name"] !== undefined) {
+        this.Person1Name = window.CapWords(State.attributes["friendly_name"]);
+      }
+      if (State.attributes["entity_picture"] !== undefined) {
+        this.Person1Photo = State.attributes["entity_picture"];
+      }
+      if (State.state !== undefined) {
+        this.Person1Location = window.CapWords(State.state.replace('_',' '));
+      }
+    end
+  end
+  else if (Entity = Person2Sensor) then
+  begin
+    asm
+      if (State.attributes["friendly_name"] !== undefined) {
+        this.Person2Name = window.CapWords(State.attributes["friendly_name"]);
+      }
+      if (State.attributes["entity_picture"] !== undefined) {
+        this.Person2Photo = State.attributes["entity_picture"];
+      }
+      if (State.state !== undefined) {
+        this.Person2Location = window.CapWords(State.state.replace('_',' '));
+      }
+    end
+  end
+
+
   // Entities where we're just looking for a single value
   else if (Entity = MoonSensor) then asm this.MoonIcon = State.attributes.icon end
-  else if (Entity = ClimateMinTempSensor) then asm this.ClimateMinTemp = parseFloat(State.state) end
-  else if (Entity = ClimateMaxTempSensor) then asm this.ClimateMaxTemp = parseFloat(State.state) end
+  else if (Entity = ClimateMinTempSensor) then asm if (!isNaN(State.state)) { this.ClimateMinTemp = parseFloat(State.state) } end
+  else if (Entity = ClimateMaxTempSensor) then asm if (!isNaN(State.state)) { this.ClimateMaxTemp = parseFloat(State.state) } end
   else if (Entity = ClimateMinHumiditySensor) then asm this.ClimateMinHumidity = parseFloat(State.state) end
   else if (Entity = ClimateMaxHumiditySensor) then asm this.ClimateMaxHumidity = parseFloat(State.state) end
   else if (Entity = DaylightSensor) then asm this.ClimateLight = (State.attributes.light_level+' '+State.attributes.unit_of_measurement).replace('lx','lux') end
-  else if (Entity = WeatherMinTempSensor) then asm this.WeatherMinTemp = parseFloat(State.state) end
-  else if (Entity = WeatherMaxTempSensor) then asm this.WeatherMaxTemp = parseFloat(State.state) end
-  else if (Entity = WeatherMinPressureSensor) then asm this.WeatherMinPressure = parseFloat(State.state) end
-  else if (Entity = WeatherMaxPressureSensor) then asm this.WeatherMaxPressure = parseFloat(State.state) end
+  else if (Entity = WeatherMinTempSensor) then asm if (!isNaN(State.state)) { this.WeatherMinTemp = parseFloat(State.state) } end
+  else if (Entity = WeatherMaxTempSensor) then asm if (!isNaN(State.state)) { this.WeatherMaxTemp = parseFloat(State.state) } end
+  else if (Entity = WeatherMinPressureSensor) then asm if (!isNaN(State.state)) { this.WeatherMinPressure = parseFloat(State.state) } end
+  else if (Entity = WeatherMaxPressureSensor) then asm if (!isNaN(State.state)) { this.WeatherMaxPressure = parseFloat(State.state) }end
   else if (Entity = WeatherMinHumiditySensor) then asm this.WeatherMinHumidity = parseFloat(State.state) end
   else if (Entity = WeatherMaxHumiditySensor) then asm this.WeatherMaxHumidity = parseFloat(State.state) end
   else if (Entity = WeatherUVSensor) then asm this.WeatherUV = State.state end
   else if (Entity = WeatherAQHISensor) then asm this.WeatherAQHI = State.state end
+
 
   else
   begin
@@ -850,6 +1061,14 @@ begin
     this.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
     this.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
     this.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
+
+    this.Battery1Sensor = table.getRow(22).getCell('entity_id').getValue();
+    this.Battery2Sensor = table.getRow(23).getCell('entity_id').getValue();
+    this.Battery3Sensor = table.getRow(24).getCell('entity_id').getValue();
+    this.Battery4Sensor = table.getRow(25).getCell('entity_id').getValue();
+
+    this.Person1Sensor = table.getRow(26).getCell('entity_id').getValue();
+    this.Person2Sensor = table.getRow(27).getCell('entity_id').getValue();
   end;
 
   // Might as well load these up right away
@@ -899,11 +1118,6 @@ begin
   then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
   else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
 
-  // Once connected, refresh the data again in a minute in case some of the
-  // data didn't get updated properly after a Home Assistant Server restart
-  tmrRefresh.Enabled := False;
-  tmrRefresh.Tag := 10;  // Refresh every 30s for 5 minutes
-  tmrRefresh.Enabled := True;
 end;
 
 procedure TForm1.HAWebSocketDataReceived(Sender: TObject; Origin: string; SocketData: TJSObjectRecord);
@@ -1153,6 +1367,57 @@ begin
 
 
 
+        // ENERGY PANEL
+
+        // Battery 1
+        if (this.Battery1Sensor !== '') {
+          var battery = hadata.result.find(o => o.entity_id === this.Battery1Sensor);
+          if (battery !== undefined) {
+            this.StateChanged(this.Battery1Sensor, battery);
+          }
+        }
+        // Battery 2
+        if (this.Battery2Sensor !== '') {
+          var battery = hadata.result.find(o => o.entity_id === this.Battery2Sensor);
+          if (battery !== undefined) {
+            this.StateChanged(this.Battery2Sensor, battery);
+          }
+        }
+        // Battery 3
+        if (this.Battery3Sensor !== '') {
+          var battery = hadata.result.find(o => o.entity_id === this.Battery3Sensor);
+          if (battery !== undefined) {
+            this.StateChanged(this.Battery3Sensor, battery);
+          }
+        }
+        // Battery 4
+        if (this.Battery4Sensor !== '') {
+          var battery = hadata.result.find(o => o.entity_id === this.Battery4Sensor);
+          if (battery !== undefined) {
+            this.StateChanged(this.Battery4Sensor, battery);
+          }
+        }
+
+        // Person 1
+        if (this.Person1Sensor !== '') {
+          var person = hadata.result.find(o => o.entity_id === this.Person1Sensor);
+          if (person !== undefined) {
+            this.StateChanged(this.Person1Sensor, person);
+          }
+        }
+
+        // Person 2
+        if (this.Person2Sensor !== '') {
+          var person = hadata.result.find(o => o.entity_id === this.Person2Sensor);
+          if (person !== undefined) {
+            this.StateChanged(this.Person2Sensor, person);
+          }
+        }
+
+
+
+
+
         // Load Configuration from Home Assistant Data (triggered by button click - not automatic)
         if (this.HALoadConfig == true) {
           var config = hadata.result.find(o => o.entity_id === 'var.catheedral_configuration');
@@ -1287,22 +1552,61 @@ begin
           pas.Unit1.Form1.UpdateNow();
         }
 
-        if (hadata.event.data.entity_id == this.ClimateSensor) {
-          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
+        var sensorlist = [
+          this.ClimateSensor,
+          this.SunSensor,
+          this.MoonSensor,
+          this.DaylightSensor,
+
+          this.ClimateSensor,
+          this.ClimateMinTempSensor,
+          this.ClimateMaxTempSensor,
+          this.ClimateMinHumiditySensor,
+          this.ClimateMaxHumiditySensor,
+
+          this.WeatherSensor,
+          this.WeatherMinTempSensor,
+          this.WeatherMaxTempSensor,
+          this.WeatherMinPressureSensor,
+          this.WeatherMaxPressureSensor,
+          this.WeatherMinHumiditySensor,
+          this.WeatherMaxHumiditySensor,
+
+          this.WeatherUVSensor,
+          this.WeatherAQHISensor,
+
+          this.Battery1Sensor,
+          this.Battery2Sensor,
+          this.Battery3Sensor,
+          this.Battery4Sensor,
+
+          this.Person1Sensor,
+          this.Person2Sensor
+        ];
+
+        for (var i = 0; i < sensorlist.length; i++) {
+          if (sensorlist[i] !== '') {
+            if (hadata.event.data.entity_id == sensorlist[i]) {
+              this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
+            }
+          }
         }
-        else if (hadata.event.data.entity_id == this.SunSensor) {
-          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
-        }
-        else if (hadata.event.data.entity_id == this.MoonSensor) {
-          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
-        }
-        else if (hadata.event.data.entity_id == this.DaylightSensor) {
-          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
-        }
-        else {
-//          console.log("State changed: "+hadata.event.data.new_state.entity_id);
-//          console.log(hadata.event);
-        }
+
+//        if (hadata.event.data.entity_id == this.ClimateSensor) {
+//        }
+//        else if (hadata.event.data.entity_id == this.SunSensor) {
+//          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
+//        }
+//        else if (hadata.event.data.entity_id == this.MoonSensor) {
+//          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
+//        }
+//        else if (hadata.event.data.entity_id == this.DaylightSensor) {
+//          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
+//        }
+//        else {
+////          console.log("State changed: "+hadata.event.data.new_state.entity_id);
+////          console.log(hadata.event);
+//        }
       }
       else {
 //        console.log(hadata.event);
@@ -1338,6 +1642,15 @@ end;
 procedure TForm1.labelConfigSTATUSClick(Sender: TObject);
 begin
   SwitchPages(0, 6);
+end;
+
+procedure TForm1.LightButtonClicked(light: String);
+begin
+  if pos('light-',light) = 1 then
+  begin
+    HAID := HAID + 1;
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+Copy(light,7,length(light))+'"}}');
+  end;
 end;
 
 procedure TForm1.listBackgroundsChange(Sender: TObject);
@@ -1492,6 +1805,14 @@ begin
     this.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
     this.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
     this.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
+
+    this.Battery1Sensor = table.getRow(22).getCell('entity_id').getValue();
+    this.Battery2Sensor = table.getRow(23).getCell('entity_id').getValue();
+    this.Battery3Sensor = table.getRow(24).getCell('entity_id').getValue();
+    this.Battery4Sensor = table.getRow(25).getCell('entity_id').getValue();
+
+    this.Person1Sensor = table.getRow(26).getCell('entity_id').getValue();
+    this.Person2Sensor = table.getRow(27).getCell('entity_id').getValue();
   end;
 
   // Might as well load these up right away
@@ -1524,20 +1845,29 @@ var
 begin
 
   // Let's just do this versioning stuff by hand
-  AppVersion := '1.0.3';
-  AppRelease := '2023-Jan-03';
+  AppVersion := '1.0.4';
+  AppRelease := '2023-Jan-18';
   AppStarted := Now;
 
-  ConfigTableReady := False;
-  ConfigurationLoaded := False;
+  dataInfoVersion.Caption := AppVersion;
+  dataInfoRelease.Caption := AppRelease;
+  titleCatheedral.Caption := 'Catheedral v'+AppVersion;
+  dataConfigVERSION.Caption := AppVersion;
+  dataconfigRELEASE.Caption := AppRelease;
 
+  // INI Filename
   datafile := StringReplace(ParamStr(0),'.exe','',[])+'.ini';
   asm
     datafile = datafile.split('\\').pop().split('/').pop();
   end;
   dataInfoCatheedral.Caption := datafile;
-  dataInfoVersion.Caption := AppVersion;
-  dataInfoRelease.Caption := AppRelease;
+
+  // Application State
+  ConfigTableReady := False;
+  ConfigurationLoaded := False;
+  UpdatePending := False;
+  LastRefresh := Now;
+  LightsMode := 3; // No Groups
 
   // Home Assistant State - Unknonw at start
   HASystemName := '';
@@ -1608,15 +1938,8 @@ begin
 //  CopyPosition(divHelpHome, divHelpConfigSensors);
 //  CopyPosition(divHelpHome, divHelpCustom);
 
-  // Update the main configuration page title
-  titleCatheedral.Caption := 'Catheedral v'+AppVersion;
-  dataConfigVERSION.Caption := AppVersion;
-  dataconfigRELEASE.Caption := AppRelease;
-
-
   // Configure Tabulator list of Sensors
   ConfigureTabSensors;
-
 
   // Adjust sizes of Config Listboxes
   listBackgrounds.Top := 204;
@@ -1665,6 +1988,12 @@ begin
   WeatherMaxHumiditySensor := '';
   WeatherUVSensor := '';
   WeatherAQHISensor := '';
+  Battery1Sensor := '';
+  Battery2Sensor := '';
+  Battery3Sensor := '';
+  Battery4Sensor := '';
+  Person1Sensor := '';
+  Person2Sensor := '';
 
   // Config Page Defaults
   editConfigURL.Text := 'http://homeassistant.local:8123';
@@ -1704,6 +2033,40 @@ begin
   btnHomeTempDown.ElementHandle.style.setProperty('opacity','1');
   btnHomeTempUp.ElementHandle.style.setProperty('opacity','1');
 
+  // Home Page - Weather Panel
+  WeatherTemperature := 0;
+  WeatherPressure := 0;
+  WeatherHumidity := 0;
+  WeatherMinTemp := 0;
+  WeatherMaxTemp := 0;
+  WeatherMinTempRange := 0;
+  WeatherMaxTempRange := 100;
+  WeatherMinPressureRange := 0;
+  WeatherMaxPressureRange := 0;
+  WeatherUV := 'N/A';
+  WeatherAQHI := 'N/A';
+
+  // Home Page - Energy Panel
+  Battery1Name := '';
+  Battery2Name := '';
+  Battery3Name := '';
+  Battery4Name := '';
+  Battery1 := '';
+  Battery2 := '';
+  Battery3 := '';
+  Battery4 := '';
+  Battery1Status := '';
+  Battery2Status := '';
+  Battery3Status := '';
+  Battery4Status := '';
+  Person1Name := '';
+  Person1Photo := '';
+  Person1Location := '';
+  Person2Name := '';
+  Person2Photo := '';
+  Person2Location := '';
+  EnergyUse := 1234;
+
 
   // Got JavaScript functions we want to use?  Not sure where to put them.
   SetupJavaScriptFunctions;
@@ -1713,6 +2076,7 @@ begin
   tmrStartup.Enabled := True;
   tmrStartupTimer(Sender);
 
+  LightButtonClicked('');
 end;
 
 procedure TForm1.MiletusFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -2009,36 +2373,6 @@ begin
   tmrInactivity.Enabled := False;
 end;
 
-procedure TForm1.tmrRefreshTimer(Sender: TObject);
-begin
-  // Send a request for all the data periodically (and quietly)
-
-  // Request full set of states again (no option to limit what is returned
-  HAID := HAID + 1;
-  HAGetStates := HAID;
-  try
-    HAWebSocket.Send('{"id":'+IntToStr(HAID)+',"type": "get_states"}');
-  except on E:Exception do
-    begin
-      // Probably should do something here?
-    end;
-  end;
-
-  tmrRefresh.Tag := tmrRefresh.Tag - 1;
-  if tmrRefresh.Tag <= 0 then
-  begin
-    tmrRefresh.Interval := 1800000; // 30 minutes
-    tmrRefresh.Enabled := False;
-    tmrRefresh.Enabled := True;
-  end
-  else
-  begin
-    tmrRefresh.Interval := 30000; // 30 seconds
-    tmrRefresh.Enabled := False;
-    tmrRefresh.Enabled := True;
-  end;
-end;
-
 procedure TForm1.tmrSecondsTimer(Sender: TObject);
 var
   current_seconds: Integer;
@@ -2060,12 +2394,23 @@ var
   UpdateRing4,
   UpdateRing5: Boolean;
 
-//  ElapsedTime: TDateTime;
+  ElapsedTime: TDateTime;
 begin
-  tmrSeconds.Enabled := False;
 
   // How long does it take to run an update?
-//  ElapsedTime := Now;
+  ElapsedTime := Now;
+
+  // If we JUST ran an update, let's not do it again
+  if MillisecondsBetween(ElapsedTime, LastRefresh) < 100 then
+  begin
+    UpdatePending := True;
+    exit;
+  end;
+  // If we're already about to do an update, let's wait until then
+  if (1000-MilliSecondOftheSecond(ElapsedTime) < 100) then exit;
+  // Otherwise, let's continue
+  LastRefresh := ElapsedTime;
+  tmrSeconds.Enabled := False;
 
   // Some easy calculations
   current_seconds := SecondOfTheDay(Now);
@@ -2331,7 +2676,7 @@ begin
 
 
       // Moon Icon
-      display := '<img src="weather-icons-dev/production/fill/svg/moon'+StringReplace(StringReplace(StringReplace(MoonIcon,'_','-',[]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
+      display := '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/moon'+StringReplace(StringReplace(StringReplace(MoonIcon,'_','-',[]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
       if divHomeMoon.HTML.Text <> display
       then divHomeMoon.HTML.Text := display;
 
@@ -2363,9 +2708,9 @@ begin
 //                 IntToStr(LightsOff)+''+'<i class="fa-solid fa-lightbulb DarkGray fa-2xs px-2"></i>'+
 //                 IntToStr(LightsCount)+'</div>';
       Lights := '<div class="d-flex justify-content-center">'+
-                  '<div class="Text TextRG Gray text-end" style="width:50px;">'+IntToStr(LightsOn)+'</div>'+
+                  '<div class="TextRG Gray text-end" style="width:50px;">'+IntToStr(LightsOn)+'</div>'+
                   '<div><i class="fa-solid fa-lightbulb Yellow fa-2xs px-2"></i></div>'+
-                  '<div class="Text TextRG Gray text-start" style="width:50px;">'+IntToStr(LightsOff)+'</div>'+
+                  '<div class="TextRG Gray text-start" style="width:50px;">'+IntToStr(LightsOff)+'</div>'+
                 '</div>';
       if dataHomeLights.HTML <> Lights
       then dataHomeLights.HTML := Lights;
@@ -2416,7 +2761,7 @@ begin
 
       // Humidity
       display := '<div class="d-flex flex-wrap w-100 align-items-center justify-content-center">'+
-                   '<div class="w-100 m-auto"><img style="width:80px; height:80px; margin-bottom:-25px;" src="weather-icons-dev/production/fill/svg/humidity.svg"></div>'+
+                   '<div class="w-100 m-auto"><img style="width:80px; height:80px; margin-bottom:-25px;" src="weather-icons-dev/production/fill/svg-static/humidity.svg"></div>'+
                    '<div style="width:60px; text-align: right;" class="TextSM Gray">'+Trim(FloatToStrF(ClimateMinHumidity,ffNumber,5,0))+'</div>'+
                    '<div style="width:60px; text-align: center;">'+Trim(FloatToStrF(ClimateHumidity,ffNumber,5,0))+'</div>'+
                    '<div style="width:60px; text-align: left;" class="TextSM Gray">'+Trim(FloatToStrF(ClimateMaxHumidity,ffNumber,5,0))+'</div>'+
@@ -2454,7 +2799,7 @@ begin
       if dataHomeLightLevel.Caption <> ClimateLight
       then dataHomeLightLevel.Caption := ClimateLight;
 
-      if (UpdateRing1 = True) or  ((tmrSeconds.Tag = 1) and (circleClimateTemperature.Tag <= 5)) then
+      if (UpdateRing1 = True) or (tmrSeconds.Tag = 1) then
       begin
         circleClimateTemperature.Tag := circleClimateTemperature.Tag + 1;
 
@@ -2484,7 +2829,7 @@ begin
         );
       end;
 
-      if (UpdateRing2 = True) or ((tmrSeconds.Tag = 1) and (circleSetPoint.Tag <= 5)) then
+      if (UpdateRing2 = True) or (tmrSeconds.Tag = 1) then
       begin
         circleSetPoint.Tag := circleSetPoint.Tag + 1;
 
@@ -2514,7 +2859,7 @@ begin
         );
       end;
 
-      if (UpdateRing3 = True) or ((tmrSeconds.Tag = 1) and (circleClimateHumidity.Tag <= 5))  then
+      if (UpdateRing3 = True) or (tmrSeconds.Tag = 1) then
       begin
         circleClimateHumidity.Tag := circleClimateHumidity.Tag + 1;
 
@@ -2549,8 +2894,8 @@ begin
 
     // Weather Panel //////////////////////////////////////////////////////////////////////////////////
 
-    // Updates once a minute at 15s mark
-    if (current_seconds_60 = 15) or (tmrSeconds.Tag = 1) then
+    // Updates once a minute at 30s mark
+    if (current_seconds_60 = 30) or (tmrSeconds.Tag = 1) then
     begin
       UpdateRing1 := False;
       UpdateRing2 := False;
@@ -2668,7 +3013,7 @@ begin
 
       // Humidity
       display := '<div class="d-flex flex-wrap w-100 align-items-center justify-content-center">'+
-                   '<div class="w-100 m-auto"><img style="width:80px; height:80px; margin-bottom:-25px;" src="weather-icons-dev/production/fill/svg/humidity.svg"></div>'+
+                   '<div class="w-100 m-auto"><img style="width:80px; height:80px; margin-bottom:-25px;" src="weather-icons-dev/production/fill/svg-static/humidity.svg"></div>'+
                    '<div style="width:60px; text-align: right;" class="TextSM Gray">'+Trim(FloatToStrF(WeatherMinHumidity,ffNumber,5,0))+'</div>'+
                    '<div style="width:60px; text-align: center;">'+Trim(FloatToStrF(WeatherHumidity,ffNumber,5,0))+'</div>'+
                    '<div style="width:60px; text-align: left;" class="TextSM Gray">'+Trim(FloatToStrF(WeatherMaxHumidity,ffNumber,5,0))+'</div>'+
@@ -2680,7 +3025,7 @@ begin
       end;
 
 
-      if (UpdateRing1 = True) or  ((tmrSeconds.Tag = 1) and (circleWeatherTemperature.Tag <= 5)) then
+      if (UpdateRing1 = True) or (tmrSeconds.Tag = 1) then
       begin
         circleWeatherTemperature.Tag := circleWeatherTemperature.Tag + 1;
 
@@ -2710,7 +3055,7 @@ begin
         );
       end;
 
-      if (UpdateRing2 = True) or ((tmrSeconds.Tag = 1) and (circleWeatherPressure.Tag <= 5)) then
+      if (UpdateRing2 = True) or (tmrSeconds.Tag = 1) then
       begin
         circleWeatherPressure.Tag := circleWeatherPressure.Tag + 1;
 
@@ -2740,7 +3085,7 @@ begin
         );
       end;
 
-      if (UpdateRing3 = True) or ((tmrSeconds.Tag = 1) and (circleWeatherHumidity.Tag <= 5))  then
+      if (UpdateRing3 = True) or (tmrSeconds.Tag = 1) then
       begin
         circleWeatherHumidity.Tag := circleClimateHumidity.Tag + 1;
 
@@ -2771,10 +3116,145 @@ begin
       end;
     end;
 
+
+
+    // Energy Panel //////////////////////////////////////////////////////////////////////////////////
+
+    // Updates once a minute at 45s mark
+    if (current_seconds_60 = 45) or (tmrSeconds.Tag = 1) then
+    begin
+
+      // Display current energy use
+      display := FloatToStrF(EnergyUse/1000.0, ffNumber,5,3)+' kW';
+      if dataEnergyUse.Caption <> display
+      then dataEnergyUse.Caption := display;
+
+
+      // Label the Batteries
+      if   labelBattery1.Caption <> Battery1Name
+      then labelBattery1.Caption := Battery1Name;
+      if   labelBattery2.Caption <> Battery2Name
+      then labelBattery2.Caption := Battery2Name;
+      if   labelBattery3.Caption <> Battery3Name
+      then labelBattery3.Caption := Battery3Name;
+      if   labelBattery4.Caption <> Battery4Name
+      then labelBattery4.Caption := Battery4Name;
+
+      // Battery Status Values
+      if   dataBattery1Status.Caption <> Battery1Status
+      then dataBattery1Status.Caption := Battery1Status;
+      if   dataBattery2Status.Caption <> Battery2Status
+      then dataBattery2Status.Caption := Battery2Status;
+      if   dataBattery3Status.Caption <> Battery3Status
+      then dataBattery3Status.Caption := Battery3Status;
+      if   dataBattery4Status.Caption <> Battery4Status
+      then dataBattery4Status.Caption := Battery4Status;
+
+      // Battery Values
+      if   dataBattery1.Caption <> Battery1
+      then dataBattery1.Caption := Battery1;
+      if   dataBattery2.Caption <> Battery2
+      then dataBattery2.Caption := Battery2;
+      if   dataBattery3.Caption <> Battery3
+      then dataBattery3.Caption := Battery3;
+      if   dataBattery4.Caption <> Battery4
+      then dataBattery4.Caption := Battery4;
+
+      // Person Locations
+      if   dataPerson1Location.Caption <> Person1Location
+      then dataPerson1Location.Caption := Person1Location;
+      if   dataPerson2Location.Caption <> Person2Location
+      then dataPerson2Location.Caption := Person2Location;
+
+      // Person Photos
+      if Person1Photo <> '' then
+      begin
+        display := '<img style="border-radius:50%; width:50px; height:50px;" src='+editConfigURL.Text+Person1Photo+'>';
+        if divPerson1.HTML.Text <> display
+        then divPerson1.HTML.Text := display;
+      end;
+      if Person2Photo <> '' then
+      begin
+        display := '<img style="border-radius:50%; width:50px; height:50px;" src='+editConfigURL.Text+Person2Photo+'>';
+        if divPerson2.HTML.Text <> display
+        then divPerson2.HTML.Text := display;
+      end;
+
+
+      // Energy Now (Ring 1)
+      Sparkline_Donut(
+        55, 5, 290, 290,                                // T, L, W, H
+        circleEnergyUse,                                // TWebHTMLDiv
+        '1200/1800',                                    // Data
+        '["'+Circle1+'","'+CircleB+'"]',                // Fill
+        '180deg',                                       // Rotation
+        138,                                            // Inner Radius
+        ''                                              // Text
+      );
+
+      // Energy Now Marker (Ring 1)
+      Sparkline_Donut(
+        50, 0, 300, 300,                                // T, L, W, H
+        circleEnergyUseMarker,                          // TWebHTMLDiv
+        '4/360',                                        // Data
+        '["'+Circle1+'","transparent"]',                // Fill
+        '58deg',                                       // Rotation
+        113,                                            // Inner Radius
+        ''                                              // Text
+      );
+
+      // Energy Today (Ring 2)
+      Sparkline_Donut(
+        65, 15, 270, 270,                               // T, L, W, H
+        circleEnergyToday,                              // TWebHTMLDiv
+        '1500/1800',                                    // Data
+        '["'+Circle2+'","'+CircleB+'"]',                // Fill
+        '180deg',                                       // Rotation
+        128,                                            // Inner Radius
+        ''                                              // Text
+      );
+
+      // Energy Today Marker (Ring 2)
+      Sparkline_Donut(
+        50, 0, 300, 300,                                // T, L, W, H
+        circleEnergyTodayMarker,                        // TWebHTMLDiv
+        '4/360',                                        // Data
+        '["'+Circle2+'","transparent"]',                // Fill
+        '118deg',                                       // Rotation
+        113,                                            // Inner Radius
+        ''                                              // Text
+      );
+
+      // Energy Yesterday (Ring 3)
+      Sparkline_Donut(
+        75, 25, 250, 250,                               // T, L, W, H
+        circleEnergyYesterday,                          // TWebHTMLDiv
+        '600/1800',                                     // Data
+        '["'+Circle3+'","'+CircleB+'"]',                // Fill
+        '180deg',                                       // Rotation
+        118,                                            // Inner Radius
+        ''                                              // Text
+      );
+
+      // Energy Yesterday Marker (Ring 3)
+      Sparkline_Donut(
+        50, 0, 300, 300,                                // T, L, W, H
+        circleEnergyYesterdayMarker,                    // TWebHTMLDiv
+        '4/360',                                        // Data
+        '["'+Circle3+'","transparent"]',                // Fill
+        '300deg',                                       // Rotation
+        113,                                            // Inner Radius
+        ''                                              // Text
+      );
+
+    end;
+
   end;
 
+
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Entries on the Home Page
+  // Lights Page
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   if (pages.TabIndex = 16) or (tmrSeconds.Tag = 16) then
@@ -2783,29 +3263,81 @@ begin
     asm
       var lights = JSON.stringify(this.Lights);
       if (lights !== this.LightsAll) {
+
+        // Save this state
         this.LightsAll = lights;
-        var all = this.Lights.sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
         divAllLights.innerHTML = '';
+
+        // Stay on this page if someone is fiddling with the lights ;)
+        pas.Unit1.Form1.ResetInactivityTimer(null);
+
+        // ALL lights
+        var all = [];
+        if (this.LightsMode == 1) {
+          all = this.Lights.sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
+        }
+
+        // Only Groups
+        else if (this.LightsMode == 2) {
+          all = this.Lights.filter(
+            function(o) {
+              return ((o.entity_id.indexOf("light.") == 0) && ((o.attributes.lights !== undefined) || (o.entity_id.indexOf("_group") !== -1)) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
+            }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
+        }
+
+        // Hide Groups
+        else if (this.LightsMode == 3) {
+          all = this.Lights.filter(
+            function(o) {
+              return ((o.entity_id.indexOf("light.") == 0) && ((o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1)) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
+            }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
+        }
+
         for (var i = 0; i < all.length; i++) {
+
+          // Create a new button
           var lightbtn = document.createElement("button");
-          lightbtn.innerHTML = all[i].attributes["friendly_name"];
+          lightbtn.id = 'light-'+all[i].entity_id;
+          lightbtn.innerHTML = '<div class="LightText">'+all[i].attributes["friendly_name"].replace(' ','<br />')+'</div>';
           lightbtn.classList.add('LightButton');
+
+          // Add margin to buttons on first and last rows
           if (i < 7) {
             lightbtn.style.setProperty("margin-top","18px");
           }
           else if (i >= (Math.trunc(all.length / 7) * 7)) {
             lightbtn.style.setProperty("margin-bottom","18px")
           }
+
+          // If button is "on" we might also be able to set its color
           if (all[i].state == "on") {
             lightbtn.classList.add('LightOn');
+            if (all[i].attributes["rgb_color"] !== undefined) {
+              lightbtn.style.setProperty("background-color","rgb("+all[i].attributes["rgb_color"][0]+","+all[i].attributes["rgb_color"][1]+","+all[i].attributes["rgb_color"][2]+")");
+            }
           }
+          // If button is off or disabled, color not usually available
           else if (all[i].state == "off") {
             lightbtn.classList.add('LightOff');
           }
           else {
             lightbtn.classList.add('LightOther');
           }
+
+          // Call Delphi function when someone clicks on a button
+          lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id);});
+
+          // Add the Home Assistant icon as a background element of the button
+          var lighticon = "mdi-lightbulb"
+          if (all[i].attributes["icon"] !== undefined) {
+            var lighticon = all[i].attributes["icon"].replace(":","-");
+          }
+          var divlighticon = document.createElement("div");
+          divlighticon.classList.add("LightIcon","mdi",lighticon);
+
+          // Add button to the page
           divAllLights.appendChild(lightbtn);
+          lightbtn.appendChild(divlighticon);
         }
       }
     end;
@@ -2815,7 +3347,13 @@ begin
 
 
 
-//  console.log('Display: '+FormatDateTime('hh:nn:ss.zzz',ElapsedTime)+' '+FormatDateTime('hh:nn:ss.zzz',Now)+' '+IntToStr(MillisecondsBetween(Now,ElapsedTime))+'ms');
+  console.log('Display: '+FormatDateTime('hh:nn:ss.zzz',ElapsedTime)+' '+FormatDateTime('hh:nn:ss.zzz',Now)+' '+IntToStr(MillisecondsBetween(Now,ElapsedTime))+'ms');
+
+  if UpdatePending then
+  begin
+    UpdatePending := False;
+    tmrSecondsTimer(nil);
+  end;
 
   tmrSeconds.Tag := -1;
   tmrSeconds.Interval :=  1000-MilliSecondOftheSecond(Now);
@@ -2979,6 +3517,71 @@ begin
     tmrSeconds.Tag := pages.TabIndex;
     tmrSecondsTimer(nil);
   end;
+end;
+
+procedure TForm1.btnLightsAllOnClick(Sender: TObject);
+var
+  lights: Array of String;
+  i: integer;
+begin
+  // Turn on all the lights that are off.
+  // This processes the individual lights, excluding light groups
+  asm
+    lights = this.Lights.filter(
+      function(o) {
+        return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+      }).map( obj => obj.entity_id ).sort();;
+    console.log(lights);
+  end;
+
+  for i := 0 to length(lights) do
+  begin
+    HAID := HAID + 1;
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+lights[i]+'"}}');
+  end;
+end;
+
+procedure TForm1.btnLightsAllOffClick(Sender: TObject);
+var
+  lights: Array of String;
+  i: integer;
+begin
+  // Turn on all the lights that are off.
+  // This processes the individual lights, excluding light groups
+  asm
+    lights = this.Lights.filter(
+      function(o) {
+        return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+      }).map( obj => obj.entity_id ).sort();;
+    console.log(lights);
+  end;
+
+  for i := 0 to length(lights) do
+  begin
+    HAID := HAID + 1;
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+lights[i]+'"}}');
+  end;
+end;
+
+procedure TForm1.btnLightsGroupsClick(Sender: TObject);
+begin
+  LightsAll := '';
+  LightsMode := 2;
+  UpdateNow;
+end;
+
+procedure TForm1.btnLightsNoGroupsClick(Sender: TObject);
+begin
+  LightsAll := '';
+  LightsMode := 3;
+  UpdateNow;
+end;
+
+procedure TForm1.btnLioghtsShowAllClick(Sender: TObject);
+begin
+  LightsAll := '';
+  LightsMode := 1;
+  UpdateNow;
 end;
 
 procedure TForm1.divHomeLightsCoverClick(Sender: TObject);
@@ -3185,7 +3788,13 @@ begin
       {"id": 18, "feature":"Min Weather Humidity" , "example":"eg: sensor.weather.minimum_humidity" },
       {"id": 19, "feature":"Max Weather Humidity" , "example":"eg: sensor.weather.maximum_humidity" },
       {"id": 20, "feature":"UV Index"             , "example":"eg: sensor.city_uv_index" },
-      {"id": 21, "feature":"Air Quality Index"    , "example":"eg: sensor.city_aqhi" }
+      {"id": 21, "feature":"Air Quality Index"    , "example":"eg: sensor.city_aqhi" },
+      {"id": 22, "feature":"Device 1"             , "example":"eg: device_tracker.someone_device" },
+      {"id": 23, "feature":"Device 2"             , "example":"eg: device_tracker.someone_device" },
+      {"id": 24, "feature":"Device 3"             , "example":"eg: device_tracker.someone_device" },
+      {"id": 25, "feature":"Device 4"             , "example":"eg: device_tracker.someone_device" },
+      {"id": 26, "feature":"Person 1"             , "example":"eg: person.someone" },
+      {"id": 27, "feature":"Person 2"             , "example":"eg: person.someone" }
     ];
     pas.Unit1.Form1.Features = FeatureData.length;
 
@@ -3212,9 +3821,9 @@ begin
             verticalNavigation: "hybrid",
             freetext: true,
             clearable: true,
-            placeholderEmpty: '"<span class="text-white">No Matching Home Assistant Entities Found</span>',
+            placeholderEmpty: '<span class="text-white">No Matching Home Assistant Entities Found</span>',
             elementAttributes: {
-              spellcheck: false,
+              spellcheck: false
             }
         }},
         { title: "Example", field: "example", width: 400 },

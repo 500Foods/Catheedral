@@ -36,11 +36,10 @@ object Form1: TForm1
     ElementID = 'pages'
     Align = alClient
     ElementFont = efCSS
-    TabIndex = 16
+    TabIndex = 11
     ShowTabs = False
     TabOrder = 0
     Visible = False
-    ExplicitLeft = -8
     object pageConfiguration: TWebTabSheet
       Tag = 4
       Left = 0
@@ -1224,7 +1223,7 @@ object Form1: TForm1
         Role = ''
         object labelDate: TWebLabel
           Left = 0
-          Top = 225
+          Top = 222
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -1289,7 +1288,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeSetIcon: TWebLabel
-          Left = 245
+          Left = 240
           Top = 40
           Width = 50
           Height = 50
@@ -1304,11 +1303,11 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           HTML = 
             '<img width=50 height=50 src="weather-icons-dev/production/fill/s' +
-            'vg/sunset.svg">'
+            'vg-static/sunset.svg">'
           WidthPercent = 100.000000000000000000
         end
         object dataHomeSet: TWebLabel
-          Left = 190
+          Left = 185
           Top = 20
           Width = 100
           Height = 20
@@ -1324,7 +1323,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeDusk: TWebLabel
-          Left = 190
+          Left = 185
           Top = 343
           Width = 100
           Height = 20
@@ -1340,7 +1339,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeRiseIcon: TWebLabel
-          Left = 5
+          Left = 10
           Top = 40
           Width = 50
           Height = 50
@@ -1354,11 +1353,11 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           HTML = 
             '<img width=50 height=50 src="weather-icons-dev/production/fill/s' +
-            'vg/sunrise.svg">'
+            'vg-static/sunrise.svg">'
           WidthPercent = 100.000000000000000000
         end
         object dataHomeRise: TWebLabel
-          Left = 10
+          Left = 15
           Top = 20
           Width = 100
           Height = 20
@@ -1373,7 +1372,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeDawn: TWebLabel
-          Left = 10
+          Left = 15
           Top = 343
           Width = 100
           Height = 20
@@ -1388,7 +1387,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeDusk: TWebLabel
-          Left = 190
+          Left = 185
           Top = 369
           Width = 100
           Height = 20
@@ -1404,7 +1403,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeDawn: TWebLabel
-          Left = 10
+          Left = 15
           Top = 369
           Width = 100
           Height = 20
@@ -1483,7 +1482,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeRise: TWebLabel
-          Left = 10
+          Left = 15
           Top = 3
           Width = 100
           Height = 20
@@ -1498,7 +1497,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeSet: TWebLabel
-          Left = 190
+          Left = 185
           Top = 3
           Width = 100
           Height = 20
@@ -1514,7 +1513,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeDawnIcon: TWebLabel
-          Left = 5
+          Left = 10
           Top = 303
           Width = 50
           Height = 50
@@ -1528,11 +1527,11 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           HTML = 
             '<img style="transform: rotate(180deg);"width=50 height=50 src="w' +
-            'eather-icons-dev/production/fill/svg/sunset.svg">'
+            'eather-icons-dev/production/fill/svg-static/sunset.svg">'
           WidthPercent = 100.000000000000000000
         end
         object labelHomeDuskIcon: TWebLabel
-          Left = 245
+          Left = 240
           Top = 303
           Width = 50
           Height = 50
@@ -1546,7 +1545,7 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           HTML = 
             '<img style="transform: rotate(180deg);"width=50 height=50 src="w' +
-            'eather-icons-dev/production/fill/svg/sunrise.svg">'
+            'eather-icons-dev/production/fill/svg-static/sunrise.svg">'
           WidthPercent = 100.000000000000000000
         end
         object circleSeconds: TWebHTMLDiv
@@ -1684,7 +1683,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeMin: TWebLabel
-          Left = 10
+          Left = 15
           Top = 369
           Width = 75
           Height = 20
@@ -1699,9 +1698,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeMax: TWebLabel
-          Left = 215
+          Left = 185
           Top = 369
-          Width = 75
+          Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
@@ -1715,9 +1714,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeMax: TWebLabel
-          Left = 215
+          Left = 185
           Top = 343
-          Width = 75
+          Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
@@ -1731,7 +1730,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeMin: TWebLabel
-          Left = 10
+          Left = 15
           Top = 343
           Width = 75
           Height = 20
@@ -1781,7 +1780,7 @@ object Form1: TForm1
         end
         object dataHomeSetPoint: TWebLabel
           Left = 0
-          Top = 225
+          Top = 222
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -1825,7 +1824,7 @@ object Form1: TForm1
         end
         object labelSetPoint: TWebLabel
           Left = 100
-          Top = 260
+          Top = 258
           Width = 100
           Height = 20
           Alignment = taCenter
@@ -1840,7 +1839,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeMode: TWebLabel
-          Left = 10
+          Left = 15
           Top = 3
           Width = 100
           Height = 20
@@ -1855,7 +1854,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeMode: TWebLabel
-          Left = 10
+          Left = 15
           Top = 20
           Width = 100
           Height = 20
@@ -1870,7 +1869,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeState: TWebLabel
-          Left = 190
+          Left = 185
           Top = 20
           Width = 100
           Height = 20
@@ -1886,7 +1885,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeState: TWebLabel
-          Left = 190
+          Left = 185
           Top = 3
           Width = 100
           Height = 20
@@ -1910,7 +1909,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Light'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementLabelClassName = 'Text TextRG White'
           ElementID = 'dataHomeLightLevel'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2038,7 +2037,7 @@ object Form1: TForm1
         end
         object btnHomeTempDown: TWebButton
           Left = 60
-          Top = 235
+          Top = 232
           Width = 50
           Height = 50
           HelpType = htKeyword
@@ -2054,7 +2053,7 @@ object Form1: TForm1
         end
         object btnHomeTempUp: TWebButton
           Left = 190
-          Top = 235
+          Top = 232
           Width = 50
           Height = 50
           HelpType = htKeyword
@@ -2080,7 +2079,7 @@ object Form1: TForm1
         ElementFont = efCSS
         Role = ''
         object labelWeatherMin: TWebLabel
-          Left = 10
+          Left = 15
           Top = 369
           Width = 75
           Height = 20
@@ -2112,9 +2111,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelWeatherMax: TWebLabel
-          Left = 215
+          Left = 185
           Top = 369
-          Width = 75
+          Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
@@ -2146,7 +2145,7 @@ object Form1: TForm1
         end
         object dataWeatherTemperature: TWebLabel
           Left = 0
-          Top = 166
+          Top = 165
           Width = 300
           Height = 73
           Alignment = taCenter
@@ -2167,7 +2166,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherMin: TWebLabel
-          Left = 10
+          Left = 15
           Top = 343
           Width = 75
           Height = 20
@@ -2182,9 +2181,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherMax: TWebLabel
-          Left = 215
+          Left = 185
           Top = 343
-          Width = 75
+          Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
@@ -2198,7 +2197,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherMinPressure: TWebLabel
-          Left = 10
+          Left = 15
           Top = 326
           Width = 75
           Height = 20
@@ -2213,9 +2212,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherMaxPressure: TWebLabel
-          Left = 215
+          Left = 185
           Top = 326
-          Width = 75
+          Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
@@ -2230,7 +2229,7 @@ object Form1: TForm1
         end
         object labelWeatherPressure: TWebLabel
           Left = 0
-          Top = 225
+          Top = 222
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -2251,12 +2250,12 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelWeatherUV: TWebLabel
-          Left = 10
+          Left = 15
           Top = 3
           Width = 100
           Height = 20
           AutoSize = False
-          Caption = 'UV'
+          Caption = 'UV Index'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelWeatherUV'
@@ -2266,7 +2265,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherUV: TWebLabel
-          Left = 10
+          Left = 15
           Top = 20
           Width = 100
           Height = 20
@@ -2313,13 +2312,13 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelWeatherAQHI: TWebLabel
-          Left = 190
+          Left = 185
           Top = 3
           Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
-          Caption = 'AQHI'
+          Caption = 'Air Quality'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelWeatherAQHI'
@@ -2329,7 +2328,7 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherAQHI: TWebLabel
-          Left = 190
+          Left = 185
           Top = 20
           Width = 100
           Height = 20
@@ -2346,7 +2345,7 @@ object Form1: TForm1
         end
         object dataWeatherCondition: TWebLabel
           Left = 0
-          Top = 265
+          Top = 262
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -2439,6 +2438,357 @@ object Form1: TForm1
           Height = 100
           ElementClassName = 'Text TextLG'
           ElementID = 'divWeatherIcon'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+      end
+      object divEnergy: TWebHTMLDiv
+        Left = 940
+        Top = 0
+        Width = 300
+        Height = 400
+        ElementClassName = 'overflow-visible'
+        ElementID = 'divEnergy'
+        ChildOrder = 3
+        ElementFont = efCSS
+        Role = ''
+        object labelBattery1: TWebLabel
+          Left = 15
+          Top = 3
+          Width = 100
+          Height = 20
+          AutoSize = False
+          Caption = 'Battery One'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextSM White'
+          ElementID = 'labelBattery1'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object labelBattery2: TWebLabel
+          Left = 185
+          Top = 3
+          Width = 100
+          Height = 20
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Battery Two'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextSM White'
+          ElementID = 'labelBattery2'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object labelBattery3: TWebLabel
+          Left = 15
+          Top = 369
+          Width = 75
+          Height = 20
+          AutoSize = False
+          Caption = 'Battery Three'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextSM White'
+          ElementID = 'labelBattery3'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object labelBattery4: TWebLabel
+          Left = 185
+          Top = 369
+          Width = 100
+          Height = 20
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Battery Four'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextSM White'
+          ElementID = 'labelBattery4'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataEnergyUse: TWebLabel
+          Left = 0
+          Top = 165
+          Width = 300
+          Height = 73
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Watts'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextXL White'
+          ElementID = 'dataEnergyUse'
+          ElementFont = efCSS
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -53
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          ParentFont = False
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery1Status: TWebLabel
+          Left = 15
+          Top = 20
+          Width = 100
+          Height = 20
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Orange'
+          ElementID = 'dataBattery1Status'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery2Status: TWebLabel
+          Left = 185
+          Top = 20
+          Width = 100
+          Height = 20
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Orange'
+          ElementID = 'dataBattery2Status'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery3Status: TWebLabel
+          Left = 15
+          Top = 343
+          Width = 75
+          Height = 20
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Orange'
+          ElementID = 'dataBattery3Status'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery4Status: TWebLabel
+          Left = 185
+          Top = 343
+          Width = 100
+          Height = 20
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Orange'
+          ElementID = 'dataBattery4Status'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery1: TWebLabel
+          Left = 15
+          Top = 45
+          Width = 100
+          Height = 20
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementID = 'dataBattery1'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery2: TWebLabel
+          Left = 185
+          Top = 45
+          Width = 100
+          Height = 20
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementID = 'dataBattery2'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery3: TWebLabel
+          Left = 15
+          Top = 317
+          Width = 75
+          Height = 20
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementID = 'dataBattery3'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataBattery4: TWebLabel
+          Left = 185
+          Top = 317
+          Width = 100
+          Height = 20
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'N/A'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementID = 'dataBattery4'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+        end
+        object dataPerson1Location: TWebLabel
+          Left = 0
+          Top = 143
+          Width = 300
+          Height = 62
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Location'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Gray'
+          ElementID = 'dataPerson1Location'
+          ElementFont = efCSS
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -43
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          ParentFont = False
+          WidthPercent = 100.000000000000000000
+        end
+        object dataPerson2Location: TWebLabel
+          Left = 0
+          Top = 225
+          Width = 300
+          Height = 62
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Location'
+          ElementClassName = 'overflow-visible'
+          ElementLabelClassName = 'Text TextRG Gray'
+          ElementID = 'dataPerson2Location'
+          ElementFont = efCSS
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -43
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          ParentFont = False
+          WidthPercent = 100.000000000000000000
+        end
+        object circleEnergyUse: TWebHTMLDiv
+          Left = 14
+          Top = 154
+          Width = 67
+          Height = 35
+          ElementClassName = 'Circle'
+          ElementID = 'circleEnergyUse'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+        object circleEnergyUseMarker: TWebHTMLDiv
+          Left = 14
+          Top = 195
+          Width = 67
+          Height = 35
+          ElementClassName = 'CircleMarker'
+          ElementID = 'circleEnergyUseMarker'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+        object divPerson1: TWebHTMLDiv
+          Left = 125
+          Top = 90
+          Width = 50
+          Height = 50
+          ElementClassName = 'Text TextLG'
+          ElementID = 'divPerson1'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+        object divPerson2: TWebHTMLDiv
+          Left = 125
+          Top = 256
+          Width = 50
+          Height = 50
+          ElementClassName = 'Text TextLG'
+          ElementID = 'divPerson2'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+        object circleEnergyToday: TWebHTMLDiv
+          Left = 227
+          Top = 154
+          Width = 67
+          Height = 35
+          ElementClassName = 'Circle'
+          ElementID = 'circleEnergyToday'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+        object circleEnergyTodayMarker: TWebHTMLDiv
+          Left = 227
+          Top = 195
+          Width = 67
+          Height = 35
+          ElementClassName = 'CircleMarker'
+          ElementID = 'circleEnergyTodayMarker'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+        object circleEnergyYesterday: TWebHTMLDiv
+          Left = 201
+          Top = 66
+          Width = 67
+          Height = 35
+          ElementClassName = 'Circle'
+          ElementID = 'circleEnergyYesterday'
+          ChildOrder = 2
+          ElementFont = efCSS
+          Role = ''
+        end
+        object circleEnergyYesterdayMarker: TWebHTMLDiv
+          Left = 201
+          Top = 107
+          Width = 67
+          Height = 35
+          ElementClassName = 'CircleMarker'
+          ElementID = 'circleEnergyYesterdayMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
@@ -4667,69 +5017,89 @@ object Form1: TForm1
       Caption = 'Lt'
       ChildOrder = 16
       ElementFont = efCSS
-      object WebButton1: TWebButton
+      object btnLioghtsShowAll: TWebButton
         Left = 45
         Top = 20
         Width = 140
         Height = 68
-        Caption = 'All On'
-        ElementClassName = 'btn btn-primary LightButton'
+        Caption = 
+          '<div class="LightText">View All<br />Lights</div><div class="Lig' +
+          'htBtnIcon mdi mdi-home-lightbulb"></div>'
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLioghtsShowAll'
         ElementFont = efCSS
         HeightStyle = ssAuto
         HeightPercent = 100.000000000000000000
         WidthPercent = 100.000000000000000000
+        OnClick = btnLioghtsShowAllClick
       end
-      object WebButton2: TWebButton
+      object btnLightsGroups: TWebButton
         Left = 45
         Top = 93
         Width = 140
         Height = 68
-        Caption = 'All Off'
+        Caption = 
+          '<div class="LightText">Only<br />Groups</div><div class="LightBt' +
+          'nIcon mdi mdi-lightbulb-group"></div>'
         ChildOrder = 1
-        ElementClassName = 'btn btn-primary LightButton'
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsGroups'
         ElementFont = efCSS
         HeightStyle = ssAuto
         HeightPercent = 100.000000000000000000
         WidthPercent = 100.000000000000000000
+        OnClick = btnLightsGroupsClick
       end
-      object WebButton3: TWebButton
+      object btnLightsNoGroups: TWebButton
         Left = 45
         Top = 166
         Width = 140
         Height = 68
-        Caption = 'View All'
+        Caption = 
+          '<div class="LightText">Hide<br />Groups</div><div class="LightBt' +
+          'nIcon mdi mdi-lightbulb-group-off"></div>'
         ChildOrder = 2
-        ElementClassName = 'btn btn-primary LightButton'
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsNoGroups'
         ElementFont = efCSS
         HeightStyle = ssAuto
         HeightPercent = 100.000000000000000000
         WidthPercent = 100.000000000000000000
+        OnClick = btnLightsNoGroupsClick
       end
-      object WebButton4: TWebButton
+      object btnLightsAllOn: TWebButton
         Left = 45
         Top = 239
         Width = 140
         Height = 68
-        Caption = 'Groups'
+        Caption = 
+          '<div class="LightText">Turn<br />All On</div><div class="LightBt' +
+          'nIcon mdi mdi-lightbulb"></div>'
         ChildOrder = 3
-        ElementClassName = 'btn btn-primary LightButton'
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsAllOn'
         ElementFont = efCSS
         HeightStyle = ssAuto
         HeightPercent = 100.000000000000000000
         WidthPercent = 100.000000000000000000
+        OnClick = btnLightsAllOnClick
       end
-      object WebButton5: TWebButton
+      object btnLightsAllOff: TWebButton
         Left = 45
         Top = 312
         Width = 140
         Height = 68
-        Caption = 'Singles'
+        Caption = 
+          '<div class="LightText">Turn<br />All Off</div><div class="LightB' +
+          'tnIcon mdi mdi-lightbulb-outline"></div>'
         ChildOrder = 4
-        ElementClassName = 'btn btn-primary LightButton'
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsAllOff'
         ElementFont = efCSS
         HeightStyle = ssAuto
         HeightPercent = 100.000000000000000000
         WidthPercent = 100.000000000000000000
+        OnClick = btnLightsAllOffClick
       end
       object divAllLights: TWebHTMLDiv
         Left = 185
@@ -4904,12 +5274,6 @@ object Form1: TForm1
     Interval = 500
     OnTimer = tmrStartupTimer
     Left = 520
-    Top = 64
-  end
-  object tmrRefresh: TWebTimer
-    Enabled = False
-    OnTimer = tmrRefreshTimer
-    Left = 456
     Top = 64
   end
 end
