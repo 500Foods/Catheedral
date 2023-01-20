@@ -306,6 +306,9 @@ type
     circleEnergyTodayMarker: TWebHTMLDiv;
     circleEnergyYesterday: TWebHTMLDiv;
     circleEnergyYesterdayMarker: TWebHTMLDiv;
+    tmrExit: TWebTimer;
+    pageExit: TWebTabSheet;
+    labelShutdown: TWebLabel;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -363,6 +366,7 @@ type
     procedure btnLightsGroupsClick(Sender: TObject);
     procedure btnLightsNoGroupsClick(Sender: TObject);
     procedure btnLightsAllOnClick(Sender: TObject);
+    procedure tmrExitTimer(Sender: TObject);
 
   private
     { Private declarations }
@@ -728,8 +732,8 @@ begin
       }
     end;
     if Battery1 = '100%'
-    then dataBattery1.ElementLabelClassName := 'Text TextRG Orange'
-    else dataBattery1.ElementLabelClassName := 'Text TextRG Yellow';
+    then dataBattery1.ElementLabelClassName := 'Text TextSM Orange'
+    else dataBattery1.ElementLabelClassName := 'Text TextSM Yellow';
   end
   else if (Entity = Battery2Sensor) then
   begin
@@ -756,8 +760,8 @@ begin
       }
     end;
     if Battery2 = '100%'
-    then dataBattery2.ElementLabelClassName := 'Text TextRG Orange'
-    else dataBattery2.ElementLabelClassName := 'Text TextRG Yellow';
+    then dataBattery2.ElementLabelClassName := 'Text TextSM Orange'
+    else dataBattery2.ElementLabelClassName := 'Text TextSM Yellow';
   end
   else if (Entity = Battery3Sensor) then
   begin
@@ -784,8 +788,8 @@ begin
       }
     end;
     if Battery3 = '100%'
-    then dataBattery3.ElementLabelClassName := 'Text TextRG Orange'
-    else dataBattery3.ElementLabelClassName := 'Text TextRG Yellow';
+    then dataBattery3.ElementLabelClassName := 'Text TextSM Orange'
+    else dataBattery3.ElementLabelClassName := 'Text TextSM Yellow';
   end
   else if (Entity = Battery4Sensor) then
   begin
@@ -812,8 +816,8 @@ begin
       }
     end;
     if Battery4 = '100%'
-    then dataBattery4.ElementLabelClassName := 'Text TextRG Orange'
-    else dataBattery4.ElementLabelClassName := 'Text TextRG Yellow';
+    then dataBattery4.ElementLabelClassName := 'Text TextSM Orange'
+    else dataBattery4.ElementLabelClassName := 'Text TextSM Yellow';
   end
 
   else if (Entity = Person1Sensor) then
@@ -2352,6 +2356,12 @@ begin
   end;
 end;
 
+procedure TForm1.tmrExitTimer(Sender: TObject);
+begin
+  HAWebSocket.Disconnect;
+  Form1.Close;
+end;
+
 procedure TForm1.tmrInactivityTimer(Sender: TObject);
 begin
   if pages.TabIndex <> 1
@@ -2909,7 +2919,7 @@ begin
       end;
 
       // Main Pressure Display
-      display := Trim(FloatToStrF(WeatherPressure,ffGeneral,5,0)+' '+WeatherPressureUnit);
+      display := Trim(FloatToStrF(WeatherPressure/10,ffGeneral,5,1)+' kPa');
       if labelWeatherPressure.Caption <> display then
       begin
         labelWeatherPressure.Caption := display;
@@ -2982,7 +2992,7 @@ begin
 
 
       // Minimum Weather Pressure
-      display := Trim(FloatToStrF(WeatherMinPressure,ffGeneral,5,0)+' '+WeatherPressureUnit);
+      display := Trim(FloatToStrF(WeatherMinPressure/10,ffGeneral,5,1)+' kPa');
 //      display := Trim(FloatToStrF(WeatherMinTPressure,ffGeneral,5,0);
       if DataWeatherMinPressure.Caption <> display then
       begin
@@ -2992,7 +3002,7 @@ begin
       end;
 
       // Maximum Weather Pressure
-      display := Trim(FloatToStrF(WeatherMaxPressure,ffGeneral,5,0)+' '+WeatherPressureUnit);
+      display := Trim(FloatToStrF(WeatherMaxPressure/10,ffGeneral,5,0)+' kPa');
  //     display := Trim(FloatToStrF(WeatherMaxPressure,ffNumber,5,0));
       if DataWeatherMaxPressure.Caption <> display then
       begin
@@ -3533,6 +3543,22 @@ begin
   end;
 
 
+  // Continue Shutdown
+  if EndPage = 18 then
+  begin
+
+    // Reverse opening animation
+    btnHelp.Left := -MainButtonSize;
+    btnChange.Top := -MainButtonSize;
+    btnHome.Left := PanelWidth + MainButtonSize;
+    btnConfiguration.Top := PanelHeight + MainButtonSize;
+    Navleft.Left := -MainNavSize;
+    NavRight.Left := PanelWidth + MainNavSize;
+
+    labelShutdown.ElementHandle.style.setProperty('opacity','0');
+    tmrExit.Enabled := True;
+  end;
+
   // Refresh Custom URL after each hour
   CustomRefresh := FormatDateTime('yyyymmddhh',Now);
   if (pages.TabIndex =  7) and (CustomPage1Refresh <> CustomRefresh) then btnChangeClick(nil);
@@ -3674,7 +3700,8 @@ begin
   if (pages.TabIndex = 0) then
   begin
     // Config Button on Config Page is for Power Off.
-    Close;
+    // Continues in SwitchPage event
+    SwitchPages(pages.TabIndex, 18);
   end
   else
   begin

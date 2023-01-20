@@ -36,7 +36,7 @@ object Form1: TForm1
     ElementID = 'pages'
     Align = alClient
     ElementFont = efCSS
-    TabIndex = 1
+    TabIndex = 18
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -2601,13 +2601,13 @@ object Form1: TForm1
         end
         object dataBattery1: TWebLabel
           Left = 15
-          Top = 45
+          Top = 47
           Width = 100
           Height = 20
           AutoSize = False
           Caption = 'N/A'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementLabelClassName = 'Text TextSM Yellow'
           ElementID = 'dataBattery1'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -2616,14 +2616,14 @@ object Form1: TForm1
         end
         object dataBattery2: TWebLabel
           Left = 185
-          Top = 45
+          Top = 47
           Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'N/A'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementLabelClassName = 'Text TextSM Yellow'
           ElementID = 'dataBattery2'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -2632,13 +2632,13 @@ object Form1: TForm1
         end
         object dataBattery3: TWebLabel
           Left = 15
-          Top = 317
+          Top = 326
           Width = 75
           Height = 20
           AutoSize = False
           Caption = 'N/A'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementLabelClassName = 'Text TextSM Yellow'
           ElementID = 'dataBattery3'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -2647,14 +2647,14 @@ object Form1: TForm1
         end
         object dataBattery4: TWebLabel
           Left = 185
-          Top = 317
+          Top = 326
           Width = 100
           Height = 20
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'N/A'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextRG Yellow'
+          ElementLabelClassName = 'Text TextSM Yellow'
           ElementID = 'dataBattery4'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -5124,6 +5124,33 @@ object Form1: TForm1
       ChildOrder = 17
       ElementFont = efCSS
     end
+    object pageExit: TWebTabSheet
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageExit'
+      Caption = 'Out'
+      ChildOrder = 18
+      ElementFont = efCSS
+      object labelShutdown: TWebLabel
+        Left = 340
+        Top = 200
+        Width = 600
+        Height = 100
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Shutting Down - Please Wait'
+        ElementClassName = 'Title SplashEnd'
+        ElementID = 'labelShutdown'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        Layout = tlCenter
+        WidthPercent = 100.000000000000000000
+      end
+    end
   end
   object navLeft: TWebHTMLDiv
     Left = 0
@@ -5197,7 +5224,7 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<i class="fa-solid fa-home fa-2x icon-default"></i><i class="fa-' +
+      '<i class="fa-solid fa-home fa-xl icon-default"></i><i class="fa-' +
       'solid fa-triangle-exclamation fa-2x text-warning icon-third"></i' +
       '><i class="fa-solid fa-bolt fa-2x icon-alternate"></i>'
     ChildOrder = 22
@@ -5280,6 +5307,13 @@ object Form1: TForm1
     Interval = 500
     OnTimer = tmrStartupTimer
     Left = 520
+    Top = 64
+  end
+  object tmrExit: TWebTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = tmrExitTimer
+    Left = 970
     Top = 64
   end
 end
