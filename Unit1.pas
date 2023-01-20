@@ -539,9 +539,23 @@ end;
 
 procedure TForm1.ShowConnected;
 begin
-  if (pages.TabIndex = 1) or (pages.TabIndex = 11)
-  then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
-  else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
+  btnHome.ElementHandle.style.setProperty('opacity','0.25');
+  if (pages.TabIndex = 1) or (pages.TabIndex = 11) then
+  begin
+    asm
+      btnHome.firstElementChild.style.setProperty('opacity','0');
+      btnHome.firstElementChild.nextElementSibling.style.setProperty('opacity','0');
+      btnHome.lastElementChild.style.setProperty('opacity','1');
+    end;
+  end
+  else
+  begin
+    asm
+      btnHome.firstElementChild.style.setProperty('opacity','1');
+      btnHome.firstElementChild.nextElementSibling.style.setProperty('opacity','0');
+      btnHome.lastElementChild.style.setProperty('opacity','0');
+    end;
+  end;
 
   btnHALinks.Enabled := True;
   btnHALoadConfiguration.Enabled := True;
@@ -553,7 +567,13 @@ end;
 
 procedure TForm1.ShowDisconnected;
 begin
-  btnHome.Caption := '<i class="fa-solid fa-triangle-exclamation fa-2x opacity-100 text-warning"></i>';
+  asm
+    btnHome.style.setProperty('opacity','1');
+    btnHome.firstElementChild.style.setProperty('opacity','0');
+    btnHome.firstElementChild.nextElementSibling.style.setProperty('opacity','1');
+    btnHome.lastElementChild.style.setProperty('opacity','0');
+  end;
+
 
   btnHALinks.Enabled := False;
   btnHALoadConfiguration.Enabled := False;
@@ -566,12 +586,12 @@ end;
 procedure TForm1.Sparkline_Donut(CTop, CLeft, CWidth, CHeight: Integer; Chart: TWebHTMLDiv; ChartData: String; Fill: String; Rotation: String; InnerRadius: Double; DisplayText: String);
 var
   Element: TJSElement;
-  ChartName: String;
+//  ChartName: String;
 begin
-  ChartName := StringReplace(StringReplace(Chart.ElementID,'circle','',[]),'Marker','M',[]);
-  asm
-    console.log('Drawing Chart: '+ChartName+' ['+CTop+','+CLeft+','+CWidth+','+CHeight+'] '+InnerRadius+': '+ChartData);
-  end;
+//  ChartName := StringReplace(StringReplace(Chart.ElementID,'circle','',[]),'Marker','M',[]);
+//  asm
+//    console.log('Drawing Chart: '+ChartName+' ['+CTop+','+CLeft+','+CWidth+','+CHeight+'] '+InnerRadius+': '+ChartData);
+//  end;
 
   // Set Dimensions of Chart
   Chart.Top := CTop;
@@ -1114,10 +1134,7 @@ procedure TForm1.HAWebSocketConnect(Sender: TObject);
 begin
   dataConfigSTATUS.Caption := 'Connected';
 
-  if (pages.TabIndex = 1) or (pages.TabIndex = 11)
-  then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
-  else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
-
+  ShowConnected;
 end;
 
 procedure TForm1.HAWebSocketDataReceived(Sender: TObject; Origin: string; SocketData: TJSObjectRecord);
@@ -2274,46 +2291,16 @@ end;
 
 procedure TForm1.SwitchPages(StartPage, EndPage: Integer);
 begin
-
-  // This is in case we want to update the page when it is not visible
-  tmrSeconds.Tag := EndPage;
-  tmrSecondsTimer(nil);
-
-
+  // Fadeout CurrentPage
+  if (StartPage <> EndPage)
+  then pages.ActivePage.ElementHandle.style.setProperty('opacity','0');
 
   // If Leaving "Configure Sensors" Page, Save Changes
   if StartPage = 5
   then editConfigChange(nil);
 
-
-  // configuration button on Configuration Page is Power On/Off otherwise it is a Gear
-  if EndPage = 0
-  then btnConfiguration.Caption := '<i class="fa-solid fa-power-off fa-2x"></i>'
-  else btnConfiguration.Caption := '<i class="fa-solid fa-gear fa-2x"></i>';
-
-
-  // Home button on Home Page is bolt if connnected or
-  if dataConfigSTATUS.Caption = 'Connected' then
-  begin
-    ShowConnected;
-    if EndPage = 1
-    then btnHome.Caption := '<i class="fa-solid fa-bolt fa-2x"></i>'
-    else btnHome.Caption := '<i class="fa-solid fa-home fa-2x"></i>';
-  end
-  else
-  begin
-    ShowDisconnected;
-  end;
-
-
-  // Fadeout CurrentPage
-  if (StartPage <> EndPage)
-  then pages.ActivePage.ElementHandle.style.setProperty('opacity','0');
-
-
   // Would really like a sleep function here.
   // Instead, we'll finish up what we're doing in a timer
-
 
   tmrSwitchPage.Tag := EndPage;
   tmrSwitchPage.Enabled := True;
@@ -2464,8 +2451,11 @@ begin
 
     if (current_seconds_15 = 0) or (tmrSeconds.Tag = 6) then
     begin
+      memory := 0;
       asm
-        memory = performance.memory.totalJSHeapSize;
+        if ((performance !== undefined) && (performance.memory !== undefined) && (performance.memory.totalJSHeapSize !== undefined)) {
+          memory = parseInt(performance.memory.totalJSHeapSize);
+        }
       end;
      dataInfoMemory.Caption := FloatToStrF(memory / (1024 * 1024), ffNumber, 6,1)+' MB';
     end;
@@ -3186,7 +3176,7 @@ begin
         55, 5, 290, 290,                                // T, L, W, H
         circleEnergyUse,                                // TWebHTMLDiv
         '1200/1800',                                    // Data
-        '["'+Circle1+'","'+CircleB+'"]',                // Fill
+        '["'+Circle2+'","'+CircleB+'"]',                // Fill
         '180deg',                                       // Rotation
         138,                                            // Inner Radius
         ''                                              // Text
@@ -3197,7 +3187,7 @@ begin
         50, 0, 300, 300,                                // T, L, W, H
         circleEnergyUseMarker,                          // TWebHTMLDiv
         '4/360',                                        // Data
-        '["'+Circle1+'","transparent"]',                // Fill
+        '["'+Circle2+'","transparent"]',                // Fill
         '58deg',                                       // Rotation
         113,                                            // Inner Radius
         ''                                              // Text
@@ -3208,7 +3198,7 @@ begin
         65, 15, 270, 270,                               // T, L, W, H
         circleEnergyToday,                              // TWebHTMLDiv
         '1500/1800',                                    // Data
-        '["'+Circle2+'","'+CircleB+'"]',                // Fill
+        '["'+Circle1+'","'+CircleB+'"]',                // Fill
         '180deg',                                       // Rotation
         128,                                            // Inner Radius
         ''                                              // Text
@@ -3219,7 +3209,7 @@ begin
         50, 0, 300, 300,                                // T, L, W, H
         circleEnergyTodayMarker,                        // TWebHTMLDiv
         '4/360',                                        // Data
-        '["'+Circle2+'","transparent"]',                // Fill
+        '["'+Circle1+'","transparent"]',                // Fill
         '118deg',                                       // Rotation
         113,                                            // Inner Radius
         ''                                              // Text
@@ -3296,10 +3286,13 @@ begin
         for (var i = 0; i < all.length; i++) {
 
           // Create a new button
-          var lightbtn = document.createElement("button");
+          var lightbtn = document.createElement("div");
           lightbtn.id = 'light-'+all[i].entity_id;
-          lightbtn.innerHTML = '<div class="LightText">'+all[i].attributes["friendly_name"].replace(' ','<br />')+'</div>';
           lightbtn.classList.add('LightButton');
+
+          var lighttxt = document.createElement("div");
+          lighttxt.innerHTML = all[i].attributes["friendly_name"].replace(' ','<br />');
+          lighttxt.classList.add('LightText');
 
           // Add margin to buttons on first and last rows
           if (i < 7) {
@@ -3324,20 +3317,22 @@ begin
             lightbtn.classList.add('LightOther');
           }
 
-          // Call Delphi function when someone clicks on a button
-          lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id);});
 
           // Add the Home Assistant icon as a background element of the button
-          var lighticon = "mdi-lightbulb"
+          var icon = "mdi-lightbulb";
           if (all[i].attributes["icon"] !== undefined) {
-            var lighticon = all[i].attributes["icon"].replace(":","-");
+            icon = all[i].attributes["icon"].replace(":","-");
           }
-          var divlighticon = document.createElement("div");
-          divlighticon.classList.add("LightIcon","mdi",lighticon);
+          var lighticon = document.createElement("div");
+          lighticon.classList.add("LightIcon","mdi",icon);
 
           // Add button to the page
           divAllLights.appendChild(lightbtn);
-          lightbtn.appendChild(divlighticon);
+          lightbtn.appendChild(lighticon);
+          lightbtn.appendChild(lighttxt);
+
+          // Call Delphi function when someone clicks on a button
+           lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id);});
         }
       }
     end;
@@ -3345,16 +3340,18 @@ begin
 
 
 
+  // When do we want to do this again?
 
+//  console.log('Display: '+FormatDateTime('hh:nn:ss.zzz',ElapsedTime)+' '+FormatDateTime('hh:nn:ss.zzz',Now)+' '+IntToStr(MillisecondsBetween(Now,ElapsedTime))+'ms');
 
-  console.log('Display: '+FormatDateTime('hh:nn:ss.zzz',ElapsedTime)+' '+FormatDateTime('hh:nn:ss.zzz',Now)+' '+IntToStr(MillisecondsBetween(Now,ElapsedTime))+'ms');
-
+  // Right now, thanks
   if UpdatePending then
   begin
     UpdatePending := False;
     tmrSecondsTimer(nil);
   end;
 
+  // Wait until the next second rolls around
   tmrSeconds.Tag := -1;
   tmrSeconds.Interval :=  1000-MilliSecondOftheSecond(Now);
   tmrSeconds.Enabled := True;
@@ -3472,8 +3469,6 @@ begin
 
   // Switch the page
   pages.TabIndex := EndPage;
-//  pages.ElementHandle.style.setProperty('background', AppBackground,'important');
-//  pages.ActivePage.ElementHandle.style.setProperty('background', AppBackground,'important');
   tmrSeconds.Tag := EndPage;
   tmrSecondsTimer(nil);
 
@@ -3481,15 +3476,60 @@ begin
   then pages.ActivePage.ElementHandle.style.setProperty('opacity','1');
 
 
+  // Update alternate icons
+
+
   // Help button is either Hand or Back depending on whether on Help page or not
-  if pos('Help',pages.ActivePage.ElementClassName) > 0 then
+  if pos('Help',pages.ActivePage.ElementID) > 0 then
   begin
-    btnHelp.Caption := '<i class="fa-solid fa-caret-left text-white fa-2x opacity-100"></i>';
-    pages.ActivePage.Tag := StartPage;
+    asm
+      btnHelp.firstElementChild.style.setProperty('opacity','0');
+      btnHelp.lastElementChild.style.setProperty('opacity','1');
+    end;
   end
   else
   begin
-    btnHelp.Caption := '<i class="fa-solid fa-hand text-white fa-2x"></i>';
+    asm
+      btnHelp.firstElementChild.style.setProperty('opacity','1');
+      btnHelp.lastElementChild.style.setProperty('opacity','0');
+    end;
+  end;
+
+  // Update Change Button
+  if ((pages.TabIndex >= 5) and (pages.TabIndex <= 10)) or (pages.TabIndex = 0) then
+  begin
+    asm
+      btnChange.firstElementChild.style.setProperty('opacity','0');
+      btnChange.lastElementChild.style.setProperty('opacity','1');
+    end;
+  end
+  else
+  begin
+    asm
+      btnChange.firstElementChild.style.setProperty('opacity','1');
+      btnChange.lastElementChild.style.setProperty('opacity','0');
+    end;
+  end;
+
+  // Home button on Home Page is bolt if connnected or
+  if dataConfigSTATUS.Caption = 'Connected'
+  then ShowConnected
+  else ShowDisconnected;
+
+  // Configuration button on Configuration Page is Power On/Off otherwise it is a Gear
+  if EndPage = 0 then
+  begin
+    asm
+      btnConfiguration.firstElementChild.style.setProperty('opacity','0');
+      btnConfiguration.lastElementChild.style.setProperty('opacity','1');
+    end;
+  end
+  else
+  begin
+    asm
+      btnConfiguration.firstElementChild.style.setProperty('opacity','1');
+      btnConfiguration.lastElementChild.style.setProperty('opacity','0');
+    end;
   end;
 
 
@@ -3499,12 +3539,6 @@ begin
   if (pages.TabIndex =  8) and (CustomPage2Refresh <> CustomRefresh) then btnChangeClick(nil);
   if (pages.TabIndex =  9) and (CustomPage3Refresh <> CustomRefresh) then btnChangeClick(nil);
   if (pages.TabIndex = 10) and (CustomPage4Refresh <> CustomRefresh) then btnChangeClick(nil);
-
-
-  // Update Change Button
-  if ((pages.TabIndex >= 5) and (pages.TabIndex <= 10)) or (pages.TabIndex = 0)
-  then btnChange.Caption := '<i class="fa-solid fa-rotate-right fa-2x"></i>'
-  else btnChange.Caption := '<i class="fa-solid fa-shuffle fa-2x"></i>';
 
 
   ResetInactivityTimer(Sender);

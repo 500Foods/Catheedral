@@ -36,7 +36,7 @@ object Form1: TForm1
     ElementID = 'pages'
     Align = alClient
     ElementFont = efCSS
-    TabIndex = 11
+    TabIndex = 1
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1223,7 +1223,7 @@ object Form1: TForm1
         Role = ''
         object labelDate: TWebLabel
           Left = 0
-          Top = 222
+          Top = 220
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -1245,7 +1245,7 @@ object Form1: TForm1
         end
         object labelTime: TWebLabel
           Left = 0
-          Top = 165
+          Top = 162
           Width = 300
           Height = 73
           Alignment = taCenter
@@ -1662,7 +1662,7 @@ object Form1: TForm1
         Role = ''
         object dataHomeTemperature: TWebLabel
           Left = 0
-          Top = 165
+          Top = 162
           Width = 300
           Height = 73
           Alignment = taCenter
@@ -1780,7 +1780,7 @@ object Form1: TForm1
         end
         object dataHomeSetPoint: TWebLabel
           Left = 0
-          Top = 222
+          Top = 220
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -2037,7 +2037,7 @@ object Form1: TForm1
         end
         object btnHomeTempDown: TWebButton
           Left = 60
-          Top = 232
+          Top = 255
           Width = 50
           Height = 50
           HelpType = htKeyword
@@ -2053,7 +2053,7 @@ object Form1: TForm1
         end
         object btnHomeTempUp: TWebButton
           Left = 190
-          Top = 232
+          Top = 255
           Width = 50
           Height = 50
           HelpType = htKeyword
@@ -2145,7 +2145,7 @@ object Form1: TForm1
         end
         object dataWeatherTemperature: TWebLabel
           Left = 0
-          Top = 165
+          Top = 162
           Width = 300
           Height = 73
           Alignment = taCenter
@@ -2229,7 +2229,7 @@ object Form1: TForm1
         end
         object labelWeatherPressure: TWebLabel
           Left = 0
-          Top = 222
+          Top = 220
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -2345,7 +2345,7 @@ object Form1: TForm1
         end
         object dataWeatherCondition: TWebLabel
           Left = 0
-          Top = 262
+          Top = 260
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -2517,7 +2517,7 @@ object Form1: TForm1
         end
         object dataEnergyUse: TWebLabel
           Left = 0
-          Top = 165
+          Top = 162
           Width = 300
           Height = 73
           Alignment = taCenter
@@ -2685,7 +2685,7 @@ object Form1: TForm1
         end
         object dataPerson2Location: TWebLabel
           Left = 0
-          Top = 225
+          Top = 223
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -2740,7 +2740,7 @@ object Form1: TForm1
         end
         object divPerson2: TWebHTMLDiv
           Left = 125
-          Top = 256
+          Top = 255
           Width = 50
           Height = 50
           ElementClassName = 'Text TextLG'
@@ -5179,7 +5179,9 @@ object Form1: TForm1
     Top = 28
     Width = 40
     Height = 40
-    Caption = '<i class="fa-solid fa-hand fa-2x"></i>'
+    Caption = 
+      '<i class="fa-solid fa-hand fa-2x icon-default"></i><i class="fa-' +
+      'solid fa-caret-left fa-3x fa-fw icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHelp'
@@ -5195,8 +5197,9 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<i class="fa-solid fa-triangle-exclamation fa-2x text-warning"><' +
-      '/i>'
+      '<i class="fa-solid fa-home fa-2x icon-default"></i><i class="fa-' +
+      'solid fa-triangle-exclamation fa-2x text-warning icon-third"></i' +
+      '><i class="fa-solid fa-bolt fa-2x icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHome'
@@ -5211,7 +5214,9 @@ object Form1: TForm1
     Top = -11
     Width = 40
     Height = 40
-    Caption = '<i class="fa-solid fa-shuffle fa-2x"></i>'
+    Caption = 
+      '<i class="fa-solid fa-shuffle fa-2x icon-default"></i><i class="' +
+      'fa-solid fa-rotate-right fa-2x icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnChange'
@@ -5226,7 +5231,9 @@ object Form1: TForm1
     Top = 355
     Width = 40
     Height = 40
-    Caption = '<i class="fa-solid fa-gear fa-2x"></i>'
+    Caption = 
+      '  <i class="fa-solid fa-gear fa-2x icon-default"></i><i class="f' +
+      'a-solid fa-power-off fa-2x icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnConfiguration'
@@ -5264,7 +5271,6 @@ object Form1: TForm1
   end
   object tmrSwitchPage: TWebTimer
     Enabled = False
-    Interval = 400
     OnTimer = tmrSwitchPageTimer
     Left = 592
     Top = 64
