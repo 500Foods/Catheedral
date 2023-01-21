@@ -309,6 +309,7 @@ type
     tmrExit: TWebTimer;
     pageExit: TWebTabSheet;
     labelShutdown: TWebLabel;
+    tmrLights: TWebTimer;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -367,6 +368,7 @@ type
     procedure btnLightsNoGroupsClick(Sender: TObject);
     procedure btnLightsAllOnClick(Sender: TObject);
     procedure tmrExitTimer(Sender: TObject);
+    procedure tmrLightsTimer(Sender: TObject);
 
   private
     { Private declarations }
@@ -832,7 +834,8 @@ begin
       if (State.state !== undefined) {
         this.Person1Location = window.CapWords(State.state.replace('_',' '));
       }
-    end
+    end;
+    if Person1Location = 'Stationary' then Person1Location := 'Somewhere';
   end
   else if (Entity = Person2Sensor) then
   begin
@@ -846,7 +849,8 @@ begin
       if (State.state !== undefined) {
         this.Person2Location = window.CapWords(State.state.replace('_',' '));
       }
-    end
+    end;
+    if Person2Location = 'Stationary' then Person2Location := 'Somewhere';
   end
 
 
@@ -2370,6 +2374,18 @@ begin
   tmrInactivity.Enabled := False;
 end;
 
+procedure TForm1.tmrLightsTimer(Sender: TObject);
+begin
+  tmrLights.Enabled := False;
+  LightsMode := tmrLights.Tag;
+  LightsAll := '';
+  asm
+    divAllLights.innerHTML = '';
+  end;
+  UpdateNow;
+  divAllLights.ElementHandle.style.setProperty('opacity','1');
+end;
+
 procedure TForm1.tmrSecondsTimer(Sender: TObject);
 var
   current_seconds: Integer;
@@ -3342,7 +3358,7 @@ begin
           lightbtn.appendChild(lighttxt);
 
           // Call Delphi function when someone clicks on a button
-           lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id);});
+           lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id); e.stopPropagation;});
         }
       }
     end;
@@ -3572,11 +3588,8 @@ end;
 
 procedure TForm1.UpdateNow;
 begin
-  if tmrSeconds.Enabled then
-  begin
-    tmrSeconds.Tag := pages.TabIndex;
-    tmrSecondsTimer(nil);
-  end;
+  tmrSeconds.Tag := pages.TabIndex;
+  tmrSecondsTimer(nil);
 end;
 
 procedure TForm1.btnLightsAllOnClick(Sender: TObject);
@@ -3625,23 +3638,32 @@ end;
 
 procedure TForm1.btnLightsGroupsClick(Sender: TObject);
 begin
-  LightsAll := '';
-  LightsMode := 2;
-  UpdateNow;
+  if LightsMode <> 2 then
+  begin
+    tmrLights.Tag := 2;
+    divAllLights.ElementHandle.style.setProperty('opacity','0');
+    tmrLights.Enabled := True;
+  end;
 end;
 
 procedure TForm1.btnLightsNoGroupsClick(Sender: TObject);
 begin
-  LightsAll := '';
-  LightsMode := 3;
-  UpdateNow;
+  if LightsMode <> 3 then
+  begin
+    tmrLights.Tag := 3;
+    divAllLights.ElementHandle.style.setProperty('opacity','0');
+    tmrLights.Enabled := True;
+  end;
 end;
 
 procedure TForm1.btnLioghtsShowAllClick(Sender: TObject);
 begin
-  LightsAll := '';
-  LightsMode := 1;
-  UpdateNow;
+  if LightsMode <> 1 then
+  begin
+    tmrLights.Tag := 1;
+    divAllLights.ElementHandle.style.setProperty('opacity','0');
+    tmrLights.Enabled := True;
+  end;
 end;
 
 procedure TForm1.divHomeLightsCoverClick(Sender: TObject);

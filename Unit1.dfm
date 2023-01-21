@@ -36,7 +36,7 @@ object Form1: TForm1
     ElementID = 'pages'
     Align = alClient
     ElementFont = efCSS
-    TabIndex = 18
+    TabIndex = 16
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -173,7 +173,6 @@ object Form1: TForm1
           ElementID = 'editConfigTOKEN'
           ElementFont = efCSS
           HeightPercent = 100.000000000000000000
-          PasswordChar = '*'
           SpellCheck = False
           TabOrder = 101
           TextHint = 'Enter Home Assistant Long-Lived Token'
@@ -5313,7 +5312,14 @@ object Form1: TForm1
     Enabled = False
     Interval = 5000
     OnTimer = tmrExitTimer
-    Left = 970
+    Left = 962
     Top = 64
+  end
+  object tmrLights: TWebTimer
+    Enabled = False
+    Interval = 400
+    OnTimer = tmrLightsTimer
+    Left = 418
+    Top = 80
   end
 end
