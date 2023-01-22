@@ -32,7 +32,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 10
+    TabIndex = 16
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1048,9 +1048,10 @@ object Form1: TForm1
         WidthPercent = 100.000000000000000000
         OnChange = listBackgroundsChange
         Items.Strings = (
-          'url(images/background_orion_nebula.jpg)'
-          'url(images/background_cosmic_cliffs.jpg)'
-          'url(images/background_protostar.jpg)'
+          'images/background_orion_nebula.jpg'
+          'images/background_cosmic_cliffs.jpg'
+          'images/background_protostar.jpg'
+          'images/walking.gif'
           
             'linear-gradient(30deg, rgba(255,0,0,1) 0%, rgba(0,0,0,1) 20%, rg' +
             'ba(255,0,0,1) 40%,rgba(0,0,0,1) 60%, rgba(255,0,0,1) 80%, rgba(0' +
@@ -2822,168 +2823,17 @@ object Form1: TForm1
       Caption = 'Help-Cf'
       ChildOrder = 4
       ElementFont = efCSS
-      object divHelpConfig: TWebHTMLDiv
+      object HelpConfig: TWebHTMLDiv
         Left = 50
         Top = 20
         Width = 1180
         Height = 360
         ElementClassName = 'Help Scroll'
-        ElementID = 'divHelpConfig'
+        ElementID = 'HelpConfig'
         ElementFont = efCSS
-        HTML.Strings = (
-          '<div class="HelpTitle">'
-          'Home Assistant URL'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'This refers to the location of the Home Assistant server.  If Ca' +
-            'thedral is running on a device that is on the same network as th' +
-            'e Home Assistant Server, then a "local '
-          'network" http:// URL is most likely needed.  For '
-          
-            'example, http://homeassistant.local:8123.  If the Home Assistant' +
-            ' Server is on a different network than Cathedral, then an "inter' +
-            'net" https:// URL is most likely needed. '
-          ' Both of these URLs  can be found in Home '
-          'Assistant under Settings | Server | Network.'
-          '</div>'
-          '<div class="HelpTitle">'
-          'Home Assistant Token'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'In order for Cathedral to communicate, it must first be authoriz' +
-            'ed.  A Long-Lived Access Token can be generated from within Home' +
-            ' Assistant under Account | Long-'
-          'Lived Access Tokens.'
-          '</div>'
-          '<div class="HelpTitle">'
-          'Background'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'Any valid CSS "background" property can be used here. Any standa' +
-            'rd CSS colors can be used directly, like <strong>red</strong> or' +
-            ' <strong>purple</strong>.  Hex '
-          'colors can be specified using either '
-          
-            '<strong>#FFF</strong> or <strong>#FFFFFF</strong>.  RGB colors c' +
-            'an be specified using <strong>rgb(40,0,0)</strong>.  Images can ' +
-            'be specified using '
-          '<strong>url(local filename)</strong> or '
-          
-            '<strong>url(any valid URL)</strong>.  Gradients can also be used' +
-            '.  '
-          '</div>'
-          '<div class="HelpTitle">'
-          'Date and Time Formats'
-          '</div>'
-          '<div class="HelpBody">'
-          '<table>'
-          
-            '<tbody><tr><td class="dt" align="right"><b>y&nbsp;</b></td><td c' +
-            'lass="dd"> = Year last 2 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>yy&nbsp;</b></td><td class="' +
-            'dd"> = Year last 2 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>yyyy&nbsp;</b></td><td class' +
-            '="dd"> = Year as 4 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>m&nbsp;</b></td><td class="d' +
-            'd"> = Month number no-leading 0</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>mm&nbsp;</b></td><td class="' +
-            'dd"> = Month number as 2 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>mmm&nbsp;</b></td><td class=' +
-            '"dd"> = Month using ShortDayNames (Jan)</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>mmmm&nbsp;</b></td><td class' +
-            '="dd"> = Month using LongDayNames (January)</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>d&nbsp;</b></td><td class="d' +
-            'd"> = Day number no-leading 0</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>dd&nbsp;</b></td><td class="' +
-            'dd"> = Day number as 2 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>ddd&nbsp;</b></td><td class=' +
-            '"dd"> = Day using ShortDayNames (Sun)</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>dddd&nbsp;</b></td><td class' +
-            '="dd"> = Day using LongDayNames&nbsp;&nbsp;(Sunday)</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>ddddd&nbsp;</b></td><td clas' +
-            's="dd"> = Day in ShortDateFormat</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>dddddd&nbsp;</b></td><td cla' +
-            'ss="dd"> = Day in LongDateFormat</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>&nbsp;</b></td><td class="dd' +
-            '"></td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>c&nbsp;</b></td><td class="d' +
-            'd"> = Use ShortDateFormat + LongTimeFormat</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>h&nbsp;</b></td><td class="d' +
-            'd"> = Hour number no-leading 0</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>hh&nbsp;</b></td><td class="' +
-            'dd"> = Hour number as 2 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>n</b></td><td class="dd"> = ' +
-            'Minute number no-leading 0</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>nn&nbsp;</b></td><td class="' +
-            'dd"> = Minute number as 2 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>s&nbsp;</b></td><td class="d' +
-            'd"> = Second number no-leading 0</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>ss&nbsp;</b></td><td class="' +
-            'dd"> = Second number as 2 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>z</b></td><td class="dd"> = ' +
-            'Milli-sec number no-leading 0s</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>zzz&nbsp;</b></td><td class=' +
-            '"dd"> = Milli-sec number as 3 digits</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>t&nbsp;</b></td><td class="d' +
-            'd"> = Use ShortTimeFormat</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>tt&nbsp;</b></td><td class="' +
-            'dd"> = Use LongTimeFormat</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>&nbsp;</b></td><td class="dd' +
-            '"></td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>am/pm&nbsp;</b></td><td clas' +
-            's="dd"> = Use after h : gives 12 hours + am/pm</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>a/p&nbsp;</b></td><td class=' +
-            '"dd"> = Use after h : gives 12 hours + a/p</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>ampm&nbsp;</b></td><td class' +
-            '="dd"> = As a/p but TimeAMString,TimePMString</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>/&nbsp;</b></td><td class="d' +
-            'd"> = Substituted by DateSeparator value</td></tr>'
-          
-            '<tr><td class="dt" align="right"><b>:</b></td><td class="dd"> = ' +
-            'Substituted by TimeSeparator value</td></tr>'
-          '</tbody></table>'
-          '<br />'
-          
-            'Reference: <a target="_blank"  href="http://www.delphibasics.co.' +
-            'uk/RTL.php?Name=formatdatetime">http://www.delphibasics.co.uk/RT' +
-            'L.php?'
-          'Name=formatdatetime</a>'
-          '</div>')
         Role = ''
         OnClick = ResetInactivityTimer
-        OnMouseMove = divHelpConfigMouseMove
+        OnMouseMove = HelpConfigMouseMove
       end
     end
     object pageConfigSensors: TWebTabSheet
@@ -3007,7 +2857,7 @@ object Form1: TForm1
         ElementFont = efCSS
         Role = ''
         OnClick = ResetInactivityTimer
-        OnMouseMove = divHelpConfigMouseMove
+        OnMouseMove = HelpConfigMouseMove
       end
     end
     object pageConfigInfo: TWebTabSheet
@@ -4702,47 +4552,17 @@ object Form1: TForm1
       Caption = 'Help-Ci'
       ChildOrder = 12
       ElementFont = efCSS
-      object divHelpConfigInfo: TWebHTMLDiv
+      object HelpConfigInfo: TWebHTMLDiv
         Left = 50
         Top = 20
         Width = 1180
         Height = 360
         ElementClassName = 'Help Scroll'
-        ElementID = 'divHelpConfigInfo'
+        ElementID = 'HelpConfigInfo'
         ElementFont = efCSS
-        HTML.Strings = (
-          '<div class="HelpTitle">'
-          'Configuration Information'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'This page is used to view additional Configuration Information i' +
-            'n case you need to troubleshoot a problem.<br />'
-          '<br />'
-          
-            'The first column shows values that are specific to the Cathedral' +
-            ' app and are generated without interacting with the Home Assista' +
-            'nt Server. The Internet address '
-          
-            'indicated is the public IP Address as seen from the device that ' +
-            'this Cathedral app is running on.  If this value is '#39'unknown'#39' '
-          
-            'or '#39'undefined'#39', then the Internet was inaccessible when the Cath' +
-            'edral app first started.<br />'
-          '<br />'
-          
-            'The remaining two columns reflect data coming from the Home Assi' +
-            'stant Server.  If any of these values are incorrect, unknown, or' +
-            ' undefined, they will need to be '
-          
-            'updated directly within Home Assistant.  Subsequent changes can ' +
-            'be reflected here by restarting the Cathedral app or by refreshi' +
-            'ng it from the main Configuration '
-          'screen using the "Refresh" icon in the top-right corner.'
-          '</div>')
         Role = ''
         OnClick = ResetInactivityTimer
-        OnMouseMove = divHelpConfigMouseMove
+        OnMouseMove = HelpConfigMouseMove
       end
     end
     object pageHelpConfigSensors: TWebTabSheet
@@ -4755,50 +4575,17 @@ object Form1: TForm1
       Caption = 'Help-Cs'
       ChildOrder = 13
       ElementFont = efCSS
-      object divHelpConfigSensors: TWebHTMLDiv
+      object HelpConfigSensors: TWebHTMLDiv
         Left = 50
         Top = 20
         Width = 1180
         Height = 360
         ElementClassName = 'Help Scroll'
-        ElementID = 'divHelpConfigSensors'
+        ElementID = 'HelpConfigSensors'
         ElementFont = efCSS
-        HTML.Strings = (
-          '<div class="HelpTitle">'
-          'Home Assistant Links'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'This page is used to define the connections between the Cathedra' +
-            'l app and the Home Assistant Serer. Each element in the left col' +
-            'umn corresponds to a part of the '
-          
-            'Cathedral interface.  The center column indicates what Home Assi' +
-            'stant sensor, entity or other element is used to provide informa' +
-            'tion to Cathedral.  The right '
-          
-            'column gives examples of what to look for when searching the lis' +
-            't of available Home Assistant objects.<br />'
-          '<br />'
-          
-            'Links that are not populated will not be shown in Cathedral.  So' +
-            'me aspects of Cathedral require many links (such as the Weather ' +
-            'content), whereas others require few '
-          'or none.<br />'
-          '<br />'
-          
-            'In addition to the Home Assistant, anywhere from zero to four ad' +
-            'ditional pages can be added to Cathedral using data from externa' +
-            'l websites.  These websites are '
-          
-            'presented on their own page, and should be formatted (by the rem' +
-            'ote website) to work within the confines of Catheral'#39's 1280w by ' +
-            '400h display.'
-          '</div>'
-          '')
         Role = ''
         OnClick = ResetInactivityTimer
-        OnMouseMove = divHelpConfigMouseMove
+        OnMouseMove = HelpConfigMouseMove
       end
     end
     object pageHelpCustom: TWebTabSheet
@@ -4811,36 +4598,19 @@ object Form1: TForm1
       Caption = 'Help-C1'
       ChildOrder = 14
       ElementFont = efCSS
-      object divHelpCustom: TWebHTMLDiv
+      object HelpCustomPages: TWebHTMLDiv
         Left = 50
         Top = 20
         Width = 1180
         Height = 360
         ElementClassName = 'Help Scroll'
-        ElementID = 'divHelpCustom'
+        ElementID = 'HelpCustomPages'
         ElementFont = efCSS
         HTML.Strings = (
-          '<div class="HelpTitle">'
-          'Custom Web Content'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'This is a custom URL included in Cathedral, used to directly dis' +
-            'play information from external websites.  The content shown is g' +
-            'enerated entirely from outside Cathedral '
-          
-            'and Home Assistant, and any issues with the content should be di' +
-            'rected to the website that is linked to here.<br />'
-          '<br />'
-          
-            'Anywhere from zero to four Custom URL web pages, like this one, ' +
-            'can be added to Cathedral.  These are set in the Home Assistant ' +
-            'Links section within the '
-          'Configuratino pages.'
-          '</div>')
+          '')
         Role = ''
         OnClick = ResetInactivityTimer
-        OnMouseMove = divHelpConfigMouseMove
+        OnMouseMove = HelpConfigMouseMove
       end
     end
     object pageHelpHome: TWebTabSheet
@@ -4853,161 +4623,21 @@ object Form1: TForm1
       Caption = 'Help-Hm'
       ChildOrder = 15
       ElementFont = efCSS
-      object divHelpHome: TWebHTMLDiv
+      object HelpHome: TWebHTMLDiv
         Left = 50
         Top = 0
         Width = 1180
         Height = 400
         ElementClassName = 'Help Scroll'
-        ElementID = 'divHelpHome'
+        ElementID = 'HelpHome'
         ElementFont = efCSS
-        HTML.Strings = (
-          '<div class="HelpTitle">'
-          'Welcome to Catheedral!'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'The Catheedral Home page has four main components:  <span class=' +
-            '"HelpHighlight">Time</span>, <span class="HelpHighlight">Climate' +
-            '</span>, <span '
-          
-            'class="HelpHighlight">Weather</span>, and <span class="HelpHighl' +
-            'ight">People</span>. In addition, there are <span class="HelpHig' +
-            'hlight">Navigation '
-          'Controls</span> '
-          
-            'for moving left and right between pages, and four <span class="H' +
-            'elpHighlight">Main Buttons</span>, one in each corner.'
-          '</div>'
-          '<div class="HelpTitle">'
-          'Time'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            '  This displays the current time for your locale. Additional inf' +
-            'ormation, such as sunrise/sunset and the current phase of the mo' +
-            'on, may also be available if Home '
-          'Assistant has '
-          
-            'been configured to provide this information to Catheedral.  Ther' +
-            'e are as many as five rings in this panel.<br /><br />'
-          
-            '<ul><li><strong>Seconds</strong> shows the current second, much ' +
-            'like a second hand on a traditional clock.</li>'
-          
-            '<li><strong>Minutes</strong> shows the current minute, much like' +
-            ' the minutes hand on a traditional clock.</li>'
-          
-            '<li><strong>Hours</strong> shows the current hour, but unlike a ' +
-            'traditional clock, this is calibrated for 24 hours.</li>'
-          
-            '<li><strong>Dawn/Dusk</strong> shows the portion of the day betw' +
-            'een Dawn and dusk, using the same 24-hour calibration as <strong' +
-            '>Hours</strong>.</li>'
-          
-            '<li><strong>Sunrise/Sunset</strong> shows the portion of the day' +
-            ' between Sunrise and Sunset, using the same 24-hour calibration ' +
-            'as '
-          '<strong>Hours</strong>.</li>'
-          '</ul>'
-          
-            'In addition, the length of time between Sunrise/Sunset is displa' +
-            'yed as <strong>Daylight</strong> and the the length of time betw' +
-            'een Dawn/Dusk is displayed as '
-          '<strong>Twilight</strong>.'
-          '</div>'
-          '<div class="HelpTitle">'
-          'Navigation Controls'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'At the very left and very right of the Catheedral interface are ' +
-            'the <span class="HelpHighlight">Navigation Controls</span> that ' +
-            'let you move back and forth between '
-          'related '
-          'pages. '
-          '</div>'
-          '<div class="HelpTitle">'
-          'Main Buttons'
-          '</div>'
-          '<div class="HelpBody">'
-          
-            'There are four buttons, one in each corner, that are always visi' +
-            'ble within Catheedral.  These are referred to as <span class="He' +
-            'lpHighlight">Main '
-          'Buttons</span>.<br />'
-          '<br /> '
-          
-            'The <span class="HelpHighlight"><i class="fa-solid fa-circle-que' +
-            'stion pe-1"></i>Help</span> button in the top left corner will p' +
-            'resent you with information related to '
-          'the '
-          'page '
-          'you'#39're currently '
-          
-            'viewing.  You can also view other <span class="HelpHighlight"><i' +
-            ' class="fa-solid fa-circle-question pe-1"></i>Help</span>  pages' +
-            ' by using the <span '
-          
-            'class="HelpHighlight">Navigation Controls</span> while viewing a' +
-            'ny <span class="HelpHighlight"><i class="fa-solid fa-circle-ques' +
-            'tion pe-1"></i>Help</span> '
-          'page.<br '
-          '/>'
-          '<br />'
-          
-            'The <span class="HelpHighlight"><i class="fa-solid fa-shuffle pe' +
-            '-1"></i>Change</span> button in the top right corner provides ac' +
-            'cess to additional settings for the '
-          
-            'page.  In some instances, this will change to a <span class="Hel' +
-            'pHighlight"><i class="fa-solid fa-rotate-right pe-1"></i>Refresh' +
-            '</span> button that will allow you to '
-          'reload '
-          'that particular page.<br />'
-          '<br />'
-          
-            'The <span class="HelpHighlight"><i class="fa-solid fa-home pe-1"' +
-            '></i>Home</span> button in the bottom right corner will bring yo' +
-            'u back to the Catheedral Home '
-          'page.  If you'#39're already on '
-          'the '
-          'Catheedral '
-          
-            'Home page, this changes to a <span class="HelpHighlight"><i clas' +
-            's="fa-solid fa-bolt pe-1"></i>Connected</span>  button, which ca' +
-            'n be used to reset the '
-          'connection '
-          
-            'between Catheedral and your Home Assistant server. If the connec' +
-            'tion between Catheedral and your Home Assistant server is lost, ' +
-            'this will change to a <span '
-          
-            'class="HelpHighlight"><i class="fa-solid fa-triangle-exclamation' +
-            ' pe-1 text-warning"></i>Disconnected</span> button.<br />'
-          '<br />'
-          
-            'The <span class="HelpHighlight"><i class="fa-solid fa-gear pe-1"' +
-            '></i>Configuration</span> button in the bottom left corner bring' +
-            's up additional pages that allow you '
-          'to '
-          
-            'make changes to how Catheedral works.  If you'#39're already on the ' +
-            '<span class="HelpHighlight"><i class="fa-solid fa-gear pe-1"></i' +
-            '>Configuration</span> page, this '
-          
-            'button will instead change to a <span class="HelpHighlight"><i c' +
-            'lass="fa-solid fa-power-off pe-1"></i>Power Off</span> button th' +
-            'at will allow you to exit the '
-          'Catheedral '
-          'application completely.'
-          '</div>')
         Role = ''
         OnClick = ResetInactivityTimer
-        OnMouseMove = divHelpConfigMouseMove
+        OnMouseMove = HelpConfigMouseMove
       end
     end
     object pageLights: TWebTabSheet
+      Tag = 17
       Left = 0
       Top = 20
       Width = 1280
@@ -5123,6 +4753,18 @@ object Form1: TForm1
       Caption = 'Help-Lt'
       ChildOrder = 17
       ElementFont = efCSS
+      object HelpLights: TWebHTMLDiv
+        Left = 50
+        Top = 0
+        Width = 1180
+        Height = 400
+        ElementClassName = 'Help Scroll'
+        ElementID = 'HelpLights'
+        ElementFont = efCSS
+        Role = ''
+        OnClick = ResetInactivityTimer
+        OnMouseMove = HelpConfigMouseMove
+      end
     end
     object pageExit: TWebTabSheet
       Left = 0

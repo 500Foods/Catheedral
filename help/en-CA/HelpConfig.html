@@ -1,0 +1,60 @@
+<div class="HelpTitle">Home Assistant URL</div>
+<div class="HelpBody">
+This refers to the location of the Home Assistant server.  If Cathedral is running on a device that is on the same network as the Home Assistant Server, then a "local 
+network" http:// URL is most likely needed.  For example, http://homeassistant.local:8123.  If the Home Assistant Server is on a different network than Cathedral, then 
+an "internet" https:// URL is most likely needed.  Both of these URLs  can be found in Home Assistant under Settings | Server | Network.
+</div>
+
+<div class="HelpTitle">Home Assistant Token</div>
+<div class="HelpBody">
+In order for Cathedral to communicate, it must first be authorized.  A Long-Lived Access Token can be generated from within Home Assistant under Account | Long-
+Lived Access Tokens.
+</div>
+
+<div class="HelpTitle">Background</div>
+<div class="HelpBody">
+Any valid CSS "background" property can be used here. Any standard CSS colors can be used directly, like <strong>red</strong> or <strong>purple</strong>.  Hex 
+colors can be specified using either 
+<strong>#FFF</strong> or <strong>#FFFFFF</strong>.  RGB colors can be specified using <strong>rgb(40,0,0)</strong>.  Images can be specified using 
+<strong>url(local filename)</strong> or 
+<strong>url(any valid URL)</strong>.  Gradients can also be used.  
+</div>
+
+<div class="HelpTitle">Date and Time Formats</div>
+<div class="HelpBody">
+<table>
+<tbody><tr><td class="dt" align="right"><b>y&nbsp;</b></td><td class="dd"> = Year last 2 digits</td></tr>
+<tr><td class="dt" align="right"><b>yy&nbsp;</b></td><td class="dd"> = Year last 2 digits</td></tr>
+<tr><td class="dt" align="right"><b>yyyy&nbsp;</b></td><td class="dd"> = Year as 4 digits</td></tr>
+<tr><td class="dt" align="right"><b>m&nbsp;</b></td><td class="dd"> = Month number no-leading 0</td></tr>
+<tr><td class="dt" align="right"><b>mm&nbsp;</b></td><td class="dd"> = Month number as 2 digits</td></tr>
+<tr><td class="dt" align="right"><b>mmm&nbsp;</b></td><td class="dd"> = Month using ShortDayNames (Jan)</td></tr>
+<tr><td class="dt" align="right"><b>mmmm&nbsp;</b></td><td class="dd"> = Month using LongDayNames (January)</td></tr>
+<tr><td class="dt" align="right"><b>d&nbsp;</b></td><td class="dd"> = Day number no-leading 0</td></tr>
+<tr><td class="dt" align="right"><b>dd&nbsp;</b></td><td class="dd"> = Day number as 2 digits</td></tr>
+<tr><td class="dt" align="right"><b>ddd&nbsp;</b></td><td class="dd"> = Day using ShortDayNames (Sun)</td></tr>
+<tr><td class="dt" align="right"><b>dddd&nbsp;</b></td><td class="dd"> = Day using LongDayNames&nbsp;&nbsp;(Sunday)</td></tr>
+<tr><td class="dt" align="right"><b>ddddd&nbsp;</b></td><td class="dd"> = Day in ShortDateFormat</td></tr>
+<tr><td class="dt" align="right"><b>dddddd&nbsp;</b></td><td class="dd"> = Day in LongDateFormat</td></tr>
+<tr><td class="dt" align="right"><b>&nbsp;</b></td><td class="dd"></td></tr>
+<tr><td class="dt" align="right"><b>c&nbsp;</b></td><td class="dd"> = Use ShortDateFormat + LongTimeFormat</td></tr>
+<tr><td class="dt" align="right"><b>h&nbsp;</b></td><td class="dd"> = Hour number no-leading 0</td></tr>
+<tr><td class="dt" align="right"><b>hh&nbsp;</b></td><td class="dd"> = Hour number as 2 digits</td></tr>
+<tr><td class="dt" align="right"><b>n</b></td><td class="dd"> = Minute number no-leading 0</td></tr>
+<tr><td class="dt" align="right"><b>nn&nbsp;</b></td><td class="dd"> = Minute number as 2 digits</td></tr>
+<tr><td class="dt" align="right"><b>s&nbsp;</b></td><td class="dd"> = Second number no-leading 0</td></tr>
+<tr><td class="dt" align="right"><b>ss&nbsp;</b></td><td class="dd"> = Second number as 2 digits</td></tr>
+<tr><td class="dt" align="right"><b>z</b></td><td class="dd"> = Milli-sec number no-leading 0s</td></tr>
+<tr><td class="dt" align="right"><b>zzz&nbsp;</b></td><td class="dd"> = Milli-sec number as 3 digits</td></tr>
+<tr><td class="dt" align="right"><b>t&nbsp;</b></td><td class="dd"> = Use ShortTimeFormat</td></tr>
+<tr><td class="dt" align="right"><b>tt&nbsp;</b></td><td class="dd"> = Use LongTimeFormat</td></tr>
+<tr><td class="dt" align="right"><b>&nbsp;</b></td><td class="dd"></td></tr>
+<tr><td class="dt" align="right"><b>am/pm&nbsp;</b></td><td class="dd"> = Use after h : gives 12 hours + am/pm</td></tr>
+<tr><td class="dt" align="right"><b>a/p&nbsp;</b></td><td class="dd"> = Use after h : gives 12 hours + a/p</td></tr>
+<tr><td class="dt" align="right"><b>ampm&nbsp;</b></td><td class="dd"> = As a/p but TimeAMString,TimePMString</td></tr>
+<tr><td class="dt" align="right"><b>/&nbsp;</b></td><td class="dd"> = Substituted by DateSeparator value</td></tr>
+<tr><td class="dt" align="right"><b>:</b></td><td class="dd"> = Substituted by TimeSeparator value</td></tr>
+</tbody></table>
+<br />
+Reference: <a target="_blank"  href="http://www.delphibasics.co.uk/RTL.php?Name=formatdatetime">http://www.delphibasics.co.uk/RTL.php?Name=formatdatetime</a>
+</div>

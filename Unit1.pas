@@ -134,7 +134,7 @@ type
     btnChange: TWebButton;
     btnConfiguration: TWebButton;
     pageHelpConfig: TWebTabSheet;
-    divHelpConfig: TWebHTMLDiv;
+    HelpConfig: TWebHTMLDiv;
     pageConfigSensors: TWebTabSheet;
     divConfigSensors: TWebHTMLDiv;
     pageConfigInfo: TWebTabSheet;
@@ -233,13 +233,13 @@ type
     labelInfoWindSpeed: TWebLabel;
     dataInfoWindSpeed: TWebLabel;
     pageHelpConfigInfo: TWebTabSheet;
-    divHelpConfigInfo: TWebHTMLDiv;
+    HelpConfigInfo: TWebHTMLDiv;
     pageHelpConfigSensors: TWebTabSheet;
-    divHelpConfigSensors: TWebHTMLDiv;
+    HelpConfigSensors: TWebHTMLDiv;
     pageHelpCustom: TWebTabSheet;
-    divHelpCustom: TWebHTMLDiv;
+    HelpCustomPages: TWebHTMLDiv;
     pageHelpHome: TWebTabSheet;
-    divHelpHome: TWebHTMLDiv;
+    HelpHome: TWebHTMLDiv;
     labelHomeRise: TWebLabel;
     labelHomeSet: TWebLabel;
     circleHoursMarker: TWebHTMLDiv;
@@ -310,6 +310,7 @@ type
     pageExit: TWebTabSheet;
     labelShutdown: TWebLabel;
     tmrLights: TWebTimer;
+    HelpLights: TWebHTMLDiv;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -350,7 +351,7 @@ type
     procedure SetupJavaScriptFunctions;
     procedure btnHelpClick(Sender: TObject);
     procedure ResetInactivityTimer(Sender: TObject);
-    procedure divHelpConfigMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure HelpConfigMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure ConfigureTabSensors;
     procedure btnChangeClick(Sender: TObject);
     procedure tmrSwitchPageTimer(Sender: TObject);
@@ -369,6 +370,7 @@ type
     procedure btnLightsAllOnClick(Sender: TObject);
     procedure tmrExitTimer(Sender: TObject);
     procedure tmrLightsTimer(Sender: TObject);
+    procedure LoadHelp(HelpDIV: String);
 
   private
     { Private declarations }
@@ -417,6 +419,9 @@ type
     HALoadConfig: Boolean;
     HAStatesLoaded: Boolean;
 
+    // Home Assistant values we'll use frequently
+    HALanguage: String;
+    HACountry: String;
     HATemperatureUnits: String;
     HAPressureUnits: String;
 
@@ -1023,7 +1028,7 @@ begin
   ResetInactivityTimer(Sender);
 end;
 
-procedure TForm1.divHelpConfigMouseMove(Sender: TObject;
+procedure TForm1.HelpConfigMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
   ResetInactivityTimer(Sender);
@@ -1037,7 +1042,13 @@ begin
     AppBackground := editConfigBACKGROUND.Text;
     if Pos(';', AppBackground) > 0
     then divBackground.ElementHandle.style.cssText := AppBackground
-    else divBackground.ElementHandle.style.setProperty('background', AppBackground);
+    else if ((Pos('.png', AppBackground) > 0) or (Pos('.gif', AppBackground) > 0) or (Pos('.webp', AppBackground) > 0) or (Pos('.svg', AppBackground) > 0) or (Pos('.jpg', AppBackground) > 0) or (Pos('.jpeg', AppBackground) > 0)) and (Pos('url', AppBackground) = 0) then
+         begin
+           divBackground.ElementHandle.style.setProperty('background', 'url('+AppBackground+')');
+           divBackground.ElementHandle.style.setProperty('background-size', 'cover');
+           divBackground.ElementHandle.style.setProperty('background-position', 'center');
+         end
+         else divBackground.ElementHandle.style.setProperty('background', AppBackground);
     divBackground.ElementHandle.style.setProperty('top', '0px');
     divBackground.ElementHandle.style.setProperty('left', '0px');
     divBackground.ElementHandle.style.setProperty('width', IntToStr(PanelWidth)+'px');
@@ -1197,6 +1208,8 @@ begin
 
         this.HASystemName = hadata.result.location_name;
         this.HATimeZone = hadata.result.time_zone;
+        this.HALanguage = hadata.result.language;
+        this.HACountry = hadata.result.country;
 
         // We don't really care about these, but report them anyway
         dataInfoSystem.firstElementChild.innerHTML = hadata.result.location_name;
@@ -1782,9 +1795,15 @@ begin
   if (Trim(editConfigBACKGROUND.Text) <> '') and (LowerCase(Trim(editConfigBACKGROUND.Text)) <> 'none') then
   begin
     AppBackground := editConfigBACKGROUND.Text;
-    if Pos(';',AppBackground) > 0
+    if Pos(';', AppBackground) > 0
     then divBackground.ElementHandle.style.cssText := AppBackground
-    else divBackground.ElementHandle.style.setProperty('background', AppBackground);
+    else if ((Pos('.png', AppBackground) > 0) or (Pos('.gif', AppBackground) > 0) or (Pos('.webp', AppBackground) > 0) or (Pos('.svg', AppBackground) > 0) or (Pos('.jpg', AppBackground) > 0) or (Pos('.jpeg', AppBackground) > 0)) and (Pos('url', AppBackground) = 0) then
+         begin
+           divBackground.ElementHandle.style.setProperty('background', 'url('+AppBackground+')');
+           divBackground.ElementHandle.style.setProperty('background-size', 'cover');
+           divBackground.ElementHandle.style.setProperty('background-position', 'center');
+         end
+         else divBackground.ElementHandle.style.setProperty('background', AppBackground);
     divBackground.ElementHandle.style.setProperty('top', '0px');
     divBackground.ElementHandle.style.setProperty('left', '0px');
     divBackground.ElementHandle.style.setProperty('width', IntToStr(PanelWidth)+'px');
@@ -1885,6 +1904,45 @@ begin
   AppINIFile.Free;
 
   ConfigurationLoaded := True;
+end;
+
+procedure TForm1.LoadHelp(HelpDIV: String);
+var
+  HelpFile: String;
+  HelpFileAlt: String;
+begin
+  HelpFile := 'help/'+HALanguage+'-'+HACountry+'/'+HelpDIV+'.html';
+  HelpFileAlt := 'help/en-CA/'+HelpDIV+'.html';
+  asm
+    var Help = document.getElementById(HelpDIV)
+    fetch(HelpFile)
+      .then(
+        function(response) {
+          if (response.status !== 200) {
+            fetch(HelpFileAlt)
+              .then(
+                function(altresponse) {
+                  if (response.status !== 200) {
+                    Help.innerHTML = 'Help File Missing: '+HelpDIV+'.html'
+                  }
+                  response.text().then(function(AltHelpData) {
+                    Help.innerHTML = AltHelpData
+                  })
+                }
+              )
+              .catch(function(err) {
+                console.log('Error ['+err+'] Loading Help: '+HelpDIV)
+              })
+          }
+          response.text().then(function(HelpData) {
+            Help.innerHTML = HelpData
+          })
+        }
+      )
+      .catch(function(err) {
+        console.log('Error ['+err+'] Loading Help: '+HelpDIV)
+      })
+  end;
 end;
 
 procedure TForm1.MiletusFormCreate(Sender: TObject);
@@ -2180,6 +2238,10 @@ begin
     else if (char(Key) = '4') then
     begin
       btnConfigurationClick(Sender);
+    end
+    else if (char(Key) = '6') then
+    begin
+      divHomeLightsCoverClick(Sender);
     end
     else if (Key = VK_LEFT) and (document.activeElement.tagName <> 'input') then
     begin
@@ -2749,6 +2811,10 @@ begin
 
       // Moon Icon
       display := '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/moon'+StringReplace(StringReplace(StringReplace(MoonIcon,'_','-',[]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
+      divHomeMoon.ElementHandle.setAttribute('title',Trim(StringReplace(StringReplace(StringReplace(MoonIcon,'_',' ',[]),'mdi:moon','',[]),'-',' ',[])));
+      asm
+        divHomeMoon.setAttribute('title',window.CapWords(divHomeMoon.getAttribute('title')));
+      end;
       if divHomeMoon.HTML.Text <> display
       then divHomeMoon.HTML.Text := display;
 
@@ -3441,6 +3507,8 @@ begin
 end;
 
 procedure TForm1.tmrStartupTimer(Sender: TObject);
+var
+  HelpFilename: String;
 begin
 
   // This orchestrates a number of events at startup for
@@ -3528,8 +3596,19 @@ begin
     end
   end
 
-  // All done with Startup
+  // Stage 8: Load Help Content
   else if (tmrStartup.Tag = 8) then
+  begin
+    asm
+      const helpcontent = document.querySelectorAll('.Help');
+      helpcontent.forEach(help => {
+        pas.Unit1.Form1.LoadHelp(help.id);
+      });
+    end;
+  end
+
+  // All done with Startup
+  else if (tmrStartup.Tag = 9) then
   begin
     tmrSecondsTimer(nil);  // No delay
     tmrSeconds.Enabled := True;
@@ -3537,7 +3616,7 @@ begin
 
   // Show the Home page if connected,
   // or the Configuration page if not
-  else if (tmrStartup.Tag >= 9) then
+  else if (tmrStartup.Tag >= 10) then
   begin
     tmrStartup.Enabled := False;
 
