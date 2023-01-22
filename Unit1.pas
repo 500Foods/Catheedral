@@ -324,7 +324,7 @@ type
     procedure editConfigURLChange(Sender: TObject);
     procedure editConfigBACKGROUNDChange(Sender: TObject);
     procedure Sparkline_Donut(CTop, CLeft, CWidth, CHeight: Integer; Chart: TWebHTMLDiv; ChartData: String; Fill: String; Rotation: String; InnerRadius: Double; DisplayText: String);
-    procedure MiletusFormCreate(Sender: TObject);
+    [async] procedure MiletusFormCreate(Sender: TObject);
     procedure tmrInactivityTimer(Sender: TObject);
     procedure navRightClick(Sender: TObject);
     procedure btnHomeTempDownClick(Sender: TObject);
@@ -374,6 +374,38 @@ type
     { Private declarations }
   public
     { Public declarations }
+
+    // Application State
+    ChangeMode: Boolean;
+    DebugMode: Boolean;
+    DesktopMode: Boolean;
+
+    ConfigurationLoaded: Boolean;
+    LastRefresh: TDateTime;
+    UpdatePending: Boolean;
+
+    Features: Integer;
+
+    // Configuration - Tabulator
+    tabConfigSensors: JSValue;
+    ConfigTableReady: Boolean;
+
+    // Styles?
+    PanelWidth: Integer;
+    PanelHeight: Integer;
+    MainButtonSize: Integer;
+    MainNavSize: Integer;
+    MainButtonPad: Integer;
+
+    Circle1: String;
+    Circle2: String;
+    Circle3: String;
+    Circle4: String;
+    Circle5: String;
+    CircleB: String;
+
+
+    // Home Assistant Information
     HASystemName :String;
     HATimeZone: String;
     HAID: Integer;
@@ -388,42 +420,23 @@ type
     HATemperatureUnits: String;
     HAPressureUnits: String;
 
-    // Sensors we're reading from Home Assistant
+    // Time Panel
     SunSensor: String;
-    ClimateSensor: String;
     MoonSensor: String;
-    DaylightSensor: String;
-    ClimateMinTempSensor: String;
-    ClimateMaxTempSensor: String;
-    ClimateMinHumiditySensor: String;
-    ClimateMaxHumiditySensor: String;
-    WeatherSensor: String;
-    WeatherMinTempSensor: String;
-    WeatherMaxTempSensor: String;
-    WeatherMinPressureSensor: String;
-    WeatherMaxPressureSensor: String;
-    WeatherMinHumiditySensor: String;
-    WeatherMaxHumiditySensor: String;
-    WeatherUVSensor: String;
-    WeatherAQHISensor: String;
-    Battery1Sensor: String;
-    Battery2Sensor: String;
-    Battery3Sensor: String;
-    Battery4Sensor: String;
-    Person1Sensor: String;
-    Person2Sensor: String;
-
-    LightsOn: Integer;
-    LightsOff: Integer;
-    LightsCount: Integer;
-    Lights: JSValue;
-    LightsMode: Integer;
 
     SunRise: TTime;
     SunSet: TTime;
     SunDawn: TTime;
     SunDusk: TTime;
     MoonIcon: String;
+
+    // Climate Panel
+    DaylightSensor: String;
+    ClimateSensor: String;
+    ClimateMinTempSensor: String;
+    ClimateMaxTempSensor: String;
+    ClimateMinHumiditySensor: String;
+    ClimateMaxHumiditySensor: String;
 
     ClimateMinTemp: Double;
     ClimateMaxTemp: Double;
@@ -442,38 +455,16 @@ type
     ClimateMode: String;
     ClimateLight: String;
 
-    CustomPage1URL: String;
-    CustomPage2URL: String;
-    CustomPage3URL: String;
-    CustomPage4URL: String;
-    CustomPage1Refresh: String;
-    CustomPage2Refresh: String;
-    CustomPage3Refresh: String;
-    CustomPage4Refresh: String;
-
-    tabConfigSensors: JSValue;
-
-    Features: Integer;
-
-    PanelWidth: Integer;
-    PanelHeight: Integer;
-    MainButtonSize: Integer;
-    MainNavSize: Integer;
-    MainButtonPad: Integer;
-
-    Circle1: String;
-    Circle2: String;
-    Circle3: String;
-    Circle4: String;
-    Circle5: String;
-    CircleB: String;
-
-    ConfigTableReady: Boolean;
-    ConfigurationLoaded: Boolean;
-    LastRefresh: TDateTime;
-    UpdatePending: Boolean;
-
-    LightsAll: string;
+    // Weather Panel
+    WeatherSensor: String;
+    WeatherMinTempSensor: String;
+    WeatherMaxTempSensor: String;
+    WeatherMinPressureSensor: String;
+    WeatherMaxPressureSensor: String;
+    WeatherMinHumiditySensor: String;
+    WeatherMaxHumiditySensor: String;
+    WeatherUVSensor: String;
+    WeatherAQHISensor: String;
 
     WeatherIcon: String;
     WeatherCondition: String;
@@ -495,27 +486,59 @@ type
     WeatherUV: String;
     WeatherAQHI: String;
 
+    // Energy Panel
+    Person1Sensor: String;
+    Person2Sensor: String;
+
     Person1Name: String;
     Person1Photo: String;
     Person1Location: String;
+
     Person2Name: String;
     Person2Photo: String;
     Person2Location: String;
+
+    Battery1Sensor: String;
+    Battery2Sensor: String;
+    Battery3Sensor: String;
+    Battery4Sensor: String;
 
     Battery1Name: String;
     Battery2Name: String;
     Battery3Name: String;
     Battery4Name: String;
+
     Battery1: String;
     Battery2: String;
     Battery3: String;
     Battery4: String;
+
     Battery1Status: String;
     Battery2Status: String;
     Battery3Status: String;
     Battery4Status: String;
 
     EnergyUse: Integer;
+
+    // Lights Page
+    LightsOn: Integer;
+    LightsOff: Integer;
+    LightsCount: Integer;
+    Lights: JSValue;
+    LightsMode: Integer;
+    LightsAll: string;
+
+
+    // Custom Pages
+    CustomPage1URL: String;
+    CustomPage2URL: String;
+    CustomPage3URL: String;
+    CustomPage4URL: String;
+
+    CustomPage1Refresh: String;
+    CustomPage2Refresh: String;
+    CustomPage3Refresh: String;
+    CustomPage4Refresh: String;
 
   end;
 var
@@ -1867,18 +1890,46 @@ end;
 procedure TForm1.MiletusFormCreate(Sender: TObject);
 var
   datafile: String;
+  i: Integer;
 begin
 
   // Let's just do this versioning stuff by hand
-  AppVersion := '1.0.4';
-  AppRelease := '2023-Jan-18';
+  AppVersion := '1.0.5';
+  AppRelease := '2023-Jan-21';
   AppStarted := Now;
+
+  // Application State
+  DebugMode := False;
+  DesktopMode := False;
+  ChangeMode := False;
+  ConfigTableReady := False;
+  ConfigurationLoaded := False;
+  UpdatePending := False;
+  LastRefresh := Now;
+
+  // Main reason we care is due to menu at top
+  // messing with our fixed dimensions
+  {$IFDEF DEBUG}
+    DebugMode := True;
+  {$ENDIF}
+
+  // Main reason we care is that this determines
+  // wether borderstyle changes on configuration page
+  await(Boolean, TTMSParams.Execute);
+  for i := 0 to ParamCount do
+  begin
+    if Pos('DESKTOP', Uppercase(ParamStr(i))) > 0
+    then DesktopMode := True;
+  end;
+
 
   dataInfoVersion.Caption := AppVersion;
   dataInfoRelease.Caption := AppRelease;
   titleCatheedral.Caption := 'Catheedral v'+AppVersion;
+  Form1.Caption := titleCatheedral.Caption;
   dataConfigVERSION.Caption := AppVersion;
   dataconfigRELEASE.Caption := AppRelease;
+
 
   // INI Filename
   datafile := StringReplace(ParamStr(0),'.exe','',[])+'.ini';
@@ -1886,20 +1937,6 @@ begin
     datafile = datafile.split('\\').pop().split('/').pop();
   end;
   dataInfoCatheedral.Caption := datafile;
-
-  // Application State
-  ConfigTableReady := False;
-  ConfigurationLoaded := False;
-  UpdatePending := False;
-  LastRefresh := Now;
-  LightsMode := 3; // No Groups
-
-  // Home Assistant State - Unknonw at start
-  HASystemName := '';
-  HAID := 0;
-  ShowDisconnected;
-  HALoadConfig := False;
-  HAStatesLoaded := False;
 
   // Let's start with this.  Will adjust later.
   // Try to use these for all adjustments, so when we move to
@@ -1909,6 +1946,18 @@ begin
   MainNavSize := 40;
   MainButtonSize := 40;
   MainButtonPad := 3;
+
+  if DebugMode then
+  begin
+    Form1.Width := PanelWidth;
+    Form1.Height := PanelHeight + 20;
+  end
+  else
+  begin
+    Form1.Width := PanelWidth;
+    Form1.Height := PanelHeight;
+  end;
+
 
   // Same goes for themes.  Probably lots that can be done,
   // but for now let's start here.
@@ -1953,16 +2002,6 @@ begin
   btnConfiguration.Width := MainButtonSize;
   btnConfiguration.Height := MainButtonSize;
 
-  // Make sure Help is sized appropriately
-//  divHelpHome.Top := 0;
-//  divHelpHome.Left := Trunc(MainNavSize * 1.5);
-//  divHelpHome.Width := Trunc(PanelWidth - (MainNavSize * 3));
-//  divHelpHome.Height := PanelHeight;
-//  CopyPosition(divHelpHome, divHelpConfig);
-//  CopyPosition(divHelpHome, divHelpConfigInfo);
-//  CopyPosition(divHelpHome, divHelpConfigSensors);
-//  CopyPosition(divHelpHome, divHelpCustom);
-
   // Configure Tabulator list of Sensors
   ConfigureTabSensors;
 
@@ -1995,15 +2034,24 @@ begin
 
   // Initialize various States
 
+  // Home Assistant State - Unknonw at start
+  HASystemName := '';
+  HAID := 0;
+  ShowDisconnected;
+  HALoadConfig := False;
+  HAStatesLoaded := False;
+
   //  Sensors
   SunSensor := '';
-  ClimateSensor := '';
   MoonSensor := '';
+
   DaylightSensor := '';
+  ClimateSensor := '';
   ClimateMinTempSensor := '';
   ClimateMaxTempSensor := '';
   ClimateMinHumiditySensor := '';
   ClimateMaxHumiditySensor := '';
+
   WeatherSensor := '';
   WeatherMinTempSensor := '';
   WeatherMaxTempSensor := '';
@@ -2013,12 +2061,14 @@ begin
   WeatherMaxHumiditySensor := '';
   WeatherUVSensor := '';
   WeatherAQHISensor := '';
+
+  Person1Sensor := '';
+  Person2Sensor := '';
+
   Battery1Sensor := '';
   Battery2Sensor := '';
   Battery3Sensor := '';
   Battery4Sensor := '';
-  Person1Sensor := '';
-  Person2Sensor := '';
 
   // Config Page Defaults
   editConfigURL.Text := 'http://homeassistant.local:8123';
@@ -2092,6 +2142,9 @@ begin
   Person2Location := '';
   EnergyUse := 1234;
 
+  // Lights Page
+  LightsMode := 3; // No Groups
+
 
   // Got JavaScript functions we want to use?  Not sure where to put them.
   SetupJavaScriptFunctions;
@@ -2101,7 +2154,6 @@ begin
   tmrStartup.Enabled := True;
   tmrStartupTimer(Sender);
 
-  LightButtonClicked('');
 end;
 
 procedure TForm1.MiletusFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -2109,7 +2161,11 @@ begin
 
   if (document.activeElement.tagName <> 'INPUT') then
   begin
-    if (char(Key) = '1') then
+    if (Key = VK_ESCAPE) and (pages.TabIndex <> 1) then
+    begin
+      btnHomeClick(Sender);
+    end
+    else if (char(Key) = '1') then
     begin
       btnHelpClick(Sender);
     end
@@ -3454,8 +3510,26 @@ begin
     navRight.Left := PanelWidth - MainNavSize;
   end
 
-  // All done with Startup
+  // Stage 6: Add Event Listeners
   else if (tmrStartup.Tag = 7) then
+  begin
+    asm
+      pages.addEventListener('mousemove', function() {
+//        console.log('mousemoving');
+        pas.Unit1.Form1.ResetInactivityTimer(null);
+      });
+      const scrolls = document.querySelectorAll('.Scroll');
+      scrolls.forEach(scroll => {
+        scroll.addEventListener('scroll', function() {
+//          console.log('scrolling');
+          pas.Unit1.Form1.ResetInactivityTimer(null);
+        })
+      })
+    end
+  end
+
+  // All done with Startup
+  else if (tmrStartup.Tag = 8) then
   begin
     tmrSecondsTimer(nil);  // No delay
     tmrSeconds.Enabled := True;
@@ -3463,7 +3537,7 @@ begin
 
   // Show the Home page if connected,
   // or the Configuration page if not
-  else if (tmrStartup.Tag >= 8) then
+  else if (tmrStartup.Tag >= 9) then
   begin
     tmrStartup.Enabled := False;
 
@@ -3490,6 +3564,7 @@ begin
   EndPage := tmrSwitchPage.Tag;
 
 
+
   // Alright, back to what we were doing.
 
 
@@ -3497,6 +3572,12 @@ begin
   pages.TabIndex := EndPage;
   tmrSeconds.Tag := EndPage;
   tmrSecondsTimer(nil);
+
+
+  // Cancel Change Mode
+  if ChangeMode
+  then btnChangeClick(Sender);
+
 
   if (StartPage <> EndPage)
   then pages.ActivePage.ElementHandle.style.setProperty('opacity','1');
@@ -3583,6 +3664,32 @@ begin
   if (pages.TabIndex = 10) and (CustomPage4Refresh <> CustomRefresh) then btnChangeClick(nil);
 
 
+  if (StartPage = 0) and (EndPage <> 0) then
+  begin
+    if DesktopMode then
+    begin
+      Form1.BorderStyle := bsNoneBorder;
+      if DebugMode then
+      begin
+        Form1.Width := PanelWidth;
+        Form1.Height := PanelHeight + 20;
+      end
+      else
+      begin
+        Form1.Width := PanelWidth;
+        Form1.Height := PanelHeight;
+      end;
+    end;
+  end;
+
+  if (EndPage = 0) and (DesktopMode = True) then
+  begin
+    Form1.BorderStyle := bsDialogBorder;
+    Form1.Width := 1286;
+    Form1.Height := 428;
+  end;
+
+
   ResetInactivityTimer(Sender);
 end;
 
@@ -3604,7 +3711,7 @@ begin
       function(o) {
         return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
       }).map( obj => obj.entity_id ).sort();;
-    console.log(lights);
+//    console.log(lights);
   end;
 
   for i := 0 to length(lights) do
@@ -3626,7 +3733,7 @@ begin
       function(o) {
         return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
       }).map( obj => obj.entity_id ).sort();;
-    console.log(lights);
+//    console.log(lights);
   end;
 
   for i := 0 to length(lights) do
@@ -3676,6 +3783,7 @@ procedure TForm1.btnChangeClick(Sender: TObject);
 begin
 
   // If displaying Custom URL then reload <iframe> page
+  // 7 = Custom1, 8 = Custom2, 9 = Custom3, 10 = Custom4
   if pages.TabIndex = 7 then
   begin
     divCustom1.HTML.Text := '';
@@ -3695,13 +3803,35 @@ begin
   begin
     divCustom4.HTML.Text := '';
     divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
-  end;
+  end
 
 
   // Configuration Information
-  if (pages.TabIndex = 0) or (pages.TabIndex = 5) or (pages.TabIndex = 6) then
+  // 0 = Configuration, 5 = Configuration Sensors, 6 = Configuration Information
+  else if (pages.TabIndex = 0) or (pages.TabIndex = 5) or (pages.TabIndex = 6) then
   begin
     window.location.reload(true);
+  end
+
+
+  // Lights Change Mode
+  else if (pages.Tabindex = 16) and (ChangeMode = False) then
+  begin
+    ChangeMode := True;
+    asm
+      btnChange.firstElementChild.classList.add('text-warning','fa-beat');
+      btnChange.style.setProperty('opacity','1');
+    end;
+  end
+
+  // Cancel Change Mode regardless of what was being changed
+  else if ChangeMode then
+  begin
+      ChangeMode := False;
+      asm
+        btnChange.firstElementChild.classList.remove('text-warning','fa-beat');
+        btnChange.style.setProperty('opacity','0.25');
+      end;
   end;
 
   ResetInactivityTimer(Sender);

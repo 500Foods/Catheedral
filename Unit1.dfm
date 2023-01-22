@@ -4,9 +4,7 @@ object Form1: TForm1
   Color = clNone
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
-  FormStyle = fsStayOnTop
   Shadow = False
-  ShowClose = False
   OnCreate = MiletusFormCreate
   OnKeyDown = MiletusFormKeyDown
   OnMouseMove = MiletusFormMouseMove
@@ -14,14 +12,13 @@ object Form1: TForm1
   ClientWidth = 1280
   BorderStyle = bsNoneBorder
   Position = poScreenCenter
-  BorderIcons = []
+  ScreenSnap = True
   object divBackground: TWebHTMLDiv
     Left = 0
     Top = 0
     Width = 1280
     Height = 400
     ElementID = 'divBackground'
-    Align = alClient
     ChildOrder = 16
     ElementFont = efCSS
     Role = ''
@@ -34,9 +31,8 @@ object Form1: TForm1
     HelpType = htKeyword
     ElementClassName = 'Page'
     ElementID = 'pages'
-    Align = alClient
     ElementFont = efCSS
-    TabIndex = 16
+    TabIndex = 10
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -2831,7 +2827,7 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
-        ElementClassName = 'Help'
+        ElementClassName = 'Help Scroll'
         ElementID = 'divHelpConfig'
         ElementFont = efCSS
         HTML.Strings = (
@@ -3006,6 +3002,7 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
+        ElementClassName = 'Scroll'
         ElementID = 'divConfigSensors'
         ElementFont = efCSS
         Role = ''
@@ -4580,7 +4577,7 @@ object Form1: TForm1
         Top = 0
         Width = 1280
         Height = 400
-        ElementClassName = 'overflow-hidden'
+        ElementClassName = 'overflow-hidden Scroll'
         ElementID = 'divCustom1'
         ElementFont = efCSS
         Role = ''
@@ -4602,7 +4599,7 @@ object Form1: TForm1
         Top = 0
         Width = 1280
         Height = 400
-        ElementClassName = 'overflow-hidden '
+        ElementClassName = 'overflow-hidden Scroll'
         ElementID = 'divCustom2'
         ElementFont = efCSS
         Role = ''
@@ -4624,7 +4621,7 @@ object Form1: TForm1
         Top = 0
         Width = 1280
         Height = 400
-        ElementClassName = 'overflow-hidden'
+        ElementClassName = 'overflow-hidden Scroll'
         ElementID = 'divCustom3'
         ElementFont = efCSS
         Role = ''
@@ -4646,7 +4643,7 @@ object Form1: TForm1
         Top = 0
         Width = 1280
         Height = 400
-        ElementClassName = 'overflow-hidden'
+        ElementClassName = 'overflow-hidden Scroll'
         ElementID = 'divCustom4'
         ElementFont = efCSS
         Role = ''
@@ -4710,7 +4707,7 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
-        ElementClassName = 'Help'
+        ElementClassName = 'Help Scroll'
         ElementID = 'divHelpConfigInfo'
         ElementFont = efCSS
         HTML.Strings = (
@@ -4763,7 +4760,7 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
-        ElementClassName = 'Help'
+        ElementClassName = 'Help Scroll'
         ElementID = 'divHelpConfigSensors'
         ElementFont = efCSS
         HTML.Strings = (
@@ -4819,7 +4816,7 @@ object Form1: TForm1
         Top = 20
         Width = 1180
         Height = 360
-        ElementClassName = 'Help'
+        ElementClassName = 'Help Scroll'
         ElementID = 'divHelpCustom'
         ElementFont = efCSS
         HTML.Strings = (
@@ -4861,7 +4858,7 @@ object Form1: TForm1
         Top = 0
         Width = 1180
         Height = 400
-        ElementClassName = 'Help'
+        ElementClassName = 'Help Scroll'
         ElementID = 'divHelpHome'
         ElementFont = efCSS
         HTML.Strings = (
@@ -4941,18 +4938,22 @@ object Form1: TForm1
           'Buttons</span>.<br />'
           '<br /> '
           
-            'The <span class="HelpHighlight"><i class="fa-solid fa-hand pe-1"' +
-            '></i>Help</span> button in the top left corner will present you ' +
-            'with information related to the page '
+            'The <span class="HelpHighlight"><i class="fa-solid fa-circle-que' +
+            'stion pe-1"></i>Help</span> button in the top left corner will p' +
+            'resent you with information related to '
+          'the '
+          'page '
           'you'#39're currently '
           
             'viewing.  You can also view other <span class="HelpHighlight"><i' +
-            ' class="fa-solid fa-hand pe-1"></i>Help</span>  pages by using t' +
-            'he <span '
+            ' class="fa-solid fa-circle-question pe-1"></i>Help</span>  pages' +
+            ' by using the <span '
           
             'class="HelpHighlight">Navigation Controls</span> while viewing a' +
-            'ny <span class="HelpHighlight"><i class="fa-solid fa-hand pe-1">' +
-            '</i>Help</span> page.<br />'
+            'ny <span class="HelpHighlight"><i class="fa-solid fa-circle-ques' +
+            'tion pe-1"></i>Help</span> '
+          'page.<br '
+          '/>'
           '<br />'
           
             'The <span class="HelpHighlight"><i class="fa-solid fa-shuffle pe' +
@@ -5105,7 +5106,7 @@ object Form1: TForm1
         Top = 2
         Width = 1050
         Height = 396
-        ElementClassName = 'd-flex flex-wrap flex-row'
+        ElementClassName = 'Scroll d-flex flex-wrap flex-row'
         ElementID = 'divAllLights'
         ChildOrder = 5
         ElementFont = efCSS
@@ -5206,8 +5207,8 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<i class="fa-solid fa-hand fa-2x icon-default"></i><i class="fa-' +
-      'solid fa-caret-left fa-3x fa-fw icon-alternate"></i>'
+      '<i class="fa-solid fa-circle-question fa-2x icon-default"></i><i' +
+      ' class="fa-solid fa-caret-left fa-3x fa-fw icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHelp'
@@ -5223,7 +5224,7 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<i class="fa-solid fa-home fa-xl icon-default"></i><i class="fa-' +
+      '<i class="fa-solid fa-home fa-2x icon-default"></i><i class="fa-' +
       'solid fa-triangle-exclamation fa-2x text-warning icon-third"></i' +
       '><i class="fa-solid fa-bolt fa-2x icon-alternate"></i>'
     ChildOrder = 22
@@ -5241,8 +5242,8 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<i class="fa-solid fa-shuffle fa-2x icon-default"></i><i class="' +
-      'fa-solid fa-rotate-right fa-2x icon-alternate"></i>'
+      '<i class="fa-solid fa-screwdriver-wrench fa-2x icon-default"></i' +
+      '><i class="fa-solid fa-rotate-right fa-2x icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnChange'
@@ -5319,7 +5320,7 @@ object Form1: TForm1
     Enabled = False
     Interval = 400
     OnTimer = tmrLightsTimer
-    Left = 418
-    Top = 80
+    Left = 456
+    Top = 64
   end
 end
