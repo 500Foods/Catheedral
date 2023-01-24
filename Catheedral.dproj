@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Catheedral.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug-Win32</Config>
+        <Config Condition="'$(Config)'==''">Build-Win32</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>

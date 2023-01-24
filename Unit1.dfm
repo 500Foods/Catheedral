@@ -24,6 +24,7 @@ object Form1: TForm1
     Role = ''
   end
   object pages: TWebPageControl
+    Tag = 16
     Left = 0
     Top = 0
     Width = 1280
@@ -32,7 +33,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 0
+    TabIndex = 1
     ShowTabs = False
     TabOrder = 0
     Visible = False

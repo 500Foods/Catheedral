@@ -1839,27 +1839,27 @@ begin
   ConfigureTabSensors;
 
   // Adjust sizes of Config Listboxes
-  listBackgrounds.Top := 204;
+  listBackgrounds.Top := 205;
   listBackgrounds.Left := 190;
   listBackgrounds.Width := 520;
   listBackgrounds.Height := 178;
 
-  listDatesLong.Top := 244;
+  listDatesLong.Top := 245;
   listDatesLong.Left := 190;
   listDatesLong.Width := 260;
   listDatesLong.Height := 138;
 
-  listDatesShort.Top := 284;
+  listDatesShort.Top := 285;
   listDatesShort.Left := 190;
   listDatesShort.Width := 260;
   listDatesShort.Height := 98;
 
-  listTimesLong.Top := 244;
+  listTimesLong.Top := 245;
   listTimesLong.Left := 560;
   listTimesLong.Width := 150;
   listTimesLong.Height := 138;
 
-  listTimesShort.Top := 284;
+  listTimesShort.Top := 285;
   listTimesShort.Left := 560;
   listTimesShort.Width := 150;
   listTimesShort.Height := 98;
@@ -2836,7 +2836,7 @@ begin
       end;
 
       // Main Pressure Display
-      display := Trim(FloatToStrF(WeatherPressure/10,ffGeneral,5,1)+' kPa');
+      display := Trim(FloatToStrF(WeatherPressure/10,ffNumber,5,1)+' kPa');
       if labelWeatherPressure.Caption <> display then
       begin
         labelWeatherPressure.Caption := display;
@@ -2909,7 +2909,7 @@ begin
 
 
       // Minimum Weather Pressure
-      display := Trim(FloatToStrF(WeatherMinPressure/10,ffGeneral,5,1)+' kPa');
+      display := Trim(FloatToStrF(WeatherMinPressure/10,ffNumber,5,1)+' kPa');
 //      display := Trim(FloatToStrF(WeatherMinTPressure,ffGeneral,5,0);
       if DataWeatherMinPressure.Caption <> display then
       begin
@@ -2919,7 +2919,7 @@ begin
       end;
 
       // Maximum Weather Pressure
-      display := Trim(FloatToStrF(WeatherMaxPressure/10,ffGeneral,5,0)+' kPa');
+      display := Trim(FloatToStrF(WeatherMaxPressure/10,ffNumber,5,1)+' kPa');
  //     display := Trim(FloatToStrF(WeatherMaxPressure,ffNumber,5,0));
       if DataWeatherMaxPressure.Caption <> display then
       begin
@@ -3447,6 +3447,7 @@ begin
   // Help button is either Hand or Back depending on whether on Help page or not
   if pos('Help',pages.ActivePage.ElementID) > 0 then
   begin
+    pages.ActivePage.Tag := StartPage;
     asm
       btnHelp.firstElementChild.style.setProperty('opacity','0');
       btnHelp.lastElementChild.style.setProperty('opacity','1');
