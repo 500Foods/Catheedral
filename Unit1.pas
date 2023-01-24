@@ -561,6 +561,89 @@ implementation
 procedure TForm1.SetupJavaScriptFunctions;
 begin
   asm
+    // Don't have any sensors yet
+    window.SensorList = [];
+
+
+    // This is what we're plucking out of the Home Assistant data streams
+    window.UpdateSensorList = function() {
+
+      const here = pas.Unit1.Form1;
+      const table = here.tabConfigSensors;
+
+      // Time Panel
+      here.SunSensor = table.getRow(1).getCell('entity_id').getValue();
+      here.MoonSensor = table.getRow(2).getCell('entity_id').getValue();
+
+      // Custom URLs
+      here.CustomPage1URL = table.getRow(3).getCell('entity_id').getValue();
+      here.CustomPage2URL = table.getRow(4).getCell('entity_id').getValue();
+      here.CustomPage3URL = table.getRow(5).getCell('entity_id').getValue();
+      here.CustomPage4URL = table.getRow(6).getCell('entity_id').getValue();
+
+      // Climate Panel
+      here.ClimateSensor = table.getRow(7).getCell('entity_id').getValue();
+      here.DaylightSensor = table.getRow(8).getCell('entity_id').getValue();
+      here.ClimateMinTempSensor = table.getRow(9).getCell('entity_id').getValue();
+      here.ClimateMaxTempSensor = table.getRow(10).getCell('entity_id').getValue();
+      here.ClimateMinHumiditySensor = table.getRow(11).getCell('entity_id').getValue();
+      here.ClimateMaxHumiditySensor = table.getRow(12).getCell('entity_id').getValue();
+
+      // Weather Panel
+      here.WeatherSensor = table.getRow(13).getCell('entity_id').getValue();
+      here.WeatherMinTempSensor = table.getRow(14).getCell('entity_id').getValue();
+      here.WeatherMaxTempSensor = table.getRow(15).getCell('entity_id').getValue();
+      here.WeatherMinPressureSensor = table.getRow(16).getCell('entity_id').getValue();
+      here.WeatherMaxPressureSensor = table.getRow(17).getCell('entity_id').getValue();
+      here.WeatherMinHumiditySensor = table.getRow(18).getCell('entity_id').getValue();
+      here.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
+      here.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
+      here.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
+
+      // Energy Panel
+      here.Battery1Sensor = table.getRow(22).getCell('entity_id').getValue();
+      here.Battery2Sensor = table.getRow(23).getCell('entity_id').getValue();
+      here.Battery3Sensor = table.getRow(24).getCell('entity_id').getValue();
+      here.Battery4Sensor = table.getRow(25).getCell('entity_id').getValue();
+      here.Person1Sensor = table.getRow(26).getCell('entity_id').getValue();
+      here.Person2Sensor = table.getRow(27).getCell('entity_id').getValue();
+
+      window.SensorList = [
+
+        // Time Panel
+        here.SunSensor,
+        here.MoonSensor,
+
+        // Climate Panel
+        here.DaylightSensor,
+        here.ClimateSensor,
+        here.ClimateMinTempSensor,
+        here.ClimateMaxTempSensor,
+        here.ClimateMinHumiditySensor,
+        here.ClimateMaxHumiditySensor,
+
+        // Weather Panel
+        here.WeatherSensor,
+        here.WeatherMinTempSensor,
+        here.WeatherMaxTempSensor,
+        here.WeatherMinPressureSensor,
+        here.WeatherMaxPressureSensor,
+        here.WeatherMinHumiditySensor,
+        here.WeatherMaxHumiditySensor,
+        here.WeatherUVSensor,
+        here.WeatherAQHISensor,
+
+        // Energy Panel
+        here.Person1Sensor,
+        here.Person2Sensor,
+        here.Battery1Sensor,
+        here.Battery2Sensor,
+        here.Battery3Sensor,
+        here.Battery4Sensor
+      ];
+    }
+
+    // Capitalize the first letter of each word
     window.CapWords = function(str) {
       const arr = str.split(' ');
       for (var i = 0; i < arr.length; i++) {
@@ -1095,42 +1178,8 @@ begin
     AppIniFile.WriteString('Home Assistant', FeatureKey, FeatureValue);
   end;
 
-  // Update current Form variables
   asm
-    var table = this.tabConfigSensors;
-
-    this.SunSensor = table.getRow(1).getCell('entity_id').getValue();
-    this.MoonSensor = table.getRow(2).getCell('entity_id').getValue();
-
-    this.CustomPage1URL = table.getRow(3).getCell('entity_id').getValue();
-    this.CustomPage2URL = table.getRow(4).getCell('entity_id').getValue();
-    this.CustomPage3URL = table.getRow(5).getCell('entity_id').getValue();
-    this.CustomPage4URL = table.getRow(6).getCell('entity_id').getValue();
-
-    this.ClimateSensor = table.getRow(7).getCell('entity_id').getValue();
-    this.DaylightSensor = table.getRow(8).getCell('entity_id').getValue();
-    this.ClimateMinTempSensor = table.getRow(9).getCell('entity_id').getValue();
-    this.ClimateMaxTempSensor = table.getRow(10).getCell('entity_id').getValue();
-    this.ClimateMinHumiditySensor = table.getRow(11).getCell('entity_id').getValue();
-    this.ClimateMaxHumiditySensor = table.getRow(12).getCell('entity_id').getValue();
-
-    this.WeatherSensor = table.getRow(13).getCell('entity_id').getValue();
-    this.WeatherMinTempSensor = table.getRow(14).getCell('entity_id').getValue();
-    this.WeatherMaxTempSensor = table.getRow(15).getCell('entity_id').getValue();
-    this.WeatherMinPressureSensor = table.getRow(16).getCell('entity_id').getValue();
-    this.WeatherMaxPressureSensor = table.getRow(17).getCell('entity_id').getValue();
-    this.WeatherMinHumiditySensor = table.getRow(18).getCell('entity_id').getValue();
-    this.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
-    this.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
-    this.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
-
-    this.Battery1Sensor = table.getRow(22).getCell('entity_id').getValue();
-    this.Battery2Sensor = table.getRow(23).getCell('entity_id').getValue();
-    this.Battery3Sensor = table.getRow(24).getCell('entity_id').getValue();
-    this.Battery4Sensor = table.getRow(25).getCell('entity_id').getValue();
-
-    this.Person1Sensor = table.getRow(26).getCell('entity_id').getValue();
-    this.Person2Sensor = table.getRow(27).getCell('entity_id').getValue();
+    window.UpdateSensorList();
   end;
 
   // Might as well load these up right away
@@ -1241,11 +1290,6 @@ begin
       // Results from get_states
       if (hadata.id == this.HAGetStates) {
 
-        // The idea is that we'll initialize values here while we're at it,
-        // so that there are some reasonable defaults in case no data is found.
-        // But we'll call the same function that we call when handling events
-        // so we don't have quite as much code duplication.
-
         // This is the state of all Home Assistant objects and their contents in detail
         this.HAStates = hadata.result.sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
 
@@ -1258,149 +1302,16 @@ begin
 //        console.log(this.HAEntities);
 
 
-        // TIME PANEL
-
-        // Sun Information
-        if (this.SunSensor !== '') {
-          var sun = hadata.result.find(o => o.entity_id === this.SunSensor);
-          if (sun !== undefined) {
-            this.StateChanged(this.SunSensor, sun);
+        // Run through our list of sensors and see if any match
+        for (var i = 0; i < window.SensorList.length; i++) {
+          if (window.SensorList[i] !== '') {
+            var sensor = this.HAEntities.find(o => o === window.SensorList[i]);
+            if (sensor !== undefined) {
+              this.StateChanged(sensor, hadata.result.find(o => o.entity_id === sensor));
+            }
           }
         }
 
-        // Moon Information
-        if (this.MoonSensor !== '') {
-          var moon = hadata.result.find(o => o.entity_id === this.MoonSensor);
-          if (moon !== undefined) {
-            this.StateChanged(this.MoonSensor, moon);
-          }
-        }
-
-
-        // CLIMATE PANEL
-
-        // Climate Information
-        if (this.ClimateSensor !== '') {
-          var climate = hadata.result.find(o => o.entity_id === this.ClimateSensor);
-          if (climate !== undefined) {
-            this.StateChanged(this.ClimateSensor, climate);
-          }
-        }
-
-        // Climate Minimum Temperature
-        if (this.ClimateMinTempSensor !== '') {
-          var climate = hadata.result.find(o => o.entity_id === this.ClimateMinTempSensor);
-          if (climate !== undefined) {
-            this.StateChanged(this.ClimateMinTempSensor, climate);
-          }
-        }
-
-        // Climate Maximum Temperature
-        if (this.ClimateMaxTempSensor !== '') {
-          var climate = hadata.result.find(o => o.entity_id === this.ClimateMaxTempSensor);
-          if (climate !== undefined) {
-            this.StateChanged(this.ClimateMaxTempSensor, climate);
-          }
-        }
-
-        // Climate Minimum Humidity
-        if (this.ClimateMinHumiditySensor !== '') {
-          var climate = hadata.result.find(o => o.entity_id === this.ClimateMinHumiditySensor);
-          if (climate !== undefined) {
-            this.StateChanged(this.ClimateMinHumiditySensor, climate);
-          }
-        }
-
-        // Climate Maximum Humidity
-        if (this.ClimateMaxHumiditySensor !== '') {
-          var climate = hadata.result.find(o => o.entity_id === this.ClimateMaxHumiditySensor);
-          if (climate !== undefined) {
-            this.StateChanged(this.ClimateMaxHumiditySensor, climate);
-          }
-        }
-
-        // Daylight Information
-        if (this.DaylightSensor !== '') {
-          var daylight = hadata.result.find(o => o.entity_id === this.DaylightSensor);
-          if (daylight !== undefined) {
-            this.StateChanged(this.DaylightSensor, daylight);
-          }
-        }
-
-
-        // WEATHER PANEL
-
-        // Weather Information
-        if (this.WeatherSensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherSensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherSensor, weather);
-          }
-        }
-
-        // Weather UV Index
-        if (this.WeatherUVSensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherUVSensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherUVSensor, weather);
-          }
-        }
-
-        // Weather AQHI
-        if (this.WeatherAQHISensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherAQHISensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherAQHISensor, weather);
-          }
-        }
-
-        // Weather Minimum Temperature
-        if (this.WeatherMinTempSensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherMinTempSensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherMinTempSensor, weather);
-          }
-        }
-
-        // Weather Maximum Temperature
-        if (this.WeatherMaxTempSensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherMaxTempSensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherMaxTempSensor, weather);
-          }
-        }
-
-        // Weather Minimum Pressure
-        if (this.WeatherMinPressureSensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherMinPressureSensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherMinPressureSensor, weather);
-          }
-        }
-
-        // Weather Maximum Pressure
-        if (this.WeatherMaxPressureSensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherMaxPressureSensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherMaxPressureSensor, weather);
-          }
-        }
-
-        // Weather Minimum Humidity
-        if (this.WeatherMinHumiditySensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherMinHumiditySensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherMinHumiditySensor, weather);
-          }
-        }
-
-        // Weather Maximum Humidity
-        if (this.WeatherMaxHumiditySensor !== '') {
-          var weather = hadata.result.find(o => o.entity_id === this.WeatherMaxHumiditySensor);
-          if (weather !== undefined) {
-            this.StateChanged(this.WeatherMaxHumiditySensor, weather);
-          }
-        }
 
         // There are FOUR lights
         this.LightsOn = hadata.result.filter(
@@ -1425,58 +1336,6 @@ begin
         // Let's have a look at it, shall we??
 //        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
 //        console.log(this.Lights);
-
-
-
-        // ENERGY PANEL
-
-        // Battery 1
-        if (this.Battery1Sensor !== '') {
-          var battery = hadata.result.find(o => o.entity_id === this.Battery1Sensor);
-          if (battery !== undefined) {
-            this.StateChanged(this.Battery1Sensor, battery);
-          }
-        }
-        // Battery 2
-        if (this.Battery2Sensor !== '') {
-          var battery = hadata.result.find(o => o.entity_id === this.Battery2Sensor);
-          if (battery !== undefined) {
-            this.StateChanged(this.Battery2Sensor, battery);
-          }
-        }
-        // Battery 3
-        if (this.Battery3Sensor !== '') {
-          var battery = hadata.result.find(o => o.entity_id === this.Battery3Sensor);
-          if (battery !== undefined) {
-            this.StateChanged(this.Battery3Sensor, battery);
-          }
-        }
-        // Battery 4
-        if (this.Battery4Sensor !== '') {
-          var battery = hadata.result.find(o => o.entity_id === this.Battery4Sensor);
-          if (battery !== undefined) {
-            this.StateChanged(this.Battery4Sensor, battery);
-          }
-        }
-
-        // Person 1
-        if (this.Person1Sensor !== '') {
-          var person = hadata.result.find(o => o.entity_id === this.Person1Sensor);
-          if (person !== undefined) {
-            this.StateChanged(this.Person1Sensor, person);
-          }
-        }
-
-        // Person 2
-        if (this.Person2Sensor !== '') {
-          var person = hadata.result.find(o => o.entity_id === this.Person2Sensor);
-          if (person !== undefined) {
-            this.StateChanged(this.Person2Sensor, person);
-          }
-        }
-
-
-
 
 
         // Load Configuration from Home Assistant Data (triggered by button click - not automatic)
@@ -1613,61 +1472,13 @@ begin
           pas.Unit1.Form1.UpdateNow();
         }
 
-        var sensorlist = [
-          this.ClimateSensor,
-          this.SunSensor,
-          this.MoonSensor,
-          this.DaylightSensor,
-
-          this.ClimateSensor,
-          this.ClimateMinTempSensor,
-          this.ClimateMaxTempSensor,
-          this.ClimateMinHumiditySensor,
-          this.ClimateMaxHumiditySensor,
-
-          this.WeatherSensor,
-          this.WeatherMinTempSensor,
-          this.WeatherMaxTempSensor,
-          this.WeatherMinPressureSensor,
-          this.WeatherMaxPressureSensor,
-          this.WeatherMinHumiditySensor,
-          this.WeatherMaxHumiditySensor,
-
-          this.WeatherUVSensor,
-          this.WeatherAQHISensor,
-
-          this.Battery1Sensor,
-          this.Battery2Sensor,
-          this.Battery3Sensor,
-          this.Battery4Sensor,
-
-          this.Person1Sensor,
-          this.Person2Sensor
-        ];
-
-        for (var i = 0; i < sensorlist.length; i++) {
-          if (sensorlist[i] !== '') {
-            if (hadata.event.data.entity_id == sensorlist[i]) {
+        for (var i = 0; i < window.SensorList.length; i++) {
+          if (window.SensorList[i] !== '') {
+            if (hadata.event.data.entity_id == window.SensorList[i]) {
               this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
             }
           }
         }
-
-//        if (hadata.event.data.entity_id == this.ClimateSensor) {
-//        }
-//        else if (hadata.event.data.entity_id == this.SunSensor) {
-//          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
-//        }
-//        else if (hadata.event.data.entity_id == this.MoonSensor) {
-//          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
-//        }
-//        else if (hadata.event.data.entity_id == this.DaylightSensor) {
-//          this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
-//        }
-//        else {
-////          console.log("State changed: "+hadata.event.data.new_state.entity_id);
-////          console.log(hadata.event);
-//        }
       }
       else {
 //        console.log(hadata.event);
@@ -1842,44 +1653,8 @@ begin
     end;
   end;
 
-  // Update current Form variables
   asm
-    var table = this.tabConfigSensors;
-
-    this.SunSensor = table.getRow(1).getCell('entity_id').getValue();
-    this.MoonSensor = table.getRow(2).getCell('entity_id').getValue();
-    this.ClimateSensor = table.getRow(7).getCell('entity_id').getValue();
-    this.DaylightSensor = table.getRow(8).getCell('entity_id').getValue();
-
-    this.CustomPage1URL = table.getRow(3).getCell('entity_id').getValue();
-    this.CustomPage2URL = table.getRow(4).getCell('entity_id').getValue();
-    this.CustomPage3URL = table.getRow(5).getCell('entity_id').getValue();
-    this.CustomPage4URL = table.getRow(6).getCell('entity_id').getValue();
-
-    this.ClimateSensor = table.getRow(7).getCell('entity_id').getValue();
-    this.DaylightSensor = table.getRow(8).getCell('entity_id').getValue();
-    this.ClimateMinTempSensor = table.getRow(9).getCell('entity_id').getValue();
-    this.ClimateMaxTempSensor = table.getRow(10).getCell('entity_id').getValue();
-    this.ClimateMinHumiditySensor = table.getRow(11).getCell('entity_id').getValue();
-    this.ClimateMaxHumiditySensor = table.getRow(12).getCell('entity_id').getValue();
-
-    this.WeatherSensor = table.getRow(13).getCell('entity_id').getValue();
-    this.WeatherMinTempSensor = table.getRow(14).getCell('entity_id').getValue();
-    this.WeatherMaxTempSensor = table.getRow(15).getCell('entity_id').getValue();
-    this.WeatherMinPressureSensor = table.getRow(16).getCell('entity_id').getValue();
-    this.WeatherMaxPressureSensor = table.getRow(17).getCell('entity_id').getValue();
-    this.WeatherMinHumiditySensor = table.getRow(18).getCell('entity_id').getValue();
-    this.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
-    this.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
-    this.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
-
-    this.Battery1Sensor = table.getRow(22).getCell('entity_id').getValue();
-    this.Battery2Sensor = table.getRow(23).getCell('entity_id').getValue();
-    this.Battery3Sensor = table.getRow(24).getCell('entity_id').getValue();
-    this.Battery4Sensor = table.getRow(25).getCell('entity_id').getValue();
-
-    this.Person1Sensor = table.getRow(26).getCell('entity_id').getValue();
-    this.Person2Sensor = table.getRow(27).getCell('entity_id').getValue();
+    window.UpdateSensorList();
   end;
 
   // Might as well load these up right away
@@ -2810,13 +2585,17 @@ begin
 
 
       // Moon Icon
-      display := '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/moon'+StringReplace(StringReplace(StringReplace(MoonIcon,'_','-',[]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
-      divHomeMoon.ElementHandle.setAttribute('title',Trim(StringReplace(StringReplace(StringReplace(MoonIcon,'_',' ',[]),'mdi:moon','',[]),'-',' ',[])));
-      asm
-        divHomeMoon.setAttribute('title',window.CapWords(divHomeMoon.getAttribute('title')));
-      end;
+      display := '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/moon'+StringReplace(StringReplace(StringReplace(MoonIcon,'_','-',[rfReplaceAll]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
       if divHomeMoon.HTML.Text <> display
       then divHomeMoon.HTML.Text := display;
+
+      // Moon Title
+      display := Trim(StringReplace(StringReplace(StringReplace(MoonIcon,'_',' ',[rfReplaceAll]),'mdi:moon','',[]),'-',' ',[rfReplaceAll]));
+      asm
+        display = window.CapWords(display);
+      end;
+      if divHomeMoon.ElementHandle.getAttribute('title') <> display
+      then divHomeMoon.ElementHandle.setAttribute('title',display);
 
     end;
 
