@@ -695,6 +695,14 @@
         <None Include="help\en-CA\HelpCustomPages.html"/>
         <None Include="help\en-CA\HelpHome.html"/>
         <None Include="help\en-CA\HelpLights.html"/>
+        <RcItem Include="images\Catheedral-128.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>PngImage_2</ResourceId>
+        </RcItem>
+        <RcItem Include="images\Catheedral-1024.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>PngImage_3</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -1068,6 +1076,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moonrise.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\time-evening.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -1093,6 +1107,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\uv-index-11.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-new.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -1218,6 +1238,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\humidity.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\extreme-fog.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -1249,6 +1275,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thermometer-snow.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waning-gibbous.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -1542,6 +1574,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-last-quarter.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\time-night.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -1585,6 +1623,18 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\extreme-hail.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="images\walking.gif" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpConfigSensors.html" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -1908,6 +1958,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waxing-gibbous.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\code-yellow.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -1939,6 +1995,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thunderstorms-day-extreme.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-full.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -2017,6 +2079,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\flag-small-craft-advisory.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpConfigInfo.html" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -2118,6 +2186,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpLights.html" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\flag-storm-warning.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -2209,6 +2283,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\overcast-night-hail.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="images\Catheedral-128.png" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -2473,6 +2553,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Project1.html" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpHome.html" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -3162,7 +3248,19 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waning-crescent.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\compass.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpCustomPages.html" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -3205,6 +3303,18 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thunderstorms-extreme.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moonset.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\sunrise.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -3253,6 +3363,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thunderstorms-extreme-rain.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpConfig.html" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -3438,6 +3554,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-waxing-crescent.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="images\background_orion_nebula.jpg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -3475,6 +3597,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\dust-night.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="images\Catheedral-1024.png" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -3660,6 +3788,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\sunset.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\extreme-night-smoke.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -3733,6 +3867,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\umbrella.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg-static\moon-first-quarter.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

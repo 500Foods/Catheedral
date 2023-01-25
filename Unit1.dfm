@@ -33,7 +33,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 1
+    TabIndex = 18
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -4527,9 +4527,9 @@ object Form1: TForm1
       end
       object divInit: TWebLabel
         Left = 340
-        Top = 200
+        Top = 360
         Width = 600
-        Height = 100
+        Height = 20
         Alignment = taCenter
         AutoSize = False
         Caption = 'Initializing - Please Wait'
@@ -4540,6 +4540,17 @@ object Form1: TForm1
         HeightPercent = 100.000000000000000000
         Layout = tlCenter
         WidthPercent = 100.000000000000000000
+      end
+      object divSplashImage: TWebHTMLDiv
+        Left = 168
+        Top = 144
+        Width = 100
+        Height = 41
+        ElementClassName = 'SplashImage'
+        ElementID = 'divSplashImage'
+        ChildOrder = 2
+        ElementFont = efCSS
+        Role = ''
       end
     end
     object pageHelpConfigInfo: TWebTabSheet
@@ -4779,9 +4790,9 @@ object Form1: TForm1
       ElementFont = efCSS
       object labelShutdown: TWebLabel
         Left = 340
-        Top = 200
+        Top = 360
         Width = 600
-        Height = 100
+        Height = 20
         Alignment = taCenter
         AutoSize = False
         Caption = 'Shutting Down - Please Wait'
@@ -4792,6 +4803,17 @@ object Form1: TForm1
         HeightPercent = 100.000000000000000000
         Layout = tlCenter
         WidthPercent = 100.000000000000000000
+      end
+      object divExitImage: TWebHTMLDiv
+        Left = 176
+        Top = 152
+        Width = 100
+        Height = 41
+        ElementClassName = 'SplashImage'
+        ElementID = 'divExitImage'
+        ChildOrder = 2
+        ElementFont = efCSS
+        Role = ''
       end
     end
   end
@@ -4867,9 +4889,10 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<i class="fa-solid fa-home fa-2x icon-default"></i><i class="fa-' +
-      'solid fa-triangle-exclamation fa-2x text-warning icon-third"></i' +
-      '><i class="fa-solid fa-bolt fa-2x icon-alternate"></i>'
+      '<img src="images/Catheedral-128.png" width=32 height=32 class="i' +
+      'con-default"><i class="fa-solid fa-triangle-exclamation fa-2x te' +
+      'xt-warning icon-third"></i><i class="fa-solid fa-bolt fa-2x icon' +
+      '-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHome'

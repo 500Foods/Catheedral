@@ -311,6 +311,8 @@ type
     labelShutdown: TWebLabel;
     tmrLights: TWebTimer;
     HelpLights: TWebHTMLDiv;
+    divSplashImage: TWebHTMLDiv;
+    divExitImage: TWebHTMLDiv;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
