@@ -169,13 +169,12 @@ input[type=text]:focus-visible.ConfigEdit  {
 
 /* Splash Image */
 .SplashImage {
-  background: url("images/Catheedral-1024.png");
-  background-size: cover;
+  background: url("images/Catheedral-1280X400-Trio-White.png");
   top: 0px !important;
-  left: 440px !important;
-  width: 400px !important;
+  left: 0px !important;
+  width: 1280px !important;
   height: 400px !important;
-  opacity: 0.1;
+  opacity: 0.25;
 }
 
 /* Configuration Page Styles */

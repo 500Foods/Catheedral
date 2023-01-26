@@ -1001,11 +1001,10 @@ end;
 
 procedure TForm1.btnHALoadConfigurationClick(Sender: TObject);
 begin
-
   // Change icon to indicate an update is happening.
   // Though in this case it might be too quick to be visible
   btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
-                                      '<div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<iconify-icon icon="mdi:home-assistant" style="color:#3399CC;" width="48" height="48"></iconify-icon>'+
                                       '<i class="fa-solid fa-rotate fa-spin fa-fw" style="color:black; font-size:24px;"></i>'+
                                       '<div class="ps-2 lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
                                     '</div>';
@@ -1032,7 +1031,7 @@ begin
   // Though in this case it might be too quick to be visible
   btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
                                       '<i class="fa-solid fa-rotate fa-fw fa-spin" style="color:black; font-size:24px;"></i>'+
-                                      '<div class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<iconify-icon icon="mdi:home-assistant" style="padding-right: 4px; color:#3399CC;" width="48" height="48"></iconify-icon>'+
                                       '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
                                     '</div>';
 
@@ -1069,7 +1068,7 @@ begin
   // Revert to normal icon
   btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
                                       '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
-                                      '<div class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<iconify-icon icon="mdi:home-assistant" style="padding-right: 4px; color:#3399CC;" width="48" height="48"></iconify-icon>'+
                                       '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
                                     '</div>';
 
@@ -1372,7 +1371,11 @@ begin
           this.HALoadConfig = false;
 
           // Put back the normal icon
-          this.btnHALoadConfiguration.SetCaption('<div class="d-flex align-items-center justify-content-stretch flex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i><div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div></div>');
+          this.btnHALoadConfiguration.SetCaption('<div class="d-flex align-items-center justify-content-stretch flex-row">'+
+                                                   '<iconify-icon icon="mdi:home-assistant" style="padding-right: 4px; color:#3399CC;" width="48" height="48"></iconify-icon>'+
+                                                   '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
+                                                   '<div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
+                                                 '</div>');
         }
 
         this.HAStatesLoaded = true;
@@ -2258,7 +2261,10 @@ end;
 procedure TForm1.tmrExitTimer(Sender: TObject);
 begin
   HAWebSocket.Disconnect;
-  Form1.Close;
+
+  if labelShutdown.tag = 0
+  then Form1.Close
+  else window.location.reload(true);
 end;
 
 procedure TForm1.tmrInactivityTimer(Sender: TObject);
@@ -3185,7 +3191,6 @@ begin
 
         // Save this state
         this.LightsAll = lights;
-        divAllLights.innerHTML = '';
 
         // Stay on this page if someone is fiddling with the lights ;)
         pas.Unit1.Form1.ResetInactivityTimer(null);
@@ -3211,6 +3216,8 @@ begin
               return ((o.entity_id.indexOf("light.") == 0) && ((o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1)) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
             }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
         }
+
+        divAllLights.replaceChildren();
 
         for (var i = 0; i < all.length; i++) {
 
@@ -3246,22 +3253,23 @@ begin
             lightbtn.classList.add('LightOther');
           }
 
+          // Add button to the page
+          divAllLights.appendChild(lightbtn);
+          lightbtn.appendChild(lighttxt);
 
-          // Add the Home Assistant icon as a background element of the button
+          // Find the Home Assistant Icon to use
           var icon = "mdi-lightbulb";
           if (all[i].attributes["icon"] !== undefined) {
             icon = all[i].attributes["icon"].replace(":","-");
           }
+
+          // Add Icon to the button
           var lighticon = document.createElement("div");
+          lightbtn.appendChild(lighticon);
           lighticon.classList.add("LightIcon","mdi",icon);
 
-          // Add button to the page
-          divAllLights.appendChild(lightbtn);
-          lightbtn.appendChild(lighticon);
-          lightbtn.appendChild(lighttxt);
-
           // Call Delphi function when someone clicks on a button
-           lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id); e.stopPropagation;});
+          lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id); e.stopPropagation;});
         }
       }
     end;
@@ -3464,7 +3472,7 @@ begin
   end;
 
   // Update Change Button
-  if ((pages.TabIndex >= 5) and (pages.TabIndex <= 10)) or (pages.TabIndex = 0) then
+  if (EndPage in [0,5,6,7,8,9,10,18]) then
   begin
     asm
       btnChange.firstElementChild.style.setProperty('opacity','0');
@@ -3485,7 +3493,7 @@ begin
   else ShowDisconnected;
 
   // Configuration button on Configuration Page is Power On/Off otherwise it is a Gear
-  if EndPage = 0 then
+  if (EndPage = 0) or (EndPage = 18) then
   begin
     asm
       btnConfiguration.firstElementChild.style.setProperty('opacity','0');
@@ -3671,7 +3679,9 @@ begin
   // 0 = Configuration, 5 = Configuration Sensors, 6 = Configuration Information
   else if (pages.TabIndex = 0) or (pages.TabIndex = 5) or (pages.TabIndex = 6) then
   begin
-    window.location.reload(true);
+    labelShutdown.Caption := 'Restarting - Please Wait';
+    labelShutdown.Tag := 1; // Restart
+    SwitchPages(pages.TabIndex, 18);
   end
 
 
@@ -3714,6 +3724,8 @@ begin
   begin
     // Config Button on Config Page is for Power Off.
     // Continues in SwitchPage event
+    labelShutdown.Caption := 'Shutting Down - Please Wait';
+    labelShutdown.Tag := 0; // Shutdown;
     SwitchPages(pages.TabIndex, 18);
   end
   else

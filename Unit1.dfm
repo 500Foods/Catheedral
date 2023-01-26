@@ -33,7 +33,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 18
+    TabIndex = 16
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -101,8 +101,8 @@ object Form1: TForm1
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           HTML = 
-            '<span class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; ' +
-            'font-size:24px;"></span>HA URL'
+            '<div class="iconify pe-2" data-icon="mdi:home-assistant" style="' +
+            'color:#3399CC;" data-width="32" data-height="32"></div>HA URL'
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
@@ -154,8 +154,9 @@ object Form1: TForm1
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           HTML = 
-            '<span class="pe-2 mdi mdi-home-assistant" style="color:#3399CC; ' +
-            'font-size:24px;"></span>HA Token'
+            '<div class="iconify pe-2" data-icon="mdi:home-assistant" style="' +
+            'color:#3399CC;" data-width="32" data-height="32"></div></span>HA' +
+            ' Token'
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
@@ -977,10 +978,10 @@ object Form1: TForm1
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
           'ex-row"><i class="fa-solid fa-right-left fa-fw" style="color:bla' +
-          'ck; font-size:24px;"></i><div class="pe-2 mdi mdi-home-assistant' +
-          '" style="color:#3399CC; font-size:32px;"></div><div class="lh-1"' +
-          ' style="color:black;text-align:left;">Update Links to<br />Home ' +
-          'Assistant</div></div>'
+          'ck; font-size:24px;"></i><div class="iconify pe-2" data-icon="md' +
+          'i:home-assistant" style="color:#3399CC;" data-width="48" data-he' +
+          'ight="48"></div><div class="lh-1" style="color:black;text-align:' +
+          'left;">Update Links to<br />Home Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHALinks'
@@ -999,10 +1000,10 @@ object Form1: TForm1
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
           'ex-row"><i class="fa-solid fa-right-long fa-fw" style="color:bla' +
-          'ck; font-size:24px;"></i><div class="pe-2 mdi mdi-home-assistant' +
-          '" style="color:#3399CC; font-size:32px;"></div><div class="lh-1"' +
-          ' style="color:black;text-align:left;">Save Configuration<br />to' +
-          ' Home Assistant</div></div>'
+          'ck; font-size:24px;"></i><div class="iconify pe-2" data-icon="md' +
+          'i:home-assistant" style="color:#3399CC;" data-width="48" data-he' +
+          'ight="48"></div><div class="lh-1" style="color:black;text-align:' +
+          'left;">Save Configuration<br />to Home Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHASaveConfiguration'
@@ -1020,11 +1021,11 @@ object Form1: TForm1
         Height = 60
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
-          'ex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC' +
-          '; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw"' +
-          ' style="color:black; font-size:24px;"></i><div class="lh-1 ps-2"' +
-          ' style="color:black;text-align:left;">Load Configuration<br />fr' +
-          'om Home Assistant</div></div>'
+          'ex-row"><div class="iconify" data-icon="mdi:home-assistant" styl' +
+          'e="color:#3399CC;" data-width="48" data-height="48"></div><i cla' +
+          'ss="fa-solid fa-right-long fa-fw" style="color:black; font-size:' +
+          '24px;"></i><div class="lh-1 ps-2" style="color:black;text-align:' +
+          'left;">Load Configuration<br />from Home Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHALoadConfiguration'
@@ -4867,13 +4868,14 @@ object Form1: TForm1
     end
   end
   object btnHelp: TWebButton
-    Left = -6
+    Left = -50
     Top = 28
     Width = 40
     Height = 40
     Caption = 
-      '<i class="fa-solid fa-circle-question fa-2x icon-default"></i><i' +
-      ' class="fa-solid fa-caret-left fa-3x fa-fw icon-alternate"></i>'
+      '<div class="iconify icon-default" data-icon="mdi:help-rhombus" d' +
+      'ata-width="40" data-height="40"></div><i class="fa-solid fa-care' +
+      't-left fa-3x fa-fw icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHelp'
@@ -4884,7 +4886,7 @@ object Form1: TForm1
     OnClick = btnHelpClick
   end
   object btnHome: TWebButton
-    Left = 1235
+    Left = 1330
     Top = 355
     Width = 40
     Height = 40
@@ -4904,7 +4906,7 @@ object Form1: TForm1
   end
   object btnChange: TWebButton
     Left = 1236
-    Top = -11
+    Top = -50
     Width = 40
     Height = 40
     Caption = 
@@ -4921,12 +4923,13 @@ object Form1: TForm1
   end
   object btnConfiguration: TWebButton
     Left = -5
-    Top = 355
+    Top = 450
     Width = 40
     Height = 40
     Caption = 
-      '  <i class="fa-solid fa-gear fa-2x icon-default"></i><i class="f' +
-      'a-solid fa-power-off fa-2x icon-alternate"></i>'
+      '<div class="iconify icon-default" data-icon="fa:gears" data-widt' +
+      'h="40" data-height="40"></div><i class="fa-solid fa-power-off fa' +
+      '-2x icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnConfiguration'
