@@ -2,11 +2,56 @@ html, body {
   font-family: "Cairo" !important;
   overflow: hidden;
 
+  /* Normally we don't want anything to be selectable */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
+
+/* CSS Variables are used throughout to help make it a little easier
+** to make wholesale changes without having to track down every little
+** property definition.  These are also read directly into TMS WEB Core.
+*/
+
+:root {
+
+/* Ring Colors - at most 5 rings (usually 3) and a background color */
+/* Ring Filter - applied to each set of rings */
+
+  --TxRing1: darkred;
+  --TxRing2: darkgreen;
+  --TxRing3: royalblue;
+  --TxRing4: orange;
+  --TxRing5: yellow;
+  --TxRingB: #FFFFFF40;
+  --TxRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
+
+  --CxRing1: yellow;
+  --CxRing2: orange;
+  --CxRing3: royalblue;
+  --CxRing4: white;
+  --CxRing5: white;
+  --CxRingB: #FFFFFF40;
+  --CxRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
+
+  --WxRing1: darkred;
+  --WxRing2: darkgreen;
+  --WxRing3: royalblue;
+  --WxRing4: orange;
+  --WxRing5: yellow;
+  --WxRingB: #FFFFFF40;
+  --WxRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
+
+  --ExRing1: darkred;
+  --ExRing2: darkgreen;
+  --ExRing3: royalblue;
+  --ExRing4: orange;
+  --ExRing5: yellow;
+  --ExRingB: #FFFFFF40;
+  --ExRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
+}
+
 
 /* Make sure error messages appear on top of everything else */
 /* so that they can both be seen and be dismissed */
@@ -111,7 +156,8 @@ input[type=text]:focus-visible.ConfigEdit  {
   color: white !important;
   opacity: 0.5 !important;
 }
-.MainButton > i {
+.MainButton > i,
+.MainButton > div {
   position: absolute;
   display: flex;
   top: 0;
@@ -269,6 +315,14 @@ input[type=text]:focus-visible.ConfigEdit  {
 
 
 /* Used for drawing rings on the Home Page */
+.Ring {
+  z-index: 3;
+  opacity: 0.65;
+}
+.TxRing {
+  filter: var(--TxRingF);
+}
+
 .Circle {
   z-index: 3;
   opacity: 0.65;
@@ -279,9 +333,9 @@ input[type=text]:focus-visible.ConfigEdit  {
   filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 }
 /* Want faster moving markers to appear on top of slower moving circles */
-#circleDayMarker { z-index: 4; }
-#circleMinutesMarker { z-index: 5; }
-#circleSecondsMarker { z-index: 6; }
+#ringDayMarker { z-index: 4; }
+#ringMinutesMarker { z-index: 5; }
+#ringSecondsMarker { z-index: 6; }
 
 #circleClimateHumidityMarker { z-index: 4; }
 #circleSetPointMarker { z-index: 5; }
@@ -455,6 +509,7 @@ div.tabulator-cell.tabulator-editing {
 .LightText {
   display: flex;
   position: absolute;
+  white-space: pre-line;
   top: 0px;
   left: 0px;
   width: 100%;

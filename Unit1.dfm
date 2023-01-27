@@ -33,7 +33,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 16
+    TabIndex = 0
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -101,8 +101,8 @@ object Form1: TForm1
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           HTML = 
-            '<div class="iconify pe-2" data-icon="mdi:home-assistant" style="' +
-            'color:#3399CC;" data-width="32" data-height="32"></div>HA URL'
+            '<span class="mdi mdi-home-assistant pe-1" style="color:#3399CC;"' +
+            '></span>HA URL'
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
@@ -154,9 +154,8 @@ object Form1: TForm1
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           HTML = 
-            '<div class="iconify pe-2" data-icon="mdi:home-assistant" style="' +
-            'color:#3399CC;" data-width="32" data-height="32"></div></span>HA' +
-            ' Token'
+            '<span class="mdi mdi-home-assistant pe-1" style="color:#3399CC;"' +
+            '></span>HA Token'
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
@@ -978,10 +977,10 @@ object Form1: TForm1
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
           'ex-row"><i class="fa-solid fa-right-left fa-fw" style="color:bla' +
-          'ck; font-size:24px;"></i><div class="iconify pe-2" data-icon="md' +
-          'i:home-assistant" style="color:#3399CC;" data-width="48" data-he' +
-          'ight="48"></div><div class="lh-1" style="color:black;text-align:' +
-          'left;">Update Links to<br />Home Assistant</div></div>'
+          'ck; font-size:24px;"></i><div class="mdi mdi-home-assistant pe-2' +
+          '" style="color:#3399CC; font-size:32px;"></div><div class="lh-1"' +
+          ' style="color:black;text-align:left;">Update Links to<br />Home ' +
+          'Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHALinks'
@@ -1000,10 +999,10 @@ object Form1: TForm1
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
           'ex-row"><i class="fa-solid fa-right-long fa-fw" style="color:bla' +
-          'ck; font-size:24px;"></i><div class="iconify pe-2" data-icon="md' +
-          'i:home-assistant" style="color:#3399CC;" data-width="48" data-he' +
-          'ight="48"></div><div class="lh-1" style="color:black;text-align:' +
-          'left;">Save Configuration<br />to Home Assistant</div></div>'
+          'ck; font-size:24px;"></i><div class="mdi mdi-home-assistant pe-2' +
+          '" style="color:#3399CC; font-size:32px;"></div><div class="lh-1"' +
+          ' style="color:black;text-align:left;">Save Configuration<br />to' +
+          ' Home Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHASaveConfiguration'
@@ -1021,11 +1020,11 @@ object Form1: TForm1
         Height = 60
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
-          'ex-row"><div class="iconify" data-icon="mdi:home-assistant" styl' +
-          'e="color:#3399CC;" data-width="48" data-height="48"></div><i cla' +
-          'ss="fa-solid fa-right-long fa-fw" style="color:black; font-size:' +
-          '24px;"></i><div class="lh-1 ps-2" style="color:black;text-align:' +
-          'left;">Load Configuration<br />from Home Assistant</div></div>'
+          'ex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC' +
+          '; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw"' +
+          ' style="color:black; font-size:24px;"></i><div class="lh-1 ps-2"' +
+          ' style="color:black;text-align:left;">Load Configuration<br />fr' +
+          'om Home Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHALoadConfiguration'
@@ -1546,68 +1545,68 @@ object Form1: TForm1
             'eather-icons-dev/production/fill/svg-static/sunrise.svg">'
           WidthPercent = 100.000000000000000000
         end
-        object circleSeconds: TWebHTMLDiv
+        object ringSeconds: TWebHTMLDiv
           Left = 179
           Top = 49
           Width = 70
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleSeconds'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringSeconds'
           ChildOrder = 3
           ElementFont = efCSS
           Role = ''
         end
-        object circleMinutes: TWebHTMLDiv
+        object ringMinutes: TWebHTMLDiv
           Left = 115
           Top = 49
           Width = 58
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleMinutes'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringMinutes'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleHours: TWebHTMLDiv
+        object ringHours: TWebHTMLDiv
           Left = 42
           Top = 49
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleHours'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringHours'
           ChildOrder = 1
           ElementFont = efCSS
           Role = ''
         end
-        object circleDawnDusk: TWebHTMLDiv
+        object ringDawnDusk: TWebHTMLDiv
           Left = 191
           Top = 90
           Width = 84
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleDawnDusk'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringDawnDusk'
           ChildOrder = 5
           ElementFont = efCSS
           Role = ''
         end
-        object circleRiseSet: TWebHTMLDiv
+        object ringRiseSet: TWebHTMLDiv
           Left = 23
           Top = 90
           Width = 86
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleRiseSet'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringRiseSet'
           ChildOrder = 4
           ElementFont = efCSS
           Role = ''
         end
-        object circleMinutesMarker: TWebHTMLDiv
+        object ringMinutesMarker: TWebHTMLDiv
           Left = 95
           Top = 279
           Width = 90
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleMinutesMarker'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringMinutesMarker'
           ChildOrder = 7
           ElementFont = efCSS
           Role = ''
@@ -1625,24 +1624,24 @@ object Form1: TForm1
           ElementFont = efCSS
           Role = ''
         end
-        object circleSecondsMarker: TWebHTMLDiv
+        object ringSecondsMarker: TWebHTMLDiv
           Left = 191
           Top = 279
           Width = 102
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleSecondsMarker'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringSecondsMarker'
           ChildOrder = 8
           ElementFont = efCSS
           Role = ''
         end
-        object circleHoursMarker: TWebHTMLDiv
+        object ringHoursMarker: TWebHTMLDiv
           Left = 5
           Top = 279
           Width = 84
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleDayMarker'
+          ElementClassName = 'Ring TxRing'
+          ElementID = 'ringHoursMarker'
           ChildOrder = 6
           ElementFont = efCSS
           Role = ''
@@ -1967,68 +1966,68 @@ object Form1: TForm1
           Role = ''
           OnClick = divHomeLightsCoverClick
         end
-        object circleClimateTemperature: TWebHTMLDiv
+        object ringClimateTemperature: TWebHTMLDiv
           Left = 3
           Top = 143
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleClimateTemperature'
+          ElementClassName = 'Ring CxRing'
+          ElementID = 'ringClimateTemperature'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleSetPoint: TWebHTMLDiv
+        object ringSetPoint: TWebHTMLDiv
           Left = 230
           Top = 143
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleSetPoint'
+          ElementClassName = 'Ring CxRing'
+          ElementID = 'ringSetPoint'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleClimateHumidity: TWebHTMLDiv
+        object ringClimateHumidity: TWebHTMLDiv
           Left = 61
           Top = 66
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleClimateHumidity'
+          ElementClassName = 'Ring CxRing'
+          ElementID = 'ringClimateHumidity'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleClimateTemperatureMarker: TWebHTMLDiv
+        object ringClimateTemperatureMarker: TWebHTMLDiv
           Left = 3
           Top = 184
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleClimateTemperatureMarker'
+          ElementClassName = 'Ring CxRing'
+          ElementID = 'ringClimateTemperatureMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleSetPointMarker: TWebHTMLDiv
+        object ringSetPointMarker: TWebHTMLDiv
           Left = 227
           Top = 184
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleSetPointMarker'
+          ElementClassName = 'Ring CxRing'
+          ElementID = 'ringSetPointMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleClimateHumidityMarker: TWebHTMLDiv
+        object ringClimateHumidityMarker: TWebHTMLDiv
           Left = 134
           Top = 66
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleClimateHumidityMarker'
+          ElementClassName = 'Ring CxRing'
+          ElementID = 'ringClimateHumidityMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
@@ -4873,9 +4872,9 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<div class="iconify icon-default" data-icon="mdi:help-rhombus" d' +
-      'ata-width="40" data-height="40"></div><i class="fa-solid fa-care' +
-      't-left fa-3x fa-fw icon-alternate"></i>'
+      '<div class="mdi mdi-help-rhombus icon-default" style="font-size:' +
+      '40px;"></div><i class="fa-solid fa-caret-left fa-3x fa-fw icon-a' +
+      'lternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHelp'
@@ -4927,9 +4926,8 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<div class="iconify icon-default" data-icon="fa:gears" data-widt' +
-      'h="40" data-height="40"></div><i class="fa-solid fa-power-off fa' +
-      '-2x icon-alternate"></i>'
+      '<i class="fa-solid fa-gear fa-2x icon-default"></i><i class="fa-' +
+      'solid fa-power-off fa-2x icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnConfiguration'
