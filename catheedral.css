@@ -187,6 +187,15 @@ input[type=text]:focus-visible.ConfigEdit  {
   color: white;
   filter: drop-shadow(0px 0px 4px royalblue) drop-shadow(0px 0px 4px royalblue);
 }
+.Title.Status {
+  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
+}
+.Title.StatusGood {
+  filter: drop-shadow(0px 0px 4px green) drop-shadow(0px 0px 4px green);
+}
+.Title.StatusBad {
+  filter: drop-shadow(0px 0px 4px red) drop-shadow(0px 0px 4px red);
+}
 .Title.Splash {
   opacity: 0;
   transition: opacity 2.5s ease;
@@ -202,15 +211,6 @@ input[type=text]:focus-visible.ConfigEdit  {
   font-size: 20px;
   transition: opacity 3.5s ease 1.5s;
   filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
-}
-.Title.Status {
-  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
-}
-.Title.StatusGood {
-  filter: drop-shadow(0px 0px 4px green) drop-shadow(0px 0px 4px green);
-}
-.Title.StatusBad {
-  filter: drop-shadow(0px 0px 4px red) drop-shadow(0px 0px 4px red);
 }
 
 /* Splash Image */
@@ -256,6 +256,11 @@ input[type=text]:focus-visible.ConfigEdit  {
   color: white;
   overflow-x: hidden !important;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  opacity: 0;
+  transition: height 0.4s ease, opacity 0.4s ease;
+}
+.ConfigList option:checked {
+  border-radius: 6px;
 }
 .ConfigListButton {
   width: 25px !important;
@@ -264,6 +269,9 @@ input[type=text]:focus-visible.ConfigEdit  {
   margin: 3px 0px 0px 8px !importAnt;
   font-size: 22px;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+.ConfigListButton > i {
+  transition: transform 0.4s ease;
 }
 .ConfigButton {
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);

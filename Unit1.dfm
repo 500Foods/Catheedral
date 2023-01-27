@@ -1045,7 +1045,6 @@ object Form1: TForm1
         ElementFont = efCSS
         HeightPercent = 100.000000000000000000
         ItemHeight = 13
-        Visible = False
         WidthPercent = 100.000000000000000000
         OnChange = listBackgroundsChange
         Items.Strings = (
@@ -1110,7 +1109,6 @@ object Form1: TForm1
         ElementFont = efCSS
         HeightPercent = 100.000000000000000000
         ItemHeight = 13
-        Visible = False
         WidthPercent = 100.000000000000000000
         OnChange = listDatesLongChange
         Items.Strings = (
@@ -1135,7 +1133,6 @@ object Form1: TForm1
         ElementFont = efCSS
         HeightPercent = 100.000000000000000000
         ItemHeight = 13
-        Visible = False
         WidthPercent = 100.000000000000000000
         OnChange = listDatesShortChange
         Items.Strings = (
@@ -1160,7 +1157,6 @@ object Form1: TForm1
         ElementFont = efCSS
         HeightPercent = 100.000000000000000000
         ItemHeight = 13
-        Visible = False
         WidthPercent = 100.000000000000000000
         OnChange = listTimesLongChange
         Items.Strings = (
@@ -1185,7 +1181,6 @@ object Form1: TForm1
         ElementFont = efCSS
         HeightPercent = 100.000000000000000000
         ItemHeight = 13
-        Visible = False
         WidthPercent = 100.000000000000000000
         OnChange = listTimesShortChange
         Items.Strings = (

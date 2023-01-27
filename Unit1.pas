@@ -427,7 +427,9 @@ type
     SunSet: TTime;
     SunDawn: TTime;
     SunDusk: TTime;
+    MoonState: String;
     MoonIcon: String;
+    MoonTitle: String;
 
     // Climate Panel
     DaylightSensor: String;
@@ -958,9 +960,19 @@ begin
     if Person2Location = 'Stationary' then Person2Location := 'Somewhere';
   end
 
+  else if (Entity = MoonSensor) then
+  begin
+    asm
+      this.MoonState = State.attributes.icon;
+    end;
+    MoonIcon := '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/moon'+StringReplace(StringReplace(StringReplace(MoonState,'_','-',[rfReplaceAll]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
+    MoonTitle := Trim(StringReplace(StringReplace(StringReplace(MoonState,'_',' ',[rfReplaceAll]),'mdi:moon','',[]),'-',' ',[rfReplaceAll]));
+    asm
+      this.MoonTitle = window.CapWords(this.MoonTitle);
+    end;
+  end
 
   // Entities where we're just looking for a single value
-  else if (Entity = MoonSensor) then asm this.MoonIcon = State.attributes.icon end
   else if (Entity = ClimateMinTempSensor) then asm if (!isNaN(State.state)) { this.ClimateMinTemp = parseFloat(State.state) } end
   else if (Entity = ClimateMaxTempSensor) then asm if (!isNaN(State.state)) { this.ClimateMaxTemp = parseFloat(State.state) } end
   else if (Entity = ClimateMinHumiditySensor) then asm this.ClimateMinHumidity = parseFloat(State.state) end
@@ -1308,7 +1320,7 @@ begin
 
 
         // There are FOUR lights
-        this.LightsOn = hadata.result.filter(
+        this.LightsfOn = hadata.result.filter(
           function(o) {
            return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
           }).length;
@@ -1526,40 +1538,35 @@ end;
 procedure TForm1.listBackgroundsChange(Sender: TObject);
 begin
   editconfigBackground.Text := listBackgrounds.Items[listBackgrounds.ItemIndex];
-  listBackgrounds.Visible := False;
-  btnListBackgrounds.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  btnListBackgroundsClick(Sender);
   editConfigBackgroundChange(Sender);
 end;
 
 procedure TForm1.listDatesLongChange(Sender: TObject);
 begin
   editConfigLONGDATE.Text := listDatesLong.Items[listDatesLong.ItemIndex];
-  listDatesLong.Visible := False;
-  btnListDatesLong.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  btnListDatesLongClick(Sender);
   editConfigChange(Sender);
 end;
 
 procedure TForm1.listDatesShortChange(Sender: TObject);
 begin
   editConfigSHORTDATE.Text := listDatesShort.Items[listDatesShort.ItemIndex];
-  listDatesShort.Visible := False;
-  btnListDatesShort.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  btnListDatesShortClick(Sender);
   editConfigChange(Sender);
 end;
 
 procedure TForm1.listTimesLongChange(Sender: TObject);
 begin
   editConfigLONGTIME.Text := listTimesLong.Items[listTimesLong.ItemIndex];
-  listTimesLong.Visible := False;
-  btnListTimesLong.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  btnListTimesLongClick(Sender);
   editConfigChange(Sender);
 end;
 
 procedure TForm1.listTimesShortChange(Sender: TObject);
 begin
   editConfigShortTIME.Text := listTimesShort.Items[listTimesShort.ItemIndex];
-  listTimesShort.Visible := False;
-  btnListTimesShort.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  btnListTimesShortClick(Sender);
   editConfigChange(Sender);
 end;
 
@@ -1830,27 +1837,32 @@ begin
   listBackgrounds.Top := 205;
   listBackgrounds.Left := 190;
   listBackgrounds.Width := 520;
-  listBackgrounds.Height := 178;
+  listBackgrounds.Height := 0;
+  listBackgrounds.Tag := 178;
 
   listDatesLong.Top := 245;
   listDatesLong.Left := 190;
   listDatesLong.Width := 260;
-  listDatesLong.Height := 138;
+  listDatesLong.Height := 0;
+  listDatesLong.Tag := 138;
 
   listDatesShort.Top := 285;
   listDatesShort.Left := 190;
   listDatesShort.Width := 260;
-  listDatesShort.Height := 98;
+  listDatesShort.Height := 0;
+  listDatesShort.Tag := 98;
 
   listTimesLong.Top := 245;
   listTimesLong.Left := 560;
   listTimesLong.Width := 150;
   listTimesLong.Height := 138;
+  listTimesLong.Tag := 138;
 
   listTimesShort.Top := 285;
   listTimesShort.Left := 560;
   listTimesShort.Width := 150;
-  listTimesShort.Height := 98;
+  listTimesShort.Height := 0;
+  listTimesShort.Tag := 98;
 
 
   // Initialize various States
@@ -1898,14 +1910,16 @@ begin
   editConfigLONGDATE.Text := 'yyyy-mmm-dd (ddd)';
   editConfigLONGTIME.Text := 'hh:nn:ss';
   editConfigSHORTDATE.Text := 'mmm d' ;
-  editConfigSHORTTIME.Text := 'hh:nn:ss';
+  editConfigSHORTTIME.Text := 'hh:nn';
 
   // Home Page - Time Panel
   SunRise := Trunc(Now);
   SunSet := Trunc(Now);
   SunDawn := Trunc(Now);
   SunDusk := Trunc(Now);
-  MoonIcon := '';
+  MoonState := '';
+  MoonIcon :=  '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/not-available.svg">';
+  MoonTitle := 'Not Available';
 
   // Home Page - Climate Panel
   LightsOn := 0;
@@ -1941,6 +1955,7 @@ begin
   WeatherMaxPressureRange := 0;
   WeatherUV := 'N/A';
   WeatherAQHI := 'N/A';
+  WeatherIcon := 'not-available';
 
   // Home Page - Energy Panel
   Battery1Name := '';
@@ -1965,6 +1980,9 @@ begin
 
   // Lights Page
   LightsMode := 3; // No Groups
+  asm
+    this.Lights = [];
+  end;
 
 
   // Got JavaScript functions we want to use?  Not sure where to put them.
@@ -2574,17 +2592,11 @@ begin
 
 
       // Moon Icon
-      display := '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/moon'+StringReplace(StringReplace(StringReplace(MoonIcon,'_','-',[rfReplaceAll]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
-      if divHomeMoon.HTML.Text <> display
-      then divHomeMoon.HTML.Text := display;
-
+      if divHomeMoon.HTML.Text <> MoonIcon
+      then divHomeMoon.HTML.Text := MoonIcon;
       // Moon Title
-      display := Trim(StringReplace(StringReplace(StringReplace(MoonIcon,'_',' ',[rfReplaceAll]),'mdi:moon','',[]),'-',' ',[rfReplaceAll]));
-      asm
-        display = window.CapWords(display);
-      end;
-      if divHomeMoon.ElementHandle.getAttribute('title') <> display
-      then divHomeMoon.ElementHandle.setAttribute('title',display);
+      if divHomeMoon.ElementHandle.getAttribute('title') <> MoonTitle
+      then divHomeMoon.ElementHandle.setAttribute('title', MoonTitle);
 
     end;
 
@@ -3190,59 +3202,62 @@ begin
 
         divAllLights.replaceChildren();
 
-        for (var i = 0; i < all.length; i++) {
+        if (all.length > 0) {
+          for (var i = 0; i < all.length; i++) {
 
-          // Create a new button
-          var lightbtn = document.createElement("div");
-          lightbtn.id = 'light-'+all[i].entity_id;
-          lightbtn.classList.add('LightButton');
+            // Create a new button
+            var lightbtn = document.createElement("div");
+            lightbtn.id = 'light-'+all[i].entity_id;
+            lightbtn.classList.add('LightButton');
 
-          var lighttxt = document.createElement("div");
-          lighttxt.textContent = all[i].attributes["friendly_name"].replace(' ','\n');
-          lighttxt.classList.add('LightText');
+            var lighttxt = document.createElement("div");
+            lighttxt.textContent = all[i].attributes["friendly_name"].replace(' ','\n');
+            lighttxt.classList.add('LightText');
 
-          // Add margin to buttons on first and last rows
-          if (i < 7) {
-            lightbtn.style.setProperty("margin-top","18px");
-          }
-          else if (i >= (Math.trunc(all.length / 7) * 7)) {
-            lightbtn.style.setProperty("margin-bottom","18px")
-          }
-
-          // If button is "on" we might also be able to set its color
-          if (all[i].state == "on") {
-            lightbtn.classList.add('LightOn');
-            if (all[i].attributes["rgb_color"] !== undefined) {
-              lightbtn.style.setProperty("background-color","rgb("+all[i].attributes["rgb_color"][0]+","+all[i].attributes["rgb_color"][1]+","+all[i].attributes["rgb_color"][2]+")");
+            // Add margin to buttons on first and last rows
+            if (i < 7) {
+              lightbtn.style.setProperty("margin-top","18px");
             }
+            else if (i >= (Math.trunc(all.length / 7) * 7)) {
+              lightbtn.style.setProperty("margin-bottom","18px")
+            }
+
+            // If button is "on" we might also be able to set its color
+            if (all[i].state == "on") {
+              lightbtn.classList.add('LightOn');
+              if (all[i].attributes["rgb_color"] !== undefined) {
+                lightbtn.style.setProperty("background-color","rgb("+all[i].attributes["rgb_color"][0]+","+all[i].attributes["rgb_color"][1]+","+all[i].attributes["rgb_color"][2]+")");
+              }
+            }
+            // If button is off or disabled, color not usually available
+            else if (all[i].state == "off") {
+              lightbtn.classList.add('LightOff');
+            }
+            else {
+              lightbtn.classList.add('LightOther');
+            }
+
+            // Find the Home Assistant Icon to use
+            var lighticon = document.createElement("div");
+            var icon = "mdi-lightbulb";
+            if (all[i].attributes["icon"] !== undefined) {
+              icon = all[i].attributes["icon"].replace(":","-");
+            }
+
+            // Add button to the page
+            divAllLights.appendChild(lightbtn);
+
+            // Add Icon to the button
+            lightbtn.appendChild(lighticon);
+            lighticon.classList.add("LightIcon","mdi",icon);
+
+            // Add Text to the button
+            lightbtn.appendChild(lighttxt);
+
+            // Call Delphi function when someone clicks on a button
+            lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id); e.stopPropagation;});
+
           }
-          // If button is off or disabled, color not usually available
-          else if (all[i].state == "off") {
-            lightbtn.classList.add('LightOff');
-          }
-          else {
-            lightbtn.classList.add('LightOther');
-          }
-
-          // Find the Home Assistant Icon to use
-          var lighticon = document.createElement("div");
-          var icon = "mdi-lightbulb";
-          if (all[i].attributes["icon"] !== undefined) {
-            icon = all[i].attributes["icon"].replace(":","-");
-          }
-
-          // Add button to the page
-          divAllLights.appendChild(lightbtn);
-
-          // Add Icon to the button
-          lightbtn.appendChild(lighticon);
-          lighticon.classList.add("LightIcon","mdi",icon);
-
-          // Add Text to the button
-          lightbtn.appendChild(lighttxt);
-
-          // Call Delphi function when someone clicks on a button
-          lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id); e.stopPropagation;});
         }
       }
     end;
@@ -3508,6 +3523,12 @@ begin
 
   if (StartPage = 0) and (EndPage <> 0) then
   begin
+    btnListBackgroundsClick(Sender);
+    btnListDatesLongClick(Sender);
+    btnListDatesShortClick(Sender);
+    btnListTimesLongClick(Sender);
+    btnListTimesShortClick(Sender);
+
     if DesktopMode then
     begin
       Form1.BorderStyle := bsNoneBorder;
@@ -3548,18 +3569,21 @@ var
 begin
   // Turn on all the lights that are off.
   // This processes the individual lights, excluding light groups
-  asm
-    lights = this.Lights.filter(
-      function(o) {
-        return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
-      }).map( obj => obj.entity_id ).sort();;
-//    console.log(lights);
-  end;
-
-  for i := 0 to length(lights) do
+  if HAWebSocket.Active then
   begin
-    HAID := HAID + 1;
-    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+lights[i]+'"}}');
+    asm
+      lights = this.Lights.filter(
+        function(o) {
+          return ((o.entity_id.indexOf("light.") == 0) && (o.state == "off") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+        }).map( obj => obj.entity_id ).sort();;
+//      console.log(lights);
+    end;
+
+    for i := 0 to length(lights) do
+    begin
+      HAID := HAID + 1;
+      HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+lights[i]+'"}}');
+    end;
   end;
 end;
 
@@ -3570,19 +3594,22 @@ var
 begin
   // Turn on all the lights that are off.
   // This processes the individual lights, excluding light groups
-  asm
-    lights = this.Lights.filter(
-      function(o) {
-        return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
-      }).map( obj => obj.entity_id ).sort();;
-//    console.log(lights);
-  end;
-
-  for i := 0 to length(lights) do
+  if HAWebSocket.Active then
   begin
-    HAID := HAID + 1;
-    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+lights[i]+'"}}');
-  end;
+    asm
+      lights = this.Lights.filter(
+        function(o) {
+          return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
+        }).map( obj => obj.entity_id ).sort();;
+//      console.log(lights);
+    end;
+
+    for i := 0 to length(lights) do
+    begin
+      HAID := HAID + 1;
+      HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+lights[i]+'"}}');
+    end;
+ end;
 end;
 
 procedure TForm1.btnLightsGroupsClick(Sender: TObject);
@@ -3711,12 +3738,25 @@ end;
 procedure TForm1.btnListBackgroundsClick(Sender: TObject);
 begin
   if (Sender is TWebButton) and (Sender = btnListBackgrounds)
-  then listBackgrounds.Visible := not(listBackgrounds.Visible)
-  else listBackgrounds.Visible := False;
+  then btnlistBackgrounds.Tag := (btnlistBackgrounds.Tag + 1) mod 2
+  else btnListBackgrounds.Tag := 0;
 
-  if listBackgrounds.Visible
-  then btnListBackgrounds.Caption := '<i class="fa-solid fa-caret-up"></i>'
-  else btnListBackgrounds.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  if btnListBackgrounds.Tag = 1 then
+  begin
+    asm
+      btnListBackgrounds.firstElementChild.style.setProperty('transform','rotate(180deg)');
+    end;
+    listBackgrounds.ElementHandle.style.setProperty('height',IntToStr(listBackgrounds.Tag)+'px');
+    listBackgrounds.ElementHandle.style.setProperty('opacity','1');
+  end
+  else
+  begin
+    asm
+      btnListBackgrounds.firstElementChild.style.setProperty('transform','rotate(0deg)');
+    end;
+    listBackgrounds.ElementHandle.style.setProperty('height','0px');
+    listBackgrounds.ElementHandle.style.setProperty('opacity','0');
+  end;
 
   if (Sender is TWebButton) and (Sender = btnlistBackgrounds) then
   begin
@@ -3734,12 +3774,25 @@ end;
 procedure TForm1.btnListDatesLongClick(Sender: TObject);
 begin
   if (Sender is TWebButton) and (Sender = btnListDatesLong)
-  then listDatesLong.Visible := not(listDatesLong.Visible)
-  else listDatesLong.Visible := false;
+  then btnlistDatesLong.Tag := (btnlistDatesLong.Tag + 1) mod 2
+  else btnListDatesLong.Tag := 0;
 
-  if listDatesLong.Visible
-  then btnListDatesLong.Caption := '<i class="fa-solid fa-caret-up"></i>'
-  else btnlistDatesLong.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  if btnListDatesLong.Tag = 1 then
+  begin
+    asm
+      btnListDatesLong.firstElementChild.style.setProperty('transform','rotate(180deg)');
+    end;
+    listDatesLong.ElementHandle.style.setProperty('height',IntToStr(listDatesLong.Tag)+'px');
+    listDatesLong.ElementHandle.style.setProperty('opacity','1');
+  end
+  else
+  begin
+    asm
+      btnListDatesLong.firstElementChild.style.setProperty('transform','rotate(0deg)');
+    end;
+    listDatesLong.ElementHandle.style.setProperty('height','0px');
+    listDatesLong.ElementHandle.style.setProperty('opacity','0');
+  end;
 
   if (Sender is TWebButton) and (Sender = btnlistDatesLong) then
   begin
@@ -3757,12 +3810,25 @@ end;
 procedure TForm1.btnListDatesShortClick(Sender: TObject);
 begin
   if (Sender is TWebButton) and (Sender = btnListDatesShort)
-  then listDatesShort.Visible := not(listDatesShort.Visible)
-  else listDatesShort.Visible := False;
+  then btnlistDatesShort.Tag := (btnlistDatesShort.Tag + 1) mod 2
+  else btnListDatesShort.Tag := 0;
 
-  if listDatesShort.Visible
-  then btnListDatesShort.Caption := '<i class="fa-solid fa-caret-up"></i>'
-  else btnlistDatesShort.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  if btnListDatesShort.Tag = 1 then
+  begin
+    asm
+      btnListDatesShort.firstElementChild.style.setProperty('transform','rotate(180deg)');
+    end;
+    listDatesShort.ElementHandle.style.setProperty('height',IntToStr(listDatesShort.Tag)+'px');
+    listDatesShort.ElementHandle.style.setProperty('opacity','1');
+  end
+  else
+  begin
+    asm
+      btnListDatesShort.firstElementChild.style.setProperty('transform','rotate(0deg)');
+    end;
+    listDatesShort.ElementHandle.style.setProperty('height','0px');
+    listDatesShort.ElementHandle.style.setProperty('opacity','0');
+  end;
 
   if (Sender is TWebButton) and (Sender = btnlistDatesShort) then
   begin
@@ -3780,12 +3846,25 @@ end;
 procedure TForm1.btnListTimesLongClick(Sender: TObject);
 begin
   if (Sender is TWebButton) and (Sender = btnlistTimeSLong)
-  then listTimesLong.Visible := not(listTimesLong.Visible)
-  else listTimesLong.Visible := False;
+  then btnlistTimesLong.Tag := (btnlistTimesLong.Tag + 1) mod 2
+  else btnListTimesLong.Tag := 0;
 
-  if listTimesLong.Visible
-  then btnListTimesLong.Caption := '<i class="fa-solid fa-caret-up"></i>'
-  else btnlistTimesLong.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  if btnListTimesLong.Tag = 1 then
+  begin
+    asm
+      btnListTimesLong.firstElementChild.style.setProperty('transform','rotate(180deg)');
+    end;
+    listTimesLong.ElementHandle.style.setProperty('height',IntToStr(listTimesLong.Tag)+'px');
+    listTimesLong.ElementHandle.style.setProperty('opacity','1');
+  end
+  else
+  begin
+    asm
+      btnListTimesLong.firstElementChild.style.setProperty('transform','rotate(0deg)');
+    end;
+    listTimesLong.ElementHandle.style.setProperty('height','0px');
+    listTimesLong.ElementHandle.style.setProperty('opacity','0');
+  end;
 
   if (Sender is TWebButton) and (Sender = btnlistTimesLong) then
   begin
@@ -3803,12 +3882,25 @@ end;
 procedure TForm1.btnListTimesShortClick(Sender: TObject);
 begin
   if (Sender is TWebButton) and (Sender = btnListTimesShort)
-  then listTimesShort.Visible := not(listTimesShort.Visible)
-  else listTimesShort.Visible := False;
+  then btnlistTimesShort.Tag := (btnlistTimesShort.Tag + 1) mod 2
+  else btnListTimesShort.Tag := 0;
 
-  if listTimesShort.Visible
-  then btnListTimesShort.Caption := '<i class="fa-solid fa-caret-up"></i>'
-  else btnlistTimesShort.Caption := '<i class="fa-solid fa-caret-down"></i>';
+  if btnListTimesShort.Tag = 1 then
+  begin
+    asm
+      btnListTimesShort.firstElementChild.style.setProperty('transform','rotate(180deg)');
+    end;
+    listTimesShort.ElementHandle.style.setProperty('height',IntToStr(listTimesShort.Tag)+'px');
+    listTimesShort.ElementHandle.style.setProperty('opacity','1');
+  end
+  else
+  begin
+    asm
+      btnListTimesShort.firstElementChild.style.setProperty('transform','rotate(0deg)');
+    end;
+    listTimesShort.ElementHandle.style.setProperty('height','0px');
+    listTimesShort.ElementHandle.style.setProperty('opacity','0');
+  end;
 
   if (Sender is TWebButton) and (Sender = btnlistTimesShort) then
   begin
