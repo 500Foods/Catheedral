@@ -33,7 +33,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 0
+    TabIndex = 1
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -752,7 +752,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Status'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Title Status'
+          ElementLabelClassName = 'Title Status d-block w-100 text-end'
           ElementID = 'lableConfigSTATUS'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2357,68 +2357,68 @@ object Form1: TForm1
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
-        object circleWeatherHumidity: TWebHTMLDiv
+        object ringWeatherHumidity: TWebHTMLDiv
           Left = 69
           Top = 74
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleWeatherHumidity'
+          ElementClassName = 'Ring WxRing'
+          ElementID = 'ringWeatherHumidity'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleWeatherHumidityMarker: TWebHTMLDiv
+        object ringWeatherHumidityMarker: TWebHTMLDiv
           Left = 142
           Top = 74
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleWeatherHumidityMarker'
+          ElementClassName = 'Ring WxRing'
+          ElementID = 'ringWeatherHumidityMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleWeatherTemperature: TWebHTMLDiv
+        object ringWeatherTemperature: TWebHTMLDiv
           Left = 6
           Top = 146
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleWeatherTemperature'
+          ElementClassName = 'Ring WxRing'
+          ElementID = 'ringWeatherTemperature'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleWeatherTemperatureMarker: TWebHTMLDiv
+        object ringWeatherTemperatureMarker: TWebHTMLDiv
           Left = 6
           Top = 187
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleWeatherTemperatureMarker'
+          ElementClassName = 'Ring WxRing'
+          ElementID = 'ringWeatherTemperatureMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleWeatherPressure: TWebHTMLDiv
+        object ringWeatherPressure: TWebHTMLDiv
           Left = 227
           Top = 145
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleWeatherPressure'
+          ElementClassName = 'Ring WxRing'
+          ElementID = 'ringWeatherPressure'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleWeatherPressureMarker: TWebHTMLDiv
+        object ringWeatherPressureMarker: TWebHTMLDiv
           Left = 227
           Top = 186
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleWeatherPressureMarker'
+          ElementClassName = 'Ring WxRing'
+          ElementID = 'ringWeatherPressureMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
@@ -2697,24 +2697,24 @@ object Form1: TForm1
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
-        object circleEnergyUse: TWebHTMLDiv
+        object ringEnergyUse: TWebHTMLDiv
           Left = 14
           Top = 154
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleEnergyUse'
+          ElementClassName = 'Ring ExRing'
+          ElementID = 'ringEnergyUse'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleEnergyUseMarker: TWebHTMLDiv
+        object ringEnergyUseMarker: TWebHTMLDiv
           Left = 14
           Top = 195
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleEnergyUseMarker'
+          ElementClassName = 'Ring ExRing'
+          ElementID = 'ringEnergyUseMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
@@ -2741,46 +2741,46 @@ object Form1: TForm1
           ElementFont = efCSS
           Role = ''
         end
-        object circleEnergyToday: TWebHTMLDiv
+        object ringEnergyToday: TWebHTMLDiv
           Left = 227
           Top = 154
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleEnergyToday'
+          ElementClassName = 'Ring ExRing'
+          ElementID = 'ringEnergyToday'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleEnergyTodayMarker: TWebHTMLDiv
+        object ringEnergyTodayMarker: TWebHTMLDiv
           Left = 227
           Top = 195
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleEnergyTodayMarker'
+          ElementClassName = 'Ring ExRing'
+          ElementID = 'ringEnergyTodayMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleEnergyYesterday: TWebHTMLDiv
+        object ringEnergyYesterday: TWebHTMLDiv
           Left = 201
           Top = 66
           Width = 67
           Height = 35
-          ElementClassName = 'Circle'
-          ElementID = 'circleEnergyYesterday'
+          ElementClassName = 'Ring ExRing'
+          ElementID = 'ringEnergyYesterday'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
         end
-        object circleEnergyYesterdayMarker: TWebHTMLDiv
+        object ringEnergyYesterdayMarker: TWebHTMLDiv
           Left = 201
           Top = 107
           Width = 67
           Height = 35
-          ElementClassName = 'CircleMarker'
-          ElementID = 'circleEnergyYesterdayMarker'
+          ElementClassName = 'Ring ExRing'
+          ElementID = 'ringEnergyYesterdayMarker'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''

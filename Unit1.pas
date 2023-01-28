@@ -3,7 +3,7 @@ unit Unit1;
 interface
 
 uses
-  System.SysUtils, System.Classes, System.DateUtils, JS, Web, WEBLib.Graphics, WEBLib.Controls, jsdelphisystem, System.Math,
+  System.SysUtils, System.Classes, System.DateUtils, JS, Web, WEBLib.Graphics, WEBLib.Controls, jsdelphisystem, System.Math, System.StrUtils,
   WEBLib.Forms, WEBLib.Miletus, WEBLib.Dialogs, Vcl.Controls, Vcl.StdCtrls,
   WEBLib.StdCtrls, WEBLib.ComCtrls, WEBLib.WebCtrls, WEBLib.Storage,
   WEBLib.ExtCtrls, WEBLib.WebSocketClient, VCL.TMSFNCCustomControl,
@@ -258,8 +258,8 @@ type
     pageHelpLights: TWebTabSheet;
     divHomeLightsCover: TWebHTMLDiv;
     divWeather: TWebHTMLDiv;
-    circleWeatherHumidity: TWebHTMLDiv;
-    circleWeatherHumidityMarker: TWebHTMLDiv;
+    ringWeatherHumidity: TWebHTMLDiv;
+    ringWeatherHumidityMarker: TWebHTMLDiv;
     labelWeatherMin: TWebLabel;
     labelWeatherHumidity: TWebLabel;
     labelWeatherMax: TWebLabel;
@@ -267,12 +267,12 @@ type
     dataWeatherTemperature: TWebLabel;
     dataWeatherMin: TWebLabel;
     dataWeatherMax: TWebLabel;
-    circleWeatherTemperature: TWebHTMLDiv;
-    circleWeatherTemperatureMarker: TWebHTMLDiv;
+    ringWeatherTemperature: TWebHTMLDiv;
+    ringWeatherTemperatureMarker: TWebHTMLDiv;
     dataWeatherMinPressure: TWebLabel;
     dataWeatherMaxPressure: TWebLabel;
-    circleWeatherPressure: TWebHTMLDiv;
-    circleWeatherPressureMarker: TWebHTMLDiv;
+    ringWeatherPressure: TWebHTMLDiv;
+    ringWeatherPressureMarker: TWebHTMLDiv;
     labelWeatherPressure: TWebLabel;
     labelWeatherUV: TWebLabel;
     dataWeatherUV: TWebLabel;
@@ -296,16 +296,16 @@ type
     dataBattery2: TWebLabel;
     dataBattery3: TWebLabel;
     dataBattery4: TWebLabel;
-    circleEnergyUse: TWebHTMLDiv;
-    circleEnergyUseMarker: TWebHTMLDiv;
+    ringEnergyUse: TWebHTMLDiv;
+    ringEnergyUseMarker: TWebHTMLDiv;
     divPerson1: TWebHTMLDiv;
     divPerson2: TWebHTMLDiv;
     dataPerson1Location: TWebLabel;
     dataPerson2Location: TWebLabel;
-    circleEnergyToday: TWebHTMLDiv;
-    circleEnergyTodayMarker: TWebHTMLDiv;
-    circleEnergyYesterday: TWebHTMLDiv;
-    circleEnergyYesterdayMarker: TWebHTMLDiv;
+    ringEnergyToday: TWebHTMLDiv;
+    ringEnergyTodayMarker: TWebHTMLDiv;
+    ringEnergyYesterday: TWebHTMLDiv;
+    ringEnergyYesterdayMarker: TWebHTMLDiv;
     tmrExit: TWebTimer;
     pageExit: TWebTabSheet;
     labelShutdown: TWebLabel;
@@ -526,6 +526,7 @@ type
     LightsOff: Integer;
     LightsCount: Integer;
     Lights: JSValue;
+    LightGroups: JSValue;
     LightsMode: Integer;
     LightsAll: string;
 
@@ -1131,7 +1132,13 @@ begin
     AppBackground := editConfigBACKGROUND.Text;
     if Pos(';', AppBackground) > 0
     then divBackground.ElementHandle.style.cssText := AppBackground
-    else if ((Pos('.png', AppBackground) > 0) or (Pos('.gif', AppBackground) > 0) or (Pos('.webp', AppBackground) > 0) or (Pos('.svg', AppBackground) > 0) or (Pos('.jpg', AppBackground) > 0) or (Pos('.jpeg', AppBackground) > 0)) and (Pos('url', AppBackground) = 0) then
+    else if ((Pos('.png', AppBackground) > 0) or
+             (Pos('.gif', AppBackground) > 0) or
+             (Pos('.webp', AppBackground) > 0) or
+             (Pos('.svg', AppBackground) > 0) or
+             (Pos('.jpg', AppBackground) > 0) or
+             (Pos('.jpeg', AppBackground) > 0)) and
+             (Pos('url', AppBackground) = 0) then
          begin
            divBackground.ElementHandle.style.setProperty('background', 'url('+AppBackground+')');
            divBackground.ElementHandle.style.setProperty('background-size', 'cover');
@@ -1266,7 +1273,7 @@ begin
         this.HALanguage = hadata.result.language;
         this.HACountry = hadata.result.country;
 
-        // We don't really care about these, but report them anyway
+        // We don't really care quite as much about these, but record them anyway
         dataInfoSystem.firstElementChild.innerHTML = hadata.result.location_name;
         dataInfoHAVersion.firstElementChild.innerHTML = hadata.result.version;
         dataInfoLatitude.firstElementChild.innerHTML = hadata.result.latitude.toFixed(5);
@@ -1320,7 +1327,7 @@ begin
 
 
         // There are FOUR lights
-        this.LightsfOn = hadata.result.filter(
+        this.LightsOn = hadata.result.filter(
           function(o) {
            return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
           }).length;
@@ -1333,15 +1340,16 @@ begin
            return ((o.entity_id.indexOf("light.") == 0) && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
           }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
         // Lets include the groups so we can use them later, but not include them in the counts
-        var LightGroups = hadata.result.filter(
+        this.LightGroups = hadata.result.filter(
           function(o) {
            return ((o.entity_id.indexOf("light.") == 0) && ((o.attributes.lights !== undefined) || (o.entity_id.indexOf("_group") !== -1)) && (o.entity_id.indexOf("_hide") == -1) && ((o.state == "off") || (o.state == "on")));
           }).sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
-        this.Lights = [...this.Lights, ...LightGroups];
+        this.Lights = [...this.Lights, ...this.LightGroups];
         this.LightsCount = this.LightsOn + this.LightsOff;
         // Let's have a look at it, shall we??
-//        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
-//        console.log(this.Lights);
+        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
+        console.log(this.Lights);
+        console.log(this.LightsOn);
 
 
         // Load Configuration from Home Assistant Data (triggered by button click - not automatic)
@@ -1442,7 +1450,7 @@ begin
   // Response to our get_config request
   else if (ResponseType = 'result') and (ResponseID = HAGetConfig) then
   begin
-    labelConfigSTATUS.Caption := HASystemName+ ' Status';
+    labelConfigSTATUS.HTML := '<div class="text-end">'+Trim(HASystemName)+'<i class="fa-regular fa-circle-question px-3"></i>Status</div>';
   end
 
   // Response to our get_states request
@@ -1702,10 +1710,10 @@ begin
             fetch(HelpFileAlt)
               .then(
                 function(altresponse) {
-                  if (response.status !== 200) {
-                    Help.innerHTML = 'Help File Missing: '+HelpDIV+'.html'
+                  if (altresponse.status !== 200) {
+                    Help.textContent = 'Help File Missing: '+HelpFileAlt;
                   }
-                  response.text().then(function(AltHelpData) {
+                  altresponse.text().then(function(AltHelpData) {
                     Help.innerHTML = AltHelpData
                   })
                 }
@@ -1873,6 +1881,8 @@ begin
   ShowDisconnected;
   HALoadConfig := False;
   HAStatesLoaded := False;
+  HALanguage := 'Unknown';
+  HACountry := 'Unknown';
 
   //  Sensors
   SunSensor := '';
@@ -2206,9 +2216,6 @@ begin
   if StartPage = 5
   then editConfigChange(nil);
 
-  // Would really like a sleep function here.
-  // Instead, we'll finish up what we're doing in a timer
-
   tmrSwitchPage.Tag := EndPage;
   tmrSwitchPage.Enabled := True;
 end;
@@ -2234,15 +2241,18 @@ begin
       end
       else
       begin
+//        HAWebSocket.HostName := 'homeassistant.local';
         HAWebSocket.HostName := Copy(editConfigURL.Text, pos('://', editConfigURL.Text)+3,length(editConfigURL.Text));
         if Pos(':',HAWEBSocket.Hostname) > 0
         then HAWebSocket.Hostname := Copy(HAWebSocket.Hostname,1,Pos(':', HAWebSocket.Hostname)-1);
 
         HAWebSocket.PathName := '/api/websocket';
 
-        if Pos(':', editConfigURL.Text) > 0
+        HAWebSocket.Port := 8123;
+        if Pos(':', RightStr(Trim(editConfigURL.Text),6)) > 0
         then HAWebSocket.Port := StrToIntDef(Trim(Copy(editConfigURL.Text, LastDelimiter(':', editConfigURL.Text)+1, 5)),80);
 
+        HAWebSocket.UseSSL := False;
         if Pos('https:', editConfigURL.Text) > 0
         then HAWebSocket.UseSSL := True;
 
@@ -2939,32 +2949,30 @@ begin
 
       if (UpdateRing1 = True) or (tmrSeconds.Tag = 1) then
       begin
-        circleWeatherTemperature.Tag := circleWeatherTemperature.Tag + 1;
-
         // Weather Temperature (Ring 1)
         segment_start := Trunc(((WeatherTemperature-WeatherMinTempRange)*280) / (WeatherMaxTempRange-WeatherMinTempRange));
         segment := IntToStr(segment_start)+','+IntToStr(280-segment_start)+',80';
-//        Sparkline_Donut(
-//          55, 5, 290, 290,                                // T, L, W, H
-//          circleWeatherTemperature,                       // TWebHTMLDiv
-//          segment,                                        // Data
-//          '["'+Circle4+'","'+CircleB+'","transparent"]',  // Fill
-//          '220deg',                                       // Rotation
-//          138,                                            // Inner Radius
-//          ''                                              // Text
-//        );
+        Sparkline_Donut(
+          55, 5, 290, 290,                                      // T, L, W, H
+          ringWeatherTemperature,                               // TWebHTMLDiv
+          segment,                                              // Data
+          '["var(--WxRing1)","var(--WxRingB)","transparent"]',  // Fill
+          '220deg',                                             // Rotation
+          138,                                                  // Inner Radius
+          ''                                                    // Text
+        );
 
         // Weather Temperature Marker (Ring 1)
         rotation := IntToStr(220+Trunc(((WeatherTemperature-WeatherMinTempRange)*280) / (WeatherMaxTempRange-WeatherMinTempRange))-2);
-//        Sparkline_Donut(
-//          50, 0, 300, 300,                                // T, L, W, H
-//          circleWeatherTemperatureMarker,                 // TWebHTMLDiv
-//          '4/360',                                        // Data
-//          '["'+Circle4+'","transparent"]',                // Fill
-//          rotation+'deg',                                 // Rotation
-//          113,                                            // Inner Radius
-//          ''                                              // Text
-//        );
+        Sparkline_Donut(
+          50, 0, 300, 300,                                      // T, L, W, H
+          ringWeatherTemperatureMarker,                         // TWebHTMLDiv
+          '4/360',                                              // Data
+          '["var(--WxRing1)","transparent"]',                   // Fill
+          rotation+'deg',                                       // Rotation
+          113,                                                  // Inner Radius
+          ''                                                    // Text
+        );
       end;
 
       if (UpdateRing2 = True) or (tmrSeconds.Tag = 1) then
@@ -2972,27 +2980,27 @@ begin
         // Pressure (Ring 2)
         segment_start := Trunc(((WeatherPressure-WeatherMinPressureRange)*290) / (WeatherMaxPressureRange-WeatherMinPressureRange));
         segment := IntToStr(segment_start)+','+IntToStr(290-segment_start)+',70';
-//        Sparkline_Donut(
-//          65, 15, 270, 270,                               // T, L, W, H
-//          circleWeatherPressure,                          // TWebHTMLDiv
-//          segment,                                        // Data
-//          '["'+Circle5+'","'+CircleB+'","transparent"]',  // Fill
-//          '215deg',                                       // Rotation
-//          128,                                            // Inner Radius
-//          ''                                              // Text
-//        );
+        Sparkline_Donut(
+          65, 15, 270, 270,                                     // T, L, W, H
+          ringWeatherPressure,                                  // TWebHTMLDiv
+          segment,                                              // Data
+          '["var(--WxRing2)","var(--WxRingB)","transparent"]',  // Fill
+          '215deg',                                             // Rotation
+          128,                                                  // Inner Radius
+          ''                                                    // Text
+        );
 
         // Pressure Marker (Ring 2)
         rotation := IntToStr(215+Trunc(((WeatherPressure-WeatherMinPressureRange)*290) / (WeatherMaxPressureRange-WeatherMinPressureRange))-2);
-//        Sparkline_Donut(
-//          50, 0, 300, 300,                                // T, L, W, H
-//          circleWeatherPressureMarker,                    // TWebHTMLDiv
-//          '4/360',                                        // Data
-//          '["'+Circle5+'","transparent"]',                // Fill
-//          rotation+'deg',                                 // Rotation
-//          113,                                            // Inner Radius
-//          ''                                              // Text
-//        );
+        Sparkline_Donut(
+          50, 0, 300, 300,                                      // T, L, W, H
+          ringWeatherPressureMarker,                            // TWebHTMLDiv
+          '4/360',                                              // Data
+          '["var(--WxRing2)","transparent"]',                   // Fill
+          rotation+'deg',                                       // Rotation
+          113,                                                  // Inner Radius
+          ''                                                    // Text
+        );
       end;
 
       if (UpdateRing3 = True) or (tmrSeconds.Tag = 1) then
@@ -3000,27 +3008,27 @@ begin
         // Humidity (Ring 3)
         segment_start := Trunc((WeatherHumidity*300) / 100);
         segment := IntToStr(segment_start)+','+IntToStr(300-segment_start)+',60';
-//        Sparkline_Donut(
-//          75, 25, 250, 250,                               // T, L, W, H
-//          circleWeatherHumidity,                          // TWebHTMLDiv
-//          segment,                                        // Data
-//          '["'+Circle3+'","'+CircleB+'","transparent"]',  // Fill
-//          '210deg',                                       // Rotation
-//          118,                                            // Inner Radius
-//          ''                                              // Text
-//        );
+        Sparkline_Donut(
+          75, 25, 250, 250,                                     // T, L, W, H
+          ringWeatherHumidity,                                  // TWebHTMLDiv
+          segment,                                              // Data
+          '["var(--WxRing3)","var(--WxRingB)","transparent"]',  // Fill
+          '210deg',                                             // Rotation
+          118,                                                  // Inner Radius
+          ''                                                    // Text
+        );
 
         // Humidity Marker (Ring 3)
         rotation := IntToStr(210+Trunc((WeatherHumidity*300) / 100)-2);
-//        Sparkline_Donut(
-//          50, 0, 300, 300,                                // T, L, W, H
-//          circleWeatherHumidityMarker,                    // TWebHTMLDiv
-//          '4/360',                                        // Data
-//          '["'+Circle3+'","transparent"]',                // Fill
-//          rotation+'deg',                                 // Rotation
-//          113,                                            // Inner Radius
-//          ''                                              // Text
-//        );
+        Sparkline_Donut(
+          50, 0, 300, 300,                                      // T, L, W, H
+          ringWeatherHumidityMarker,                            // TWebHTMLDiv
+          '4/360',                                              // Data
+          '["var(--WxRing3)","transparent"]',                   // Fill
+          rotation+'deg',                                       // Rotation
+          113,                                                  // Inner Radius
+          ''                                                    // Text
+        );
       end;
     end;
 
@@ -3088,72 +3096,71 @@ begin
         then divPerson2.HTML.Text := display;
       end;
 
-
       // Energy Now (Ring 1)
-//      Sparkline_Donut(
-//        55, 5, 290, 290,                                // T, L, W, H
-//        circleEnergyUse,                                // TWebHTMLDiv
-//        '1200/1800',                                    // Data
-//        '["'+Circle2+'","'+CircleB+'"]',                // Fill
-//        '180deg',                                       // Rotation
-//        138,                                            // Inner Radius
-//        ''                                              // Text
-//      );
+      Sparkline_Donut(
+        55, 5, 290, 290,                                // T, L, W, H
+        ringEnergyUse,                                  // TWebHTMLDiv
+        '1200/1800',                                    // Data
+        '["var(--ExRing1)","var(--ExRingB)"]',          // Fill
+        '180deg',                                       // Rotation
+        138,                                            // Inner Radius
+        ''                                              // Text
+      );
 
       // Energy Now Marker (Ring 1)
-//      Sparkline_Donut(
-//        50, 0, 300, 300,                                // T, L, W, H
-//        circleEnergyUseMarker,                          // TWebHTMLDiv
-//        '4/360',                                        // Data
-//        '["'+Circle2+'","transparent"]',                // Fill
-//        '58deg',                                       // Rotation
-//        113,                                            // Inner Radius
-//        ''                                              // Text
-//      );
+      Sparkline_Donut(
+        50, 0, 300, 300,                                // T, L, W, H
+        ringEnergyUseMarker,                            // TWebHTMLDiv
+        '4/360',                                        // Data
+        '["var(--ExRing1)","transparent"]',             // Fill
+        '58deg',                                        // Rotation
+        113,                                            // Inner Radius
+        ''                                              // Text
+      );
 
       // Energy Today (Ring 2)
-//      Sparkline_Donut(
-//        65, 15, 270, 270,                               // T, L, W, H
-//        circleEnergyToday,                              // TWebHTMLDiv
-//        '1500/1800',                                    // Data
-//        '["'+Circle1+'","'+CircleB+'"]',                // Fill
-//        '180deg',                                       // Rotation
-//        128,                                            // Inner Radius
-//        ''                                              // Text
-//      );
+      Sparkline_Donut(
+        65, 15, 270, 270,                               // T, L, W, H
+        ringEnergyToday,                                // TWebHTMLDiv
+        '1500/1800',                                    // Data
+        '["var(--ExRing2)","var(--ExRingB)"]',          // Fill
+        '180deg',                                       // Rotation
+        128,                                            // Inner Radius
+        ''                                              // Text
+      );
 
       // Energy Today Marker (Ring 2)
-//      Sparkline_Donut(
-//        50, 0, 300, 300,                                // T, L, W, H
-//        circleEnergyTodayMarker,                        // TWebHTMLDiv
-//        '4/360',                                        // Data
-//        '["'+Circle1+'","transparent"]',                // Fill
-//        '118deg',                                       // Rotation
-//        113,                                            // Inner Radius
-//        ''                                              // Text
-//      );
+      Sparkline_Donut(
+        50, 0, 300, 300,                                // T, L, W, H
+        ringEnergyTodayMarker,                          // TWebHTMLDiv
+        '4/360',                                        // Data
+        '["var(--ExRing2)","transparent"]',             // Fill
+        '118deg',                                       // Rotation
+        113,                                            // Inner Radius
+        ''                                              // Text
+      );
 
       // Energy Yesterday (Ring 3)
-//      Sparkline_Donut(
-//        75, 25, 250, 250,                               // T, L, W, H
-//        circleEnergyYesterday,                          // TWebHTMLDiv
-//        '600/1800',                                     // Data
-//        '["'+Circle3+'","'+CircleB+'"]',                // Fill
-//        '180deg',                                       // Rotation
-//        118,                                            // Inner Radius
-//        ''                                              // Text
-//      );
+      Sparkline_Donut(
+        75, 25, 250, 250,                               // T, L, W, H
+        ringEnergyYesterday,                            // TWebHTMLDiv
+        '600/1800',                                     // Data
+        '["var(--ExRing3)","var(--ExRingB)"]',          // Fill
+        '180deg',                                       // Rotation
+        118,                                            // Inner Radius
+        ''                                              // Text
+      );
 
       // Energy Yesterday Marker (Ring 3)
-//      Sparkline_Donut(
-//        50, 0, 300, 300,                                // T, L, W, H
-//        circleEnergyYesterdayMarker,                    // TWebHTMLDiv
-//        '4/360',                                        // Data
-//        '["'+Circle3+'","transparent"]',                // Fill
-//        '300deg',                                       // Rotation
-//        113,                                            // Inner Radius
-//        ''                                              // Text
-//      );
+      Sparkline_Donut(
+        50, 0, 300, 300,                                // T, L, W, H
+        ringEnergyYesterdayMarker,                      // TWebHTMLDiv
+        '4/360',                                        // Data
+        '["var(--ExRing3)","transparent"]',             // Fill
+        '300deg',                                       // Rotation
+        113,                                            // Inner Radius
+        ''                                              // Text
+      );
 
     end;
 

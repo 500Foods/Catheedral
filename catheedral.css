@@ -35,19 +35,19 @@ html, body {
   --CxRingB: #FFFFFF40;
   --CxRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 
-  --WxRing1: darkred;
-  --WxRing2: darkgreen;
+  --WxRing1: orange;
+  --WxRing2: yellow;
   --WxRing3: royalblue;
-  --WxRing4: orange;
-  --WxRing5: yellow;
+  --WxRing4: white;
+  --WxRing5: white;
   --WxRingB: #FFFFFF40;
   --WxRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 
-  --ExRing1: darkred;
-  --ExRing2: darkgreen;
+  --ExRing1: darkgreen;
+  --ExRing2: yellow;
   --ExRing3: royalblue;
-  --ExRing4: orange;
-  --ExRing5: yellow;
+  --ExRing4: white;
+  --ExRing5: white;
   --ExRingB: #FFFFFF40;
   --ExRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 }
@@ -74,14 +74,14 @@ input[type=text]:focus-visible.ConfigEdit  {
 
 
 /* Background
-/* Generally, this will only work when the background changes from one image to another
+** Generally, this will only work when the background changes from one image to another
 ** or from one color to another.  Switching from image to color, or color to image
-** does not get the benefit of the transition */
+** does not get the benefit of the transition. But it's fun when it works.
+*/
 #divBackground {
   opacity: 0;
   transition: background-image 0.4s ease, background-color 0.4s ease, opacity 1.5s ease;
 }
-
 
 /* Main TWebPageControl Component */
 #pages {
@@ -97,12 +97,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   overflow: hidden;
   transition: opacity 1s ease 0.1s;
 }
-.PageIn {
-  opacity: 1 !important;
-}
-.PageOut {
-  opacity: 0 !important;
-}
+
 
 
 /*  Main Left/Right Page Navigation Components */
@@ -330,32 +325,33 @@ input[type=text]:focus-visible.ConfigEdit  {
 .TxRing {
   filter: var(--TxRingF);
 }
+.CxRing {
+  filter: var(--CxRingF);
+}
+.WxRing {
+  filter: var(--WxRingF);
+}
+.ExRing {
+  filter: var(--ExRingF);
+}
 
-.Circle {
-  z-index: 3;
-  opacity: 0.65;
-  filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
-}
-.CircleMarker {
-  opacity: 0.65;
-  filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
-}
-/* Want faster moving markers to appear on top of slower moving circles */
+/* Want faster (outer?) moving markers to appear on top of slower (inner?) moving circles */
 #ringDayMarker { z-index: 4; }
 #ringMinutesMarker { z-index: 5; }
 #ringSecondsMarker { z-index: 6; }
 
-#circleClimateHumidityMarker { z-index: 4; }
-#circleSetPointMarker { z-index: 5; }
-#circleClimateTemperatureMarker { z-index: 6; }
+#ringClimateHumidityMarker { z-index: 4; }
+#ringSetPointMarker { z-index: 5; }
+#ringClimateTemperatureMarker { z-index: 6; }
 
-#circleWeatherHumidityMarker { z-index: 4; }
-#circleWeatherPressureMarker { z-index: 5; }
-#circleWeatherTemperatureMarker { z-index: 6; }
+#ringWeatherHumidityMarker { z-index: 4; }
+#ringWeatherPressureMarker { z-index: 5; }
+#ringWeatherTemperatureMarker { z-index: 6; }
 
-#circleEnergyYesterdayMarker { z-index: 4; }
-#circleEnergyTodayMarker { z-index: 5; }
-#circleEnergyUseMarker { z-index: 6; }
+#ringEnergyYesterdayMarker { z-index: 4; }
+#ringEnergyTodayMarker { z-index: 5; }
+#ringEnergyUseMarker { z-index: 6; }
+
 
 /* Used for displaying various bits of Text on Home Page and elsewhere */
 .Text {
