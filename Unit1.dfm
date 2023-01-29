@@ -1,7 +1,7 @@
 object Form1: TForm1
   Width = 1280
   Height = 400
-  Color = clNone
+  Color = clBlack
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
   Shadow = False
@@ -33,7 +33,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 1
+    TabIndex = 7
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -2843,13 +2843,13 @@ object Form1: TForm1
       Caption = 'Cs'
       ChildOrder = 5
       ElementFont = efCSS
-      object divConfigSensors: TWebHTMLDiv
+      object divSensors: TWebHTMLDiv
         Left = 50
         Top = 20
         Width = 1180
         Height = 360
         ElementClassName = 'Scroll'
-        ElementID = 'divConfigSensors'
+        ElementID = 'divSensors'
         ElementFont = efCSS
         Role = ''
         OnClick = ResetInactivityTimer

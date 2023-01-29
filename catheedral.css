@@ -1,4 +1,5 @@
 html, body {
+  background-color: black;
   font-family: "Cairo" !important;
   overflow: hidden;
 
@@ -44,12 +45,17 @@ html, body {
   --WxRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 
   --ExRing1: darkgreen;
-  --ExRing2: yellow;
+  --ExRing2: darkred;
   --ExRing3: royalblue;
   --ExRing4: white;
   --ExRing5: white;
   --ExRingB: #FFFFFF40;
   --ExRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
+
+/* Assorted Delays */
+  --Delay-Short: 0.4s;
+  --Delay-Medium: 1.0s;
+  --Delay-Long: 1.5s;
 }
 
 
@@ -80,7 +86,8 @@ input[type=text]:focus-visible.ConfigEdit  {
 */
 #divBackground {
   opacity: 0;
-  transition: background-image 0.4s ease, background-color 0.4s ease, opacity 1.5s ease;
+  background-color: black;
+  transition: background-image var(--Delay-Long) ease, background-color var(--Delay-Long) ease, opacity var(--Delay-Long) ease;
 }
 
 /* Main TWebPageControl Component */
@@ -95,7 +102,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   width: 1280px !important;
   height: 400px !important;
   overflow: hidden;
-  transition: opacity 1s ease 0.1s;
+  transition: opacity var(--Delay-Medium) ease 0.1s;
 }
 
 
@@ -108,7 +115,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   height: 300px;
   opacity: 0.25;
   left: 0px;
-  transition: left 1.5s ease, opacity 0.4s ease;
+  transition: left var(--Delay-Long) ease, opacity var(--Delay-Short) ease;
 }
 .Nav:hover {
   opacity: 0.5;
@@ -144,7 +151,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   opacity: 0;
   color: white !important;
   padding: 0px !important;
-  transition: opacity 0.4s ease, left 1.5s ease, top 1.5s ease;
+  transition: opacity var(--Delay-Short) ease, left var(--Delay-Long) ease, top var(--Delay-Long) ease;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
 }
 .MainButton:hover {
@@ -163,15 +170,15 @@ input[type=text]:focus-visible.ConfigEdit  {
   align-items: center;
 }
 .icon-default {
-  transition: opacity 1s ease;
+  transition: opacity var(--Delay-Medium) ease;
 }
 .icon-alternate {
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity var(--Delay-Medium) ease;
 }
 .icon-third {
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity var(--Delay-Medium) ease;
 }
 
 /* Title Text */
@@ -252,7 +259,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   overflow-x: hidden !important;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
   opacity: 0;
-  transition: height 0.4s ease, opacity 0.4s ease;
+  transition: height var(--Delay-Short) ease, opacity var(--Delay-Short) ease;
 }
 .ConfigList option:checked {
   border-radius: 6px;
@@ -266,7 +273,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
 }
 .ConfigListButton > i {
-  transition: transform 0.4s ease;
+  transition: transform var(--Delay-Short) ease;
 }
 .ConfigButton {
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
@@ -314,6 +321,15 @@ input[type=text]:focus-visible.ConfigEdit  {
 .HelpHighlight {
   font-weigth: 700;
   color: royalblue;
+}
+
+
+/* Custom Content URL pages (usually <iframe> elements) */
+.CustomPage {
+  width: 100%;
+  height: 100%;
+  background: none;
+  overflow: hidden;
 }
 
 
@@ -581,5 +597,5 @@ div.tabulator-cell.tabulator-editing {
   overflow-y: auto;
   height: auto !important;
   max-height: 398px;
-  transition: opacity 0.4s ease;
+  transition: opacity var(--Delay-Short) ease;
 }

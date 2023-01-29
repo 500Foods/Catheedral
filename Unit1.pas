@@ -136,7 +136,7 @@ type
     pageHelpConfig: TWebTabSheet;
     HelpConfig: TWebHTMLDiv;
     pageConfigSensors: TWebTabSheet;
-    divConfigSensors: TWebHTMLDiv;
+    divSensors: TWebHTMLDiv;
     pageConfigInfo: TWebTabSheet;
     pageCustom1: TWebTabSheet;
     pageCustom2: TWebTabSheet;
@@ -391,7 +391,7 @@ type
     Features: Integer;
 
     // Configuration - Tabulator
-    tabConfigSensors: JSValue;
+    tabSensors: JSValue;
     ConfigTableReady: Boolean;
 
     // Styles?
@@ -566,7 +566,7 @@ begin
     window.UpdateSensorList = function() {
 
       const here = pas.Unit1.Form1;
-      const table = here.tabConfigSensors;
+      const table = here.tabSensors;
 
       // Time Panel
       here.SunSensor = table.getRow(1).getCell('entity_id').getValue();
@@ -1062,7 +1062,7 @@ begin
   i := 1;
   while (i <= Features) do
   begin
-    asm Data = this.tabConfigSensors.getRow(i).getCell('entity_id').getValue(); end;
+    asm Data = this.tabSensors.getRow(i).getCell('entity_id').getValue(); end;
     Command := Command+'"feature_'+Format('%.*d',[3,i])+'":"'+Data+'"';
     if (i < Features)  then Command := Command+','
     else Command := Command+'}}}';
@@ -1181,7 +1181,7 @@ begin
   begin
 
     asm
-      var table = this.tabConfigSensors;
+      var table = this.tabSensors;
       FeatureKey = table.getRow(i).getCell('feature').getValue();
       FeatureValue = table.getRow(i).getCell('entity_id').getValue();
       if (FeatureKey === undefined) {FeatureKey = ''};
@@ -1196,17 +1196,17 @@ begin
   end;
 
   // Might as well load these up right away
-  if   divCustom1.HTML.Text <> '<iframe src="'+CustomPage1URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom1.HTML.Text := '<iframe src="'+CustomPage1URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom1.HTML.Text <> '<iframe src="'+CustomPage1URL+'" class="CustomPage">'
+  then divCustom1.HTML.Text := '<iframe src="'+CustomPage1URL+'" class="CustomPage">';
 
-  if   divCustom2.HTML.Text <> '<iframe src="'+CustomPage2URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom2.HTML.Text := '<iframe src="'+CustomPage2URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom2.HTML.Text <> '<iframe src="'+CustomPage2URL+'" class="CustomPage">'
+  then divCustom2.HTML.Text := '<iframe src="'+CustomPage2URL+'" class="CustomPage">';
 
-  if   divCustom3.HTML.Text <> '<iframe src="'+CustomPage3URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom3.HTML.Text := '<iframe src="'+CustomPage3URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom3.HTML.Text <> '<iframe src="'+CustomPage3URL+'" class="CustomPage">'
+  then divCustom3.HTML.Text := '<iframe src="'+CustomPage3URL+'" class="CustomPage">';
 
-  if   divCustom4.HTML.Text <> '<iframe src="'+CustomPage4URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom4.HTML.Text <> '<iframe src="'+CustomPage4URL+'" class="CustomPage">'
+  then divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" class="CustomPage">';
 
   CustomPage1Refresh := FormatDateTime('yyyymmddhh',Now);
   CustomPage2Refresh := CustomPage1Refresh;
@@ -1347,9 +1347,9 @@ begin
         this.Lights = [...this.Lights, ...this.LightGroups];
         this.LightsCount = this.LightsOn + this.LightsOff;
         // Let's have a look at it, shall we??
-        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
-        console.log(this.Lights);
-        console.log(this.LightsOn);
+//        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
+//        console.log(this.Lights);
+//        console.log(this.LightsOn);
 
 
         // Load Configuration from Home Assistant Data (triggered by button click - not automatic)
@@ -1369,7 +1369,7 @@ begin
                 }
                 // List of sensors stored in 001..Features
                 else {
-                  this.tabConfigSensors.getRow(i).getCell('entity_id').setValue(param);
+                  this.tabSensors.getRow(i).getCell('entity_id').setValue(param);
                 }
               }
             }
@@ -1494,6 +1494,7 @@ begin
           if (window.SensorList[i] !== '') {
             if (hadata.event.data.entity_id == window.SensorList[i]) {
               this.StateChanged(hadata.event.data.entity_id, hadata.event.data.new_state);
+              break;
             }
           }
         }
@@ -1655,13 +1656,13 @@ begin
   for i := 1 to Features do
   begin
     asm
-      var table = this.tabConfigSensors;
+      var table = this.tabSensors;
       FeatureKey = table.getRow(i).getCell('feature').getValue();
       if (FeatureKey === undefined) {FeatureKey = ''};
     end;
     FeatureValue := await(String, AppINIFile.ReadString('Home Assistant', FeatureKey, ''));
     asm
-      var table = this.tabConfigSensors;
+      var table = this.tabSensors;
       table.getRow(i).getCell('entity_id').setValue(FeatureValue);
     end;
   end;
@@ -1671,17 +1672,17 @@ begin
   end;
 
   // Might as well load these up right away
-  if   divCustom1.HTML.Text <> '<iframe src="'+CustomPage1URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom1.HTML.Text := '<iframe src="'+CustomPage1URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom1.HTML.Text <> '<iframe src="'+CustomPage1URL+'" class="CustomPage">'
+  then divCustom1.HTML.Text := '<iframe src="'+CustomPage1URL+'" class="CustomPage">';
 
-  if   divCustom2.HTML.Text <> '<iframe src="'+CustomPage2URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom2.HTML.Text := '<iframe src="'+CustomPage2URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom2.HTML.Text <> '<iframe src="'+CustomPage2URL+'" class="CustomPage">'
+  then divCustom2.HTML.Text := '<iframe src="'+CustomPage2URL+'" class="CustomPage">';
 
-  if   divCustom3.HTML.Text <> '<iframe src="'+CustomPage3URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom3.HTML.Text := '<iframe src="'+CustomPage3URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom3.HTML.Text <> '<iframe src="'+CustomPage3URL+'" class="CustomPage">'
+  then divCustom3.HTML.Text := '<iframe src="'+CustomPage3URL+'" class="CustomPage">';
 
-  if   divCustom4.HTML.Text <> '<iframe src="'+CustomPage4URL+'" width=1280 height=400 style="background:none; overflow:hidden;">'
-  then divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+  if   divCustom4.HTML.Text <> '<iframe src="'+CustomPage4URL+'" class="CustomPage">'
+  then divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" class="CustomPage">';
 
   CustomPage1Refresh := FormatDateTime('yyyymmddhh',Now);
   CustomPage2Refresh := CustomPage1Refresh;
@@ -3663,22 +3664,22 @@ begin
   if pages.TabIndex = 7 then
   begin
     divCustom1.HTML.Text := '';
-    divCustom1.HTML.Text := '<iframe src="'+CustomPage1URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+    divCustom1.HTML.Text := '<iframe src="'+CustomPage1URL+'" class="CustomPage">';
   end
   else if pages.TabIndex = 8 then
   begin
     divCustom2.HTML.Text := '';
-    divCustom2.HTML.Text := '<iframe src="'+CustomPage2URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+    divCustom2.HTML.Text := '<iframe src="'+CustomPage2URL+'" class="CustomPage">';
   end
   else if pages.TabIndex = 9 then
   begin
     divCustom3.HTML.Text := '';
-    divCustom3.HTML.Text := '<iframe src="'+CustomPage3URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+    divCustom3.HTML.Text := '<iframe src="'+CustomPage3URL+'" class="CustomPage">';
   end
   else if pages.TabIndex = 10 then
   begin
     divCustom4.HTML.Text := '';
-    divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" width=1280 height=400 style="background:none; overflow:hidden;">';
+    divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" class="CustomPage">';
   end
 
 
@@ -3954,9 +3955,9 @@ begin
       {"id": 26, "feature":"Person 1"             , "example":"eg: person.someone" },
       {"id": 27, "feature":"Person 2"             , "example":"eg: person.someone" }
     ];
-    pas.Unit1.Form1.Features = FeatureData.length;
+    this.Features = FeatureData.length;
 
-    this.tabConfigSensors = new Tabulator('#divConfigSensors',{
+    this.tabSensors = new Tabulator('#divSensors',{
       data: FeatureData,
       index: "id",
       height: 360,
@@ -3987,16 +3988,16 @@ begin
         { title: "Example", field: "example", width: 400 },
       ]
     });
-    this.tabConfigSensors.on("tableBuilt", function(){
+    this.tabSensors.on("tableBuilt", function(){
       pas.Unit1.Form1.ConfigTableReady = true;
     });
-    this.tabConfigSensors.on("cellEditing", function(cell){
+    this.tabSensors.on("cellEditing", function(cell){
       pas.Unit1.Form1.ResetInactivityTimer;
     });
-    this.tabConfigSensors.on("cellEdited", function(cell){
+    this.tabSensors.on("cellEdited", function(cell){
       pas.Unit1.Form1.ResetInactivityTimer;
     });
-    this.tabConfigSensors.on("rowMouseOver", function(e, row){
+    this.tabSensors.on("rowMouseOver", function(e, row){
       pas.Unit1.Form1.ResetInactivityTimer;
     });
   end;
