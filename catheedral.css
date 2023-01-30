@@ -190,7 +190,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   filter: drop-shadow(0px 0px 4px royalblue) drop-shadow(0px 0px 4px royalblue);
 }
 .Title.Status {
-  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
+  filter: drop-shadow(0px 0px 4px teal) drop-shadow(0px 0px 4px teal);
 }
 .Title.StatusGood {
   filter: drop-shadow(0px 0px 4px green) drop-shadow(0px 0px 4px green);
@@ -206,13 +206,13 @@ input[type=text]:focus-visible.ConfigEdit  {
   opacity: 0;
   font-size: 20px;
   transition: opacity 3.5s ease;
-  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
+  filter: drop-shadow(0px 0px 4px teal) drop-shadow(0px 0px 4px teal);
 }
 .Title.SplashEnd {
   opacity: 1;
   font-size: 20px;
   transition: opacity 3.5s ease 1.5s;
-  filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
+  filter: drop-shadow(0px 0px 4px teal) drop-shadow(0px 0px 4px teal);
 }
 
 /* Splash Image */
