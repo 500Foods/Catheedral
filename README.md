@@ -18,4 +18,4 @@ As a modern web application, many additional JavaScript libraries/dependencies h
 
 While this project is currently under active development, feel free to give it a try and post any issues you encounter.  Or start a dicussion if you would like to help steer the project in a particular direction.  Early days yet, so a good time to have your voice heard.  As the project unfolds, additional resources will be made available, including platform binaries, more documentation, demos, and so on.
 
-If you like what you see, and you are interested in contributing financially, plesae consider donating via [Buy Me a :pizza:](https://www.buymeacoffee.com/andrewsimard500).
+If you like what you see, and you are interested in contributing financially, please consider donating via [Buy Me a :pizza:](https://www.buymeacoffee.com/andrewsimard500).
