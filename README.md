@@ -2,7 +2,7 @@
 
 This repository contains the source code for Catheedral - an app that works with [Home Assistant](https://www.home-assistant.io/) to provide another interface to the most important parts of your smart home.  Catheedral was developed using [TMS WEB Core](https://www.tmssoftware.com/site/tmswebcore.asp) from [TMS Software](https://www.tmssoftware.com), along with their [Miletus Framework](https://www.tmssoftware.com/site/blog.asp?post=775).  More details about this project can also be found on the TMS Software Blog, starting with this [first post](https://www.tmssoftware.com/site/blog.asp?post=1044). 
 
-![catheedral](https://user-images.githubusercontent.com/41052272/215580606-2c296543-5cbd-4ea7-a4b4-b08712fa439a.gif){ title="Catheedral Intro" alt="Catheedral Intro" style="margin: 0 auto;" }
+<p align="center"><img title="Catheedral Intro" alt="Catheedral Intro" src=https://user-images.githubusercontent.com/41052272/215580606-2c296543-5cbd-4ea7-a4b4-b08712fa439a.gif></p>
 
 TMS WEB Core is a framework that uses Delphi, Visual Studio Code, or Lazarus to transpile Delphi/Pascal code into 100% native JavaScript, HTML and CSS code.  Miletus is a framework, similiar to Electron, that creates platform-specific binaries, supporting Windows, macOS, Linux and Raspberry Pi.  Catheedral has been created in part to run natively on a Raspberry Pi in an embedded context - much like a smart thermostat or a smart panel for your home, while also supporting the usual desktop-style deployments.
 
