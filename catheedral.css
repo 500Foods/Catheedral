@@ -56,6 +56,61 @@ html, body {
   --Delay-Short: 0.4s;
   --Delay-Medium: 1.0s;
   --Delay-Long: 1.5s;
+
+/* Color Swatches */
+  --Swatch-0:  white;
+  --Swatch-1:  #C0C0C0;
+  --Swatch-2:  #909090;
+  --Swatch-3:  #606060;
+  --Swatch-4:  #303030;
+  --Swatch-5:  black;
+  --Swatch-6:  gold;
+  --Swatch-7:  lightsalmon;
+  --Swatch-8:  orange;
+  --Swatch-9:  lightpink;
+  --Swatch-10: lightskyblue;
+  --Swatch-11: lightyellow;
+
+  --Swatch-12: maroon;
+  --Swatch-13: green;
+  --Swatch-14: navy;
+  --Swatch-15: purple;
+  --Swatch-16: olive;
+  --Swatch-17: teal;
+  --Swatch-18: red;
+  --Swatch-19: lime;
+  --Swatch-20: blue;
+  --Swatch-21: fuchsia;
+  --Swatch-22: yellow;
+  --Swatch-23: aqua;
+
+  --Swatch-Name-0:  "White";
+  --Swatch-Name-1:  "Gray-A";
+  --Swatch-Name-2:  "Gray-B";
+  --Swatch-Name-3:  "Gray-C";
+  --Swatch-Name-4:  "Gray-D";
+  --Swatch-Name-5:  "Black";
+  --Swatch-Name-6:  "Gold";
+  --Swatch-Name-7:  "Light Salmon";
+  --Swatch-Name-8:  "Orange";
+  --Swatch-Name-9: "Light Pink";
+  --Swatch-Name-10: "Light Sky Blue";
+  --Swatch-Name-11: "Light Yellow";
+
+  --Swatch-Name-12: 'Maroon';
+  --Swatch-Name-13: 'Green';
+  --Swatch-Name-14: 'Navy';
+  --Swatch-Name-15: 'Purple';
+  --Swatch-Name-16: 'Olive';
+  --Swatch-Name-17: 'Teal';
+  --Swatch-Name-18: 'Red';
+  --Swatch-Name-19: 'Lime';
+  --Swatch-Name-20: 'Blue';
+  --Swatch-Name-21: 'Fuchsia';
+  --Swatch-Name-22: 'Yellow';
+  --Swatch-Name-23: 'Aqua';
+
+
 }
 
 
@@ -519,12 +574,26 @@ div.tabulator-cell.tabulator-editing {
   height: 68px;
   border-radius: 15px;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
-  opacity: 0.6;
   background-color: royalblue;
-  border: 1px solid royalblue;
+  border: 2px solid royalblue;
   color: white;
   cursor: pointer;
   opacity: 0.6;
+}
+.LightButtonLabel {
+  position: relative;
+  font-size: 20px;
+  line-height: 1.1;
+  white-space: normal;
+  width: 320px !important;
+  height: 68px;
+  border-radius: 15px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  background-color: royalblue;
+  border: 1px solid royalblue;
+  color: white;
+  cursor: unset;
+  opacity: 1;
 }
 .LightText {
   display: flex;
@@ -546,17 +615,17 @@ div.tabulator-cell.tabulator-editing {
   opacity: 1;
 }
 .LightOn {
-  border: 1px solid white;
+  border: 2px solid white;
   color: black;
   background-color: white;
 }
 .LightOff {
-  border: 1px solid darkgray;
+  border: 2px solid darkgray;
   color: white;
   background-color: #101010;
 }
 .LightOther {
-  border: 1px solid darkgray;
+  border: 2px solid darkgray;
   color: white;
   background-color: #101010;
   opacity: 0.25;
@@ -599,3 +668,43 @@ div.tabulator-cell.tabulator-editing {
   max-height: 398px;
   transition: opacity var(--Delay-Short) ease;
 }
+
+.Popup {
+  opacity: 0;
+  z-index: -1;
+  top: 10px !important;
+  left: 340px !important;
+  width: 600px !important;
+  height: 380px !important;
+  border: none;
+  border-radius: 15px;
+  background-color:  #4169E180; /* royal blue @ 50% */
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  transition: opacity var(--Delay-Short) ease;
+}
+#divDimmerThumb {
+  border-radius: 50%;
+  border: 5px solid royalblue;
+  background-color: white;
+  width: 75px !important;
+  height: 75px !important;
+  position: absolute;
+  top: 190px;
+  left: 100px;
+  z-index: 21;
+  pointer-events: none;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+#labelDimmerValue {
+  font-size: 40px;
+  color: white;
+  filter: drop-shadow(0px 0px 2px teal) drop-shadow(0px 0px 2px teal);
+}
+.Swatch {
+  border-radius: 12px !important;
+  border: none !important;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+
+
+

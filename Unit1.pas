@@ -6,8 +6,7 @@ uses
   System.SysUtils, System.Classes, System.DateUtils, JS, Web, WEBLib.Graphics, WEBLib.Controls, jsdelphisystem, System.Math, System.StrUtils,
   WEBLib.Forms, WEBLib.Miletus, WEBLib.Dialogs, Vcl.Controls, Vcl.StdCtrls,
   WEBLib.StdCtrls, WEBLib.ComCtrls, WEBLib.WebCtrls, WEBLib.Storage,
-  WEBLib.ExtCtrls, WEBLib.WebSocketClient, VCL.TMSFNCCustomControl,
-  VCL.TMSFNCCustomPicker, VCL.TMSFNCComboBox, WEBLib.DropDown;
+  WEBLib.ExtCtrls, WEBLib.WebSocketClient, WEBLib.DropDown;
 
 type
   TForm1 = class(TMiletusForm)
@@ -313,6 +312,42 @@ type
     HelpLights: TWebHTMLDiv;
     divSplashImage: TWebHTMLDiv;
     divExitImage: TWebHTMLDiv;
+    divLightSwitch: TWebHTMLDiv;
+    divSLLightSwitch: TWebHTMLDiv;
+    divLightDimmer: TWebHTMLDiv;
+    divLightColor: TWebHTMLDiv;
+    WebHTMLDiv4: TWebHTMLDiv;
+    tmrHidePopups: TWebTimer;
+    labelLightSwitch: TWebHTMLDiv;
+    labelLightDimmer: TWebHTMLDiv;
+    divSLLightRange: TWebHTMLDiv;
+    divDimmerThumb: TWebHTMLDiv;
+    labelDimmerValue: TWebHTMLDiv;
+    labelLightColor: TWebHTMLDiv;
+    btnSwatch0: TWebButton;
+    btnSwatch1: TWebButton;
+    btnSwatch5: TWebButton;
+    btnSwatch2: TWebButton;
+    btnSwatch4: TWebButton;
+    btnSwatch3: TWebButton;
+    btnSwatch6: TWebButton;
+    btnSwatch7: TWebButton;
+    btnSwatch8: TWebButton;
+    btnSwatch9: TWebButton;
+    btnSwatch10: TWebButton;
+    btnSwatch11: TWebButton;
+    btnSwatch12: TWebButton;
+    btnSwatch18: TWebButton;
+    btnSwatch19: TWebButton;
+    btnSwatch13: TWebButton;
+    btnSwatch14: TWebButton;
+    btnSwatch20: TWebButton;
+    btnSwatch21: TWebButton;
+    btnSwatch15: TWebButton;
+    btnSwatch16: TWebButton;
+    btnSwatch22: TWebButton;
+    btnSwatch17: TWebButton;
+    btnSwatch23: TWebButton;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -365,6 +400,8 @@ type
     procedure UpdateNow;
     procedure divHomeLightsCoverClick(Sender: TObject);
     procedure btnLightsAllOffClick(Sender: TObject);
+    procedure LightButtonSwitched(light: String);
+    procedure LightButtonDimmed(light: String; brightness: Integer);
     procedure LightButtonClicked(light: String);
     procedure btnLioghtsShowAllClick(Sender: TObject);
     procedure btnLightsGroupsClick(Sender: TObject);
@@ -373,6 +410,11 @@ type
     procedure tmrExitTimer(Sender: TObject);
     procedure tmrLightsTimer(Sender: TObject);
     procedure LoadHelp(HelpDIV: String);
+    procedure HidePopups;
+    procedure tmrHidePopupsTimer(Sender: TObject);
+    procedure divBackgroundClick(Sender: TObject);
+    procedure MiletusFormClick(Sender: TObject);
+    procedure ColorSwatchSelected(Sender: TObject);
 
   private
     { Private declarations }
@@ -383,6 +425,7 @@ type
     ChangeMode: Boolean;
     DebugMode: Boolean;
     DesktopMode: Boolean;
+    PopupVisible: Boolean;
 
     ConfigurationLoaded: Boolean;
     LastRefresh: TDateTime;
@@ -529,6 +572,10 @@ type
     LightGroups: JSValue;
     LightsMode: Integer;
     LightsAll: string;
+    CurrentLightID: String;
+    LightsWhichSwitch: Integer;
+    SwatchColors: Array[0..23] of String;
+    SwatchNames: Array[0..23] of String;
 
 
     // Custom Pages
@@ -558,6 +605,21 @@ implementation
 procedure TForm1.SetupJavaScriptFunctions;
 begin
   asm
+
+    // Load Swatch information from CSS
+    var GetSwatch = function(SwatchNum) {
+      const here = pas.Unit1.Form1;
+      here.SwatchColors[SwatchNum] = window.getComputedStyle(document.documentElement).getPropertyValue('--Swatch-'+SwatchNum);
+      here.SwatchNames[SwatchNum]  = window.getComputedStyle(document.documentElement).getPropertyValue('--Swatch-Name-'+SwatchNum).replace(/[''""]+/g, '');
+      var swatch = document.getElementById('btnSwatch'+SwatchNum);
+      swatch.style.setProperty('background-color', here.SwatchColors[SwatchNum]);
+      swatch.setAttribute('title', here.SwatchNames[SwatchNum]);
+    }
+    for (var i = 0; i <= 23; i++) {
+      GetSwatch(i);
+    }
+
+
     // Don't have any sensors yet
     window.SensorList = [];
 
@@ -785,13 +847,13 @@ begin
   else if (Entity = WeatherSensor) then
   begin
     asm
-      this.WeatherTemperature = State.attributes.temperature;
-      this.WeatherPressure = State.attributes.pressure;
-      this.WeatherHumidity = State.attributes.humidity;
-      this.WeatherPressureUnit = State.attributes.pressure_unit;
+      this.WeatherTemperature = parseFloat(State.attributes.temperature) || 0;
+      this.WeatherPressure = parseFloat(State.attributes.pressure) || 0;
+      this.WeatherHumidity = parseFloat(State.attributes.humidity) || 0;
+      this.WeatherPressureUnit = parseFloat(State.attributes.pressure_unit) || 0;
       this.WeatherCondition = window.CapWords(State.state);
 
-      var wind_bearing = parseInt(State.attributes.wind_bearing);
+      var wind_bearing = parseInt(State.attributes.wind_bearing) || 0;
       var wind_heading = Math.round(((wind_bearing %= 360) < 0 ? wind_bearing + 360 : wind_bearing) / 22.5) % 16;
       var headings = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SWS','SW','WSW','W','WNW','NW','NWW'];
       this.WeatherWind = State.attributes.wind_speed+' '+State.attributes.wind_speed_unit+' '+headings[wind_heading];
@@ -1122,6 +1184,21 @@ procedure TForm1.HelpConfigMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
   ResetInactivityTimer(Sender);
+end;
+
+procedure TForm1.HidePopups;
+begin
+  CurrentLightID := '';
+  asm
+    pages.style.setProperty('opacity','1');
+    pages.classList.remove('pe-none');
+
+    divLightSwitch.style.setProperty('opacity','0');
+    divLightDimmer.style.setProperty('opacity','0');
+    divLightColor.style.setProperty('opacity','0');
+  end;
+
+  tmrHidePopups.Enabled := True;
 end;
 
 procedure TForm1.editConfigBACKGROUNDChange(Sender: TObject);
@@ -1535,12 +1612,109 @@ begin
   SwitchPages(0, 6);
 end;
 
-procedure TForm1.LightButtonClicked(light: String);
+procedure TForm1.LightButtonSwitched(light: String);
+var
+  LightID: String;
 begin
+  LightID := Copy(light,7,length(light));
+  // Switching light on/off or Changing Color?
   if pos('light-',light) = 1 then
   begin
     HAID := HAID + 1;
-    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+Copy(light,7,length(light))+'"}}');
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+LightID+'"}}');
+  end;
+end;
+
+procedure TForm1.LightButtonDimmed(light: String; brightness: Integer);
+var
+  LightID: String;
+begin
+  LightID := Copy(light,7,length(light));
+  // Switching light on/off or Changing Color?
+  if pos('light-',light) = 1 then
+  begin
+    HAID := HAID + 1;
+    console.log('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "turn_on", "target": {"entity_id":"'+LightID+'"}, "service_data":{"brightness":'+IntToStr(brightness)+'}}');
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "turn_on", "target": {"entity_id":"'+LightID+'"}, "service_data":{"brightness":'+IntToStr(brightness)+'}}');
+  end;
+end;
+
+procedure TForm1.LightButtonClicked(light: String);
+var
+  LightID: String;
+begin
+  LightID := Copy(light,7,length(light));
+  // Switching light on/off or Changing Color?
+  if ChangeMode = False then
+  begin
+    if pos('light-',light) = 1 then
+    begin
+      HAID := HAID + 1;
+      HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "toggle", "target": {"entity_id":"'+LightID+'"}}');
+    end;
+  end
+  else
+  begin
+    asm
+      var lightobj = this.Lights.find(o => o.entity_id === LightID);
+      if (lightobj !== undefined) {
+        pages.style.setProperty('transition', 'opacity 0.4s ease');
+        pages.style.setProperty('opacity','0.25');
+        pages.classList.add('pe-none');
+        this.PopupVisible = true;
+
+        var lightattr = lightobj.attributes["supported_color_modes"];
+        var cloneobj = document.getElementById(light).cloneNode(true);
+        this.CurrentLightID = LightID;
+        cloneobj.id = 'lightswitch-'+LightID;
+        cloneobj.classList.replace('LightButton','LightButtonLabel');
+
+        if ((lightattr == undefined) || (lightattr.length == 0) ||  (lightattr.includes("onoff"))) {
+          this.LightsWhichSwitch = 1;
+          divLightSwitch.style.setProperty('opacity','1');
+          divLightSwitch.style.setProperty('z-index','20');
+          labelLightSwitch.replaceChildren(cloneobj);
+          switchlight.replaceWith(switchlight.cloneNode(true)); // get rid of any existing event listeners (?!)
+          switchlight.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonSwitched(light); e.stopPropagation;});
+          if (lightobj.state == "on") {
+            switchlight.setAttribute('checked','');
+          }
+          else {
+            switchlight.removeAttribute('checked');
+          }
+        }
+        else if (lightattr.includes("brightness")) {
+          this.LightsWhichSwitch = 2;
+          divLightDimmer.style.setProperty('opacity','1');
+          divLightDimmer.style.setProperty('z-index','20');
+          labelLightDimmer.replaceChildren(cloneobj);
+          dimmerlight.replaceWith(dimmerlight.cloneNode(true)); // get rid of any existing event listeners (?!)
+          dimmerlight.addEventListener('sl-input',function(e){
+            divDimmerThumb.style.setProperty("left",50 + (e.target.value * 4.25) +'px');
+            labelDimmerValue.textContent = e.target.value+' %';
+            pas.Unit1.Form1.LightButtonDimmed(light, parseInt(e.target.value * 2.56));
+            e.stopPropagation;
+          });
+          dimmerlight.value = 100 * ((parseFloat(lightobj.attributes["brightness"]) || 0) / 255);
+          divDimmerThumb.style.setProperty("left",50 + (dimmerlight.value * 4.25) + 'px');
+          labelDimmerValue.textContent = (parseInt(dimmerlight.value) || 0)+' %';
+        }
+        else {
+          this.LightsWhichSwitch = 3;
+          divLightColor.style.setProperty('opacity','1');
+          divLightColor.style.setProperty('z-index','20');
+          labelLightColor.replaceChildren(cloneobj);
+          colorlight.replaceWith(colorlight.cloneNode(true)); // get rid of any existing event listeners (?!)
+          colorlight.addEventListener('sl-change',function(e){
+//            pas.Unit1.Form1.LightButtonDimmed(light, parseInt(e.target.value * 2.56));
+//            e.stopPropagation;
+          });
+//          dimmerlight.value = 100 * ((parseFloat(lightobj.attributes["brightness"]) || 0) / 255);
+//          divDimmerThumb.style.setProperty("left",50 + (dimmerlight.value * 4.25) + 'px');
+//          labelDimmerValue.textContent = (parseInt(dimmerlight.value) || 0)+' %';
+        }
+      }
+    end;
   end;
 end;
 
@@ -1734,6 +1908,11 @@ begin
   end;
 end;
 
+procedure TForm1.MiletusFormClick(Sender: TObject);
+begin
+  ResetInactivityTimer(Sender);
+end;
+
 procedure TForm1.MiletusFormCreate(Sender: TObject);
 var
   datafile: String;
@@ -1753,6 +1932,7 @@ begin
   ConfigurationLoaded := False;
   UpdatePending := False;
   LastRefresh := Now;
+  PopupVisible := False;
 
   // Main reason we care is due to menu at top
   // messing with our fixed dimensions
@@ -1991,6 +2171,8 @@ begin
 
   // Lights Page
   LightsMode := 3; // No Groups
+  LightsWhichSwitch := 0;
+  CurrentLightID := '';
   asm
     this.Lights = [];
   end;
@@ -2052,8 +2234,7 @@ end;
 
 procedure TForm1.MiletusFormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 begin
-  if tmrInactivity.Enabled
-  then ResetInactivityTimer(Sender);
+  ResetInactivityTimer(Sender);
 end;
 
 procedure TForm1.navLeftClick(Sender: TObject);
@@ -2204,7 +2385,8 @@ procedure TForm1.ResetInactivityTimer(Sender: TObject);
 begin
   // Reset Inactivity Timer
   tmrInactivity.Enabled := False;
-  tmrInactivity.Enabled := True;
+  if pages.TabIndex <> 1
+  then tmrInactivity.Enabled := True;
 end;
 
 procedure TForm1.SwitchPages(StartPage, EndPage: Integer);
@@ -2216,6 +2398,9 @@ begin
   // If Leaving "Configure Sensors" Page, Save Changes
   if StartPage = 5
   then editConfigChange(nil);
+
+  // Hide Popup if visible
+  HidePopups;
 
   tmrSwitchPage.Tag := EndPage;
   tmrSwitchPage.Enabled := True;
@@ -2277,6 +2462,15 @@ begin
   if labelShutdown.tag = 0
   then Form1.Close
   else window.location.reload(true);
+end;
+
+procedure TForm1.tmrHidePopupsTimer(Sender: TObject);
+begin
+  tmrHidePopups.Enabled := False;
+  PopupVisible := false;
+  divLightSwitch.ElementHandle.style.setProperty('z-index','-1');
+  divLightDimmer.ElementHandle.style.setProperty('z-index','-1');
+  divLightColor.ElementHandle.style.setProperty('z-index','-1');
 end;
 
 procedure TForm1.tmrInactivityTimer(Sender: TObject);
@@ -3266,6 +3460,32 @@ begin
             lightbtn.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(e.target.id); e.stopPropagation;});
 
           }
+
+          if (this.PopupVisible == true) {
+            if (this.CurrentLightID !== '') {
+              var cloneobj = document.getElementById("light-"+this.CurrentLightID).cloneNode(true);
+              cloneobj.id = 'lightswitch-'+this.CurrentLightID;
+              cloneobj.classList.replace('LightButton','LightButtonLabel');
+              if (this.LightsWhichSwitch == 1) {
+                labelLightSwitch.replaceChildren(cloneobj);
+                if (this.Lights.find(o => o.entity_id === this.CurrentLightID).state == "on") {
+                  switchlight.setAttribute('checked','');
+                }
+                else {
+                  switchlight.removeAttribute('checked');
+                }
+              }
+              else if (this.LightsWhichSwitch == 2) {
+                labelLightDimmer.replaceChildren(cloneobj);
+//                if (this.Lights.find(o => o.entity_id === this.CurrentLightID).state == "on") {
+//                  switchlight.setAttribute('checked','');
+//                }
+//                else {
+//                  switchlight.removeAttribute('checked');
+//                }
+              }
+            }
+          }
         }
       }
     end;
@@ -3431,6 +3651,10 @@ begin
 
   // Alright, back to what we were doing.
 
+  if PopupVisible then
+  begin
+    HidePopups;
+  end;
 
   // Switch the page
   pages.TabIndex := EndPage;
@@ -3439,9 +3663,17 @@ begin
 
 
   // Cancel Change Mode
-  if ChangeMode
-  then btnChangeClick(Sender);
+  if ChangeMode then
+  begin
+    ChangeMode := False;
+    asm
+      btnChange.firstElementChild.classList.remove('text-warning','fa-beat');
+      btnChange.style.setProperty('opacity','0.25');
+    end;
 
+    if PopupVisible
+    then HidePopups;
+  end;
 
   if (StartPage <> EndPage)
   then pages.ActivePage.ElementHandle.style.setProperty('opacity','1');
@@ -3517,7 +3749,9 @@ begin
     Navleft.Left := -MainNavSize;
     NavRight.Left := PanelWidth + MainNavSize;
 
+    pages.ElementHandle.style.setProperty('transition', 'opacity 1.5s ease');
     labelShutdown.ElementHandle.style.setProperty('opacity','0');
+
     tmrExit.Enabled := True;
   end;
 
@@ -3650,6 +3884,12 @@ begin
   end;
 end;
 
+procedure TForm1.divBackgroundClick(Sender: TObject);
+begin
+  if PopupVisible
+  then HidePopUps;
+end;
+
 procedure TForm1.divHomeLightsCoverClick(Sender: TObject);
 begin
   // Home Page -> Lights
@@ -3711,6 +3951,10 @@ begin
         btnChange.firstElementChild.classList.remove('text-warning','fa-beat');
         btnChange.style.setProperty('opacity','0.25');
       end;
+
+    if PopupVisible
+    then HidePopups;
+
   end;
 
   ResetInactivityTimer(Sender);
@@ -3921,6 +4165,19 @@ begin
   end;
 
   ResetInactivityTimer(Sender);
+end;
+
+procedure TForm1.ColorSwatchSelected(Sender: TObject);
+var
+  NewColor: String;
+begin
+  if ((Sender is TWebButton) and ((Sender as TWebButton).Tag >= 0)) then
+  begin
+    NewColor := SwatchColors[(Sender as TWebButton).Tag];
+    asm
+      colorlight.value = NewColor;
+    end;
+  end;
 end;
 
 procedure TForm1.ConfigureTabSensors;

@@ -1,14 +1,15 @@
 object Form1: TForm1
   Width = 1280
-  Height = 400
+  Height = 808
   Color = clBlack
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
   Shadow = False
+  OnClick = MiletusFormClick
   OnCreate = MiletusFormCreate
   OnKeyDown = MiletusFormKeyDown
   OnMouseMove = MiletusFormMouseMove
-  ClientHeight = 400
+  ClientHeight = 808
   ClientWidth = 1280
   BorderStyle = bsNoneBorder
   Position = poScreenCenter
@@ -22,6 +23,7 @@ object Form1: TForm1
     ChildOrder = 16
     ElementFont = efCSS
     Role = ''
+    OnClick = divBackgroundClick
   end
   object pages: TWebPageControl
     Tag = 16
@@ -33,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 7
+    TabIndex = 16
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -4916,8 +4918,8 @@ object Form1: TForm1
     OnClick = btnChangeClick
   end
   object btnConfiguration: TWebButton
-    Left = -5
-    Top = 450
+    Left = 5
+    Top = 400
     Width = 40
     Height = 40
     Caption = 
@@ -4931,6 +4933,580 @@ object Form1: TForm1
     TabOrder = 4
     WidthPercent = 100.000000000000000000
     OnClick = btnConfigurationClick
+  end
+  object divLightSwitch: TWebHTMLDiv
+    Left = 8
+    Top = 446
+    Width = 286
+    Height = 233
+    ElementClassName = 'Popup'
+    ElementID = 'divLightSwitch'
+    ChildOrder = 8
+    ElementFont = efCSS
+    Role = ''
+    object divSLLightSwitch: TWebHTMLDiv
+      Left = 225
+      Top = 190
+      Width = 100
+      Height = 41
+      ElementID = 'divSLLightSwitch'
+      ElementFont = efCSS
+      HTML.Strings = (
+        
+          '    <sl-switch id="switchlight" class="bigswitches" style="--wid' +
+          'th: 150px; --height: 50px; --thumb-size: 75px"></sl-switch>  '
+        '      '
+        '    <style>  '
+        '    .bigswitches::part(label) { '
+        '      padding-left: 15px; '
+        '    }  '
+        '    .bigswitches::part(thumb) { '
+        
+          '        filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0' +
+          'px 2px black);'
+        '      border-width: 5px; '
+        '    }  '
+        '    .bigswitches::part(control) { '
+        '      border-radius: 15px; '
+        
+          '      filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px' +
+          ' 2px black);'
+        '    }  '
+        '    </style>  ')
+      Role = ''
+    end
+    object labelLightSwitch: TWebHTMLDiv
+      Left = 140
+      Top = 10
+      Width = 320
+      Height = 68
+      ElementClassName = 'overflow-visible'
+      ElementID = 'labelLightSwitch'
+      ChildOrder = 1
+      ElementFont = efCSS
+      Role = ''
+    end
+  end
+  object divLightDimmer: TWebHTMLDiv
+    Left = 300
+    Top = 406
+    Width = 370
+    Height = 299
+    ElementClassName = 'Popup'
+    ElementID = 'divLightDimmer'
+    ChildOrder = 8
+    ElementFont = efCSS
+    Role = ''
+    object labelLightDimmer: TWebHTMLDiv
+      Left = 140
+      Top = 10
+      Width = 320
+      Height = 68
+      ElementClassName = 'overflow-visible'
+      ElementID = 'labelLightDimmer'
+      ChildOrder = 1
+      ElementFont = efCSS
+      Role = ''
+    end
+    object divSLLightRange: TWebHTMLDiv
+      Left = 50
+      Top = 275
+      Width = 100
+      Height = 41
+      ElementID = 'divSLLightRange'
+      ChildOrder = 1
+      ElementFont = efCSS
+      HTML.Strings = (
+        
+          '<sl-range id="dimmerlight" class="bigrange" tooltip="none" style' +
+          '="--track-height: 30px; --thumb-size: 70px; --track-color-active' +
+          ':white; --track-color-inactive: '
+        'gray;"></sl-range>  '
+        '      '
+        '<style>  '
+        '.bigrange::part(base){ '
+        '  width: 500px;'
+        '}  '
+        '.bigrange::part(input) {'
+        '  border-radius: 25px;'
+        '  border: 3px solid gray;'
+        
+          '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
+          ' black);'
+        '}'
+        '.bigrange::part(base) > input::-webkit-slider-thumb {'
+        '  border: 3px solid royalblue;'
+        '  color: white;'
+        
+          '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
+          ' black);'
+        '}'
+        '</style>  ')
+      Role = ''
+    end
+    object divDimmerThumb: TWebHTMLDiv
+      Left = 96
+      Top = 255
+      Width = 100
+      Height = 41
+      ElementClassName = 'Thumb'
+      ElementID = 'divDimmerThumb'
+      ChildOrder = 2
+      ElementFont = efCSS
+      Role = ''
+    end
+    object labelDimmerValue: TWebHTMLDiv
+      Left = 250
+      Top = 144
+      Width = 100
+      Height = 41
+      ElementClassName = 'text-end'
+      ElementID = 'labelDimmerValue'
+      ChildOrder = 3
+      ElementFont = efCSS
+      Role = ''
+    end
+  end
+  object divLightColor: TWebHTMLDiv
+    Left = 672
+    Top = 406
+    Width = 600
+    Height = 380
+    ElementClassName = 'Popup'
+    ElementID = 'divLightColor'
+    ChildOrder = 8
+    ElementFont = efCSS
+    Role = ''
+    object WebHTMLDiv4: TWebHTMLDiv
+      Left = 140
+      Top = 88
+      Width = 320
+      Height = 41
+      ChildOrder = 1
+      ElementFont = efCSS
+      HTML.Strings = (
+        '<sl-color-picker'
+        '   id="colorlight"'
+        '  class="fancyslider"'
+        '  style="'
+        '    --grid-height: 164px;'
+        '    --grid-width: 320px;'
+        '    --slider-height: 30px;'
+        '    --slider-handle-size: 45px;'
+        '  "'
+        '   inline'
+        '  uppercase'
+        '  format="rgb"'
+        '  value="maroon"'
+        '></sl-colorpicker>'
+        ''
+        '<style>'
+        '.fancyslider::part(base) {'
+        '  border: none;'
+        '  border-radius: 12px;'
+        '  background-color: #F0F0FF80;'
+        
+          '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
+          ' black);'
+        '}'
+        '.fancyslider::part(grid) {'
+        '  border-top-left-radius: 11px;'
+        '  border-top-right-radius: 11px;'
+        '}'
+        '.fancyslider::part(hue-slider) {'
+        '  margin-left: 20px;'
+        '  margin-right: 20px;'
+        '  margin-top: 5px;'
+        '  margin-bottom: 5px;'
+        '  border-radius: 10px;'
+        
+          '  filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px' +
+          ' black);'
+        '}'
+        '.fancyslider::part(slider-handle) {'
+        '  border: 4px solid royalblue;'
+        
+          '  filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px' +
+          ' black);'
+        '}'
+        '.fancyslider::part(preview) {'
+        ' display: none;'
+        '  width: 0px;'
+        '  height: 0px;'
+        '}'
+        '.fancyslider::part(input) {'
+        '  border: 1px solid royalblue;'
+        '  border-radius: 10px;'
+        '--sl-input-border-radius-medium: 10px;'
+        '}'
+        '.fancyslider::part(format-button) {'
+        '  border: 1px solid royalblue;'
+        '  border-top-left-radius: 10px;'
+        '  border-bottom-left-radius: 10px;'
+        '}'
+        '.fancyslider::part(eye-dropper-button) {'
+        '  border: 1px solid royalblue;'
+        '  border-top-right-radius: 10px;'
+        '  border-bottom-right-radius: 10px;'
+        '}'
+        '.fancyslider::part(format-button__base) {'
+        '  border-top-left-radius:10px;'
+        '  border-bottom-left-radius:10px;'
+        '}'
+        '.fancyslider::part(eye-dropper-button__base) {'
+        '  border-top-right-radius: 10px;'
+        '  border-bottom-right-radius: 10px;'
+        '}'
+        '</style>')
+      Role = ''
+    end
+    object labelLightColor: TWebHTMLDiv
+      Left = 140
+      Top = 10
+      Width = 320
+      Height = 68
+      ElementClassName = 'overflow-visible'
+      ElementID = 'labelLightColor'
+      ChildOrder = 1
+      ElementFont = efCSS
+      Role = ''
+    end
+    object btnSwatch0: TWebButton
+      Left = 10
+      Top = 10
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch0'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch1: TWebButton
+      Tag = 1
+      Left = 10
+      Top = 71
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch1'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch5: TWebButton
+      Tag = 5
+      Left = 10
+      Top = 315
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch5'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch2: TWebButton
+      Tag = 2
+      Left = 10
+      Top = 132
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch2'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch4: TWebButton
+      Tag = 4
+      Left = 10
+      Top = 254
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch4'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch3: TWebButton
+      Tag = 3
+      Left = 10
+      Top = 193
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch3'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch6: TWebButton
+      Tag = 6
+      Left = 71
+      Top = 10
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch6'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch7: TWebButton
+      Tag = 7
+      Left = 71
+      Top = 71
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch7'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch8: TWebButton
+      Tag = 8
+      Left = 71
+      Top = 132
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch8'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      TextDirection = tdInherit
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch9: TWebButton
+      Tag = 9
+      Left = 71
+      Top = 193
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch9'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch10: TWebButton
+      Tag = 10
+      Left = 71
+      Top = 254
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch10'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch11: TWebButton
+      Tag = 11
+      Left = 71
+      Top = 315
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch11'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch12: TWebButton
+      Tag = 12
+      Left = 474
+      Top = 10
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch12'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch18: TWebButton
+      Tag = 18
+      Left = 535
+      Top = 10
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch18'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch19: TWebButton
+      Tag = 19
+      Left = 535
+      Top = 71
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch19'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch13: TWebButton
+      Tag = 13
+      Left = 474
+      Top = 71
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch13'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch14: TWebButton
+      Tag = 14
+      Left = 474
+      Top = 132
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch14'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch20: TWebButton
+      Tag = 20
+      Left = 535
+      Top = 132
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch20'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch21: TWebButton
+      Tag = 21
+      Left = 535
+      Top = 193
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch21'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch15: TWebButton
+      Tag = 15
+      Left = 474
+      Top = 193
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch15'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch16: TWebButton
+      Tag = 16
+      Left = 474
+      Top = 254
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch16'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch22: TWebButton
+      Tag = 22
+      Left = 535
+      Top = 254
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch22'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch17: TWebButton
+      Tag = 17
+      Left = 474
+      Top = 315
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch17'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
+    object btnSwatch23: TWebButton
+      Tag = 23
+      Left = 535
+      Top = 315
+      Width = 55
+      Height = 55
+      ChildOrder = 2
+      ElementClassName = 'btn btn-primary Swatch'
+      ElementID = 'btnSwatch23'
+      ElementFont = efCSS
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = ColorSwatchSelected
+    end
   end
   object tmrSeconds: TWebTimer
     Enabled = False
@@ -4953,7 +5529,7 @@ object Form1: TForm1
   end
   object tmrInactivity: TWebTimer
     Enabled = False
-    Interval = 30000
+    Interval = 3000000
     OnTimer = tmrInactivityTimer
     Left = 808
     Top = 64
@@ -4983,6 +5559,13 @@ object Form1: TForm1
     Interval = 400
     OnTimer = tmrLightsTimer
     Left = 456
+    Top = 64
+  end
+  object tmrHidePopups: TWebTimer
+    Enabled = False
+    Interval = 400
+    OnTimer = tmrHidePopupsTimer
+    Left = 384
     Top = 64
   end
 end
