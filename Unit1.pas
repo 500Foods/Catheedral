@@ -402,6 +402,7 @@ type
     procedure btnLightsAllOffClick(Sender: TObject);
     procedure LightButtonSwitched(light: String);
     procedure LightButtonDimmed(light: String; brightness: Integer);
+    procedure LightButtonColor(light: String; hsv: String);
     procedure LightButtonClicked(light: String);
     procedure btnLioghtsShowAllClick(Sender: TObject);
     procedure btnLightsGroupsClick(Sender: TObject);
@@ -709,6 +710,34 @@ begin
         arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
       }
       return arr.join(' ');
+    }
+
+    window.rgbFromHSV = function(h,s,v) {
+      /**
+       * I: An array of three elements hue (h) ? [0, 360], and saturation (s) and value (v) which are ? [0, 1]
+       * O: An array of red (r), green (g), blue (b), all ? [0, 255]
+       * Derived from https://en.wikipedia.org/wiki/HSL_and_HSV
+       * This stackexchange was the clearest derivation I found to reimplement https://cs.stackexchange.com/questions/64549/convert-hsv-to-rgb-colors
+      */
+
+      const hprime = h / 60;
+      const c = v * s;
+      const x = c * (1 - Math.abs(hprime % 2 - 1));
+      const m = v - c;
+      let r, g, b;
+      if (!hprime) {r = 0; g = 0; b = 0; }
+      if (hprime >= 0 && hprime < 1) { r = c; g = x; b = 0}
+      if (hprime >= 1 && hprime < 2) { r = x; g = c; b = 0}
+      if (hprime >= 2 && hprime < 3) { r = 0; g = c; b = x}
+      if (hprime >= 3 && hprime < 4) { r = 0; g = x; b = c}
+      if (hprime >= 4 && hprime < 5) { r = x; g = 0; b = c}
+      if (hprime >= 5 && hprime < 6) { r = c; g = 0; b = x}
+
+      r = Math.round( (r + m)* 255);
+      g = Math.round( (g + m)* 255);
+      b = Math.round( (b + m)* 255);
+
+      return [r, g, b]
     }
   end;
 end;
@@ -1193,9 +1222,18 @@ begin
     pages.style.setProperty('opacity','1');
     pages.classList.remove('pe-none');
 
-    divLightSwitch.style.setProperty('opacity','0');
-    divLightDimmer.style.setProperty('opacity','0');
-    divLightColor.style.setProperty('opacity','0');
+    if (this.LightsWhichSwitch == 1) {
+      divLightSwitch.style.setProperty('opacity','0');
+      divLightSwitch.style.setProperty('top','410px');
+    }
+    else if (this.LightsWhichSwitch == 2) {
+      divLightDimmer.style.setProperty('opacity','0');
+      divLightDimmer.style.setProperty('top','410px');
+    }
+    else if (this.LightsWhichSwitch == 3) {
+      divLightColor.style.setProperty('opacity','0');
+      divLightColor.style.setProperty('top','410px');
+    }
   end;
 
   tmrHidePopups.Enabled := True;
@@ -1634,8 +1672,32 @@ begin
   if pos('light-',light) = 1 then
   begin
     HAID := HAID + 1;
-    console.log('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "turn_on", "target": {"entity_id":"'+LightID+'"}, "service_data":{"brightness":'+IntToStr(brightness)+'}}');
     HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "turn_on", "target": {"entity_id":"'+LightID+'"}, "service_data":{"brightness":'+IntToStr(brightness)+'}}');
+  end;
+end;
+
+procedure TForm1.LightButtonColor(light: String; hsv: String);
+var
+  LightID: String;
+  Hue: Integer;
+  Sat: Integer;
+  Bri: Integer;
+  Command: String;
+begin
+  LightID := Copy(light,7,length(light));
+  hsv := StringReplace(StringReplace(StringReplace(StringReplace(hsv,'HSV(','',[]),')','',[]),'%','',[rfReplaceAll]),' ','',[rfReplaceAll]);
+
+  asm
+    Hue = parseInt(hsv.split(',')[0] || 0);
+    Sat = parseInt(hsv.split(',')[1] || 0);
+    Bri = parseInt(parseInt(hsv.split(',')[2] || 0) * 2.56);
+  end;
+
+  // Switching light on/off or Changing Color?
+  if pos('light-',light) = 1 then
+  begin
+    HAID := HAID + 1;
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "light", "service": "turn_on", "target": {"entity_id":"'+LightID+'"}, "service_data":{"transition":0.4,"brightness":'+IntToStr(Bri)+',"hs_color":['+IntToStr(Hue)+','+IntToStr(Sat)+']}}');
   end;
 end;
 
@@ -1658,36 +1720,51 @@ begin
     asm
       var lightobj = this.Lights.find(o => o.entity_id === LightID);
       if (lightobj !== undefined) {
+
+        // De-prioritize maing TWebPageControl
         pages.style.setProperty('transition', 'opacity 0.4s ease');
         pages.style.setProperty('opacity','0.25');
         pages.classList.add('pe-none');
-        this.PopupVisible = true;
 
-        var lightattr = lightobj.attributes["supported_color_modes"];
-        var cloneobj = document.getElementById(light).cloneNode(true);
+        // We'll need this later
+        this.PopupVisible = true;
         this.CurrentLightID = LightID;
+
+        // Clone the light button from the main display
+        var cloneobj = document.getElementById(light).cloneNode(true);
         cloneobj.id = 'lightswitch-'+LightID;
         cloneobj.classList.replace('LightButton','LightButtonLabel');
+        cloneobj.style.setProperty("margin-top","0px");
+
+        // Figure out which kind of light control to display
+        var lightattr = lightobj.attributes["supported_color_modes"];
 
         if ((lightattr == undefined) || (lightattr.length == 0) ||  (lightattr.includes("onoff"))) {
-          this.LightsWhichSwitch = 1;
-          divLightSwitch.style.setProperty('opacity','1');
-          divLightSwitch.style.setProperty('z-index','20');
+          // Add Light
           labelLightSwitch.replaceChildren(cloneobj);
+
+          // Setup Event
           switchlight.replaceWith(switchlight.cloneNode(true)); // get rid of any existing event listeners (?!)
           switchlight.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonSwitched(light); e.stopPropagation;});
+
+          // Set Current State
           if (lightobj.state == "on") {
             switchlight.setAttribute('checked','');
           }
           else {
             switchlight.removeAttribute('checked');
           }
+
+          // Show UI
+          this.LightsWhichSwitch = 1;
+          divLightSwitch.style.setProperty('opacity','1');
+          divLightSwitch.style.setProperty('top','10px');
         }
         else if (lightattr.includes("brightness")) {
-          this.LightsWhichSwitch = 2;
-          divLightDimmer.style.setProperty('opacity','1');
-          divLightDimmer.style.setProperty('z-index','20');
+          // Add Light
           labelLightDimmer.replaceChildren(cloneobj);
+
+          // Setup Event
           dimmerlight.replaceWith(dimmerlight.cloneNode(true)); // get rid of any existing event listeners (?!)
           dimmerlight.addEventListener('sl-input',function(e){
             divDimmerThumb.style.setProperty("left",50 + (e.target.value * 4.25) +'px');
@@ -1695,23 +1772,63 @@ begin
             pas.Unit1.Form1.LightButtonDimmed(light, parseInt(e.target.value * 2.56));
             e.stopPropagation;
           });
+
+          // Set Current State
           dimmerlight.value = 100 * ((parseFloat(lightobj.attributes["brightness"]) || 0) / 255);
           divDimmerThumb.style.setProperty("left",50 + (dimmerlight.value * 4.25) + 'px');
           labelDimmerValue.textContent = (parseInt(dimmerlight.value) || 0)+' %';
+
+          // Show UI
+          this.LightsWhichSwitch = 2;
+          divLightDimmer.style.setProperty('opacity','1');
+          divLightDimmer.style.setProperty('top','10px');
         }
         else {
-          this.LightsWhichSwitch = 3;
-          divLightColor.style.setProperty('opacity','1');
-          divLightColor.style.setProperty('z-index','20');
+          // Add Light
           labelLightColor.replaceChildren(cloneobj);
           colorlight.replaceWith(colorlight.cloneNode(true)); // get rid of any existing event listeners (?!)
+
+          // Setup Event
           colorlight.addEventListener('sl-change',function(e){
-//            pas.Unit1.Form1.LightButtonDimmed(light, parseInt(e.target.value * 2.56));
-//            e.stopPropagation;
+            pas.Unit1.Form1.LightButtonColor(
+              light,
+              e.target.getFormattedValue('hsv')
+            );
+            e.stopPropagation;
           });
-//          dimmerlight.value = 100 * ((parseFloat(lightobj.attributes["brightness"]) || 0) / 255);
-//          divDimmerThumb.style.setProperty("left",50 + (dimmerlight.value * 4.25) + 'px');
-//          labelDimmerValue.textContent = (parseInt(dimmerlight.value) || 0)+' %';
+
+          // Set Current State
+          if (lightobj.attributes["rgb_color"] !== undefined) {
+            colorlight.value = "hsv("+lightobj.attributes["hs_color"][0]+","+
+                                      lightobj.attributes["hs_color"][1]+"%,"+
+                                      parseInt(lightobj.attributes["brightness"]/2.56)+'%'+
+                                  ")";
+          }
+          else {
+            colorlight.value = "rgb(0,0,0)";
+          }
+
+          // Show UI
+
+          // Changing the input element's font (there's got to be a better way!)
+          customElements.whenDefined('sl-color-picker').then(() => {
+            setTimeout(function() {
+              var a = colorlight.shadowRoot;
+              var b = a.querySelectorAll('[part~="input"]');
+              var c = b[0].shadowRoot;
+              var d = c.querySelectorAll('[part~="input"]');
+              var e = d[0];
+              e.style.setProperty('font-family','Cairo');
+              e.style.setProperty('font-size','18px');
+              e.style.setProperty('padding-left','5px');
+              e.style.setProperty('padding-right','0px');
+            },50);
+          });
+
+          this.LightsWhichSwitch = 3;
+          divLightColor.style.setProperty('opacity','1');
+          divLightColor.style.setProperty('top','10px');
+
         }
       }
     end;
@@ -2468,9 +2585,9 @@ procedure TForm1.tmrHidePopupsTimer(Sender: TObject);
 begin
   tmrHidePopups.Enabled := False;
   PopupVisible := false;
-  divLightSwitch.ElementHandle.style.setProperty('z-index','-1');
-  divLightDimmer.ElementHandle.style.setProperty('z-index','-1');
-  divLightColor.ElementHandle.style.setProperty('z-index','-1');
+//  divLightSwitch.ElementHandle.style.setProperty('z-index','-1');
+//  divLightDimmer.ElementHandle.style.setProperty('z-index','-1');
+//  divLightColor.ElementHandle.style.setProperty('z-index','-1');
 end;
 
 procedure TForm1.tmrInactivityTimer(Sender: TObject);
@@ -3427,8 +3544,17 @@ begin
             // If button is "on" we might also be able to set its color
             if (all[i].state == "on") {
               lightbtn.classList.add('LightOn');
-              if (all[i].attributes["rgb_color"] !== undefined) {
-                lightbtn.style.setProperty("background-color","rgb("+all[i].attributes["rgb_color"][0]+","+all[i].attributes["rgb_color"][1]+","+all[i].attributes["rgb_color"][2]+")");
+              if (all[i].attributes["hs_color"] !== undefined) {
+                var rgb = window.rgbFromHSV(
+                  parseInt(all[i].attributes["hs_color"][0] || 0),
+                  parseInt(all[i].attributes["hs_color"][1] || 0) / 100,
+                  parseInt(all[i].attributes["brightness"]/2.56 || 0) / 100
+                )
+                lightbtn.style.setProperty("background-color","rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+")")
+              }
+              else if (all[i].attributes["brightness"] !== undefined) {
+                var rgb = parseInt(all[i].attributes["brightness"] || 0);
+                lightbtn.style.setProperty("background-color","rgb("+rgb+","+rgb+","+rgb+")")
               }
             }
             // If button is off or disabled, color not usually available
@@ -3477,12 +3603,31 @@ begin
               }
               else if (this.LightsWhichSwitch == 2) {
                 labelLightDimmer.replaceChildren(cloneobj);
-//                if (this.Lights.find(o => o.entity_id === this.CurrentLightID).state == "on") {
-//                  switchlight.setAttribute('checked','');
-//                }
-//                else {
-//                  switchlight.removeAttribute('checked');
-//                }
+                if (this.Lights.find(o => o.entity_id === this.CurrentLightID).state == "on") {
+                  var light = this.Lights.find(o => o.entity_id === this.CurrentLightID).attributes;
+                  var lightvalue = 100 * ((parseFloat(light["brightness"]) || 0) / 255);
+                  dimmerlight.value = lightvalue;
+                  divDimmerThumb.style.setProperty("left",50 + (lightvalue * 4.25) + 'px');
+                  labelDimmerValue.textContent = (parseInt(lightvalue) || 0)+' %';
+                }
+                else {
+                  dimmerlight.value = 0;
+                  divDimmerThum.style.setProperty("left","50px");
+                  labelDimmerValue.textContent = "0 %";
+                }
+              }
+              else if (this.LightsWhichSwitch == 3) {
+                labelLightColor.replaceChildren(cloneobj);
+                if (this.Lights.find(o => o.entity_id === this.CurrentLightID).state == "on") {
+                  var light = this.Lights.find(o => o.entity_id === this.CurrentLightID).attributes;
+                  colorlight.value = "hsv("+light["hs_color"][0]+","+
+                                            light["hs_color"][1]+"%,"+
+                                            parseInt(light["brightness"] / 2.56)
+                                        ")";
+                }
+                else {
+                  colorlight.value = "rgb(0,0,0)";
+                }
               }
             }
           }
@@ -3615,6 +3760,15 @@ begin
   // All done with Startup
   else if (tmrStartup.Tag = 9) then
   begin
+    asm
+      var a = colorlight.shadowRoot;
+      var b = a.querySelectorAll('[part~="input"]');
+      var c = b[0].shadowRoot;
+      var d = c.querySelectorAll('[part~="input"]');
+      var e = d[0];
+      e.style.setProperty('font-family','Cairo');
+      e.style.setProperty('font-size','18px');
+    end;
     tmrSecondsTimer(nil);  // No delay
     tmrSeconds.Enabled := True;
   end
@@ -4176,6 +4330,9 @@ begin
     NewColor := SwatchColors[(Sender as TWebButton).Tag];
     asm
       colorlight.value = NewColor;
+      colorlight.updateComplete.then(() => {
+        colorlight.dispatchEvent(new Event('sl-change'));
+      });
     end;
   end;
 end;

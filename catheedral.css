@@ -17,8 +17,8 @@ html, body {
 
 :root {
 
-/* Ring Colors - at most 5 rings (usually 3) and a background color */
-/* Ring Filter - applied to each set of rings */
+  /* Ring Colors - at most 5 rings (usually 3) and a background color */
+  /* Ring Filter - applied to each set of rings */
 
   --TxRing1: darkred;
   --TxRing2: darkgreen;
@@ -52,64 +52,71 @@ html, body {
   --ExRingB: #FFFFFF40;
   --ExRingF: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px black);
 
-/* Assorted Delays */
+  /* Assorted Delays */
+
   --Delay-Short: 0.4s;
   --Delay-Medium: 1.0s;
   --Delay-Long: 1.5s;
 
-/* Color Swatches */
+  /* Color Swatches */
+
   --Swatch-0:  white;
-  --Swatch-1:  #C0C0C0;
-  --Swatch-2:  #909090;
-  --Swatch-3:  #606060;
-  --Swatch-4:  #303030;
+  --Swatch-1:  #CCCCCC;
+  --Swatch-2:  #999999;
+  --Swatch-3:  #666666;
+  --Swatch-4:  #333333;
   --Swatch-5:  black;
-  --Swatch-6:  gold;
-  --Swatch-7:  lightsalmon;
-  --Swatch-8:  orange;
-  --Swatch-9:  lightpink;
+
+  --Swatch-6:  lightpink;
+  --Swatch-7:  lightyellow;
+  --Swatch-8:  lightgreen;
+  --Swatch-9:  lightsalmon;
   --Swatch-10: lightskyblue;
-  --Swatch-11: lightyellow;
+  --Swatch-11: paleturquoise;
 
   --Swatch-12: maroon;
-  --Swatch-13: green;
-  --Swatch-14: navy;
-  --Swatch-15: purple;
-  --Swatch-16: olive;
-  --Swatch-17: teal;
+  --Swatch-13: olive;
+  --Swatch-14: green;
+  --Swatch-15: teal;
+  --Swatch-16: navy;
+  --Swatch-17: purple;
+
   --Swatch-18: red;
-  --Swatch-19: lime;
-  --Swatch-20: blue;
-  --Swatch-21: fuchsia;
-  --Swatch-22: yellow;
-  --Swatch-23: aqua;
+  --Swatch-19: yellow;
+  --Swatch-20: lime;
+  --Swatch-21: aqua;
+  --Swatch-22: blue;
+  --Swatch-23: fuchsia;
 
   --Swatch-Name-0:  "White";
-  --Swatch-Name-1:  "Gray-A";
-  --Swatch-Name-2:  "Gray-B";
-  --Swatch-Name-3:  "Gray-C";
-  --Swatch-Name-4:  "Gray-D";
+  --Swatch-Name-1:  "Gray-80%";
+  --Swatch-Name-2:  "Gray-60%";
+  --Swatch-Name-3:  "Gray-40%";
+  --Swatch-Name-4:  "Gray-20%";
   --Swatch-Name-5:  "Black";
-  --Swatch-Name-6:  "Gold";
-  --Swatch-Name-7:  "Light Salmon";
-  --Swatch-Name-8:  "Orange";
-  --Swatch-Name-9: "Light Pink";
+
+  --Swatch-Name-6:  "Light Pink";
+  --Swatch-Name-7:  "Light Yellow";
+  --Swatch-Name-8:  "Light Green";
+  --Swatch-Name-9:  "Light Salmon";
   --Swatch-Name-10: "Light Sky Blue";
-  --Swatch-Name-11: "Light Yellow";
+  --Swatch-Name-11: "Pale Turquoise";
 
   --Swatch-Name-12: 'Maroon';
-  --Swatch-Name-13: 'Green';
-  --Swatch-Name-14: 'Navy';
-  --Swatch-Name-15: 'Purple';
-  --Swatch-Name-16: 'Olive';
-  --Swatch-Name-17: 'Teal';
-  --Swatch-Name-18: 'Red';
-  --Swatch-Name-19: 'Lime';
-  --Swatch-Name-20: 'Blue';
-  --Swatch-Name-21: 'Fuchsia';
-  --Swatch-Name-22: 'Yellow';
-  --Swatch-Name-23: 'Aqua';
+  --Swatch-Name-13: 'Olive';
+  --Swatch-Name-14: 'Green';
+  --Swatch-Name-15: 'Teal';
+  --Swatch-Name-16: 'Navy';
+  --Swatch-Name-17: 'Purple';
 
+  --Swatch-Name-18: 'Red';
+  --Swatch-Name-19: 'Yellow';
+  --Swatch-Name-20: 'Lime';
+  --Swatch-Name-21: 'Aqua';
+  --Swatch-Name-22: 'Blue';
+  --Swatch-Name-23: 'Fuchsia';
+
+--sl-font-serif: "Cairo";
 
 }
 
@@ -671,16 +678,16 @@ div.tabulator-cell.tabulator-editing {
 
 .Popup {
   opacity: 0;
-  z-index: -1;
-  top: 10px !important;
+  z-index: 20;
+  top: 410px;
   left: 340px !important;
-  width: 600px !important;
-  height: 380px !important;
+  width: 600px  !important;;
+  height: 380px  !important;;
   border: none;
   border-radius: 15px;
   background-color:  #4169E180; /* royal blue @ 50% */
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
-  transition: opacity var(--Delay-Short) ease;
+  transition: opacity var(--Delay-Short) ease, top var(--Delay-Short) ease;
 }
 #divDimmerThumb {
   border-radius: 50%;
@@ -706,5 +713,8 @@ div.tabulator-cell.tabulator-editing {
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
 }
 
-
+sl-color-picker {
+  font-family: "Cairo";
+  font-size: 18px;
+}
 

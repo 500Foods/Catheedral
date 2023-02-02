@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 16
+    TabIndex = 17
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -5101,6 +5101,9 @@ object Form1: TForm1
         '></sl-colorpicker>'
         ''
         '<style>'
+        'sl-color-picker {'
+        '  font-family: "Cairo";'
+        '}'
         '.fancyslider::part(base) {'
         '  border: none;'
         '  border-radius: 12px;'
@@ -5117,10 +5120,10 @@ object Form1: TForm1
         '  margin-left: 20px;'
         '  margin-right: 20px;'
         '  margin-top: 5px;'
-        '  margin-bottom: 5px;'
+        '  margin-bottom: 7px;'
         '  border-radius: 10px;'
         
-          '  filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 1px' +
+          '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
           ' black);'
         '}'
         '.fancyslider::part(slider-handle) {'
@@ -5135,19 +5138,30 @@ object Form1: TForm1
         '  height: 0px;'
         '}'
         '.fancyslider::part(input) {'
-        '  border: 1px solid royalblue;'
+        '  border: none;'
         '  border-radius: 10px;'
-        '--sl-input-border-radius-medium: 10px;'
+        '  --sl-input-border-radius-medium: 10px;'
+        
+          '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
+          ' black);'
+        '  font-family: "Cairo";'
         '}'
         '.fancyslider::part(format-button) {'
-        '  border: 1px solid royalblue;'
-        '  border-top-left-radius: 10px;'
-        '  border-bottom-left-radius: 10px;'
+        '  border:none'
+        '  border-radius: 10px;'
+        '  margin-right: 1px;'
+        
+          '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
+          ' black);'
+        '  --sl-font-serif: "Cairo";'
         '}'
         '.fancyslider::part(eye-dropper-button) {'
-        '  border: 1px solid royalblue;'
-        '  border-top-right-radius: 10px;'
-        '  border-bottom-right-radius: 10px;'
+        '  border: none;'
+        '  border-radius: 10px;'
+        '  margin-left: 2px;'
+        
+          '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
+          ' black);'
         '}'
         '.fancyslider::part(format-button__base) {'
         '  border-top-left-radius:10px;'
