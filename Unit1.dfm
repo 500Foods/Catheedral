@@ -27,7 +27,7 @@ object Form1: TForm1
   end
   object pages: TWebPageControl
     Tag = 16
-    Left = 0
+    Left = -4
     Top = 0
     Width = 1280
     Height = 400
@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 17
+    TabIndex = 2
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1951,9 +1951,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object divHomeLightsCover: TWebHTMLDiv
-          Left = 100
+          Left = 96
           Top = 0
-          Width = 100
+          Width = 104
           Height = 50
           Cursor = crHandPoint
           ElementClassName = 'TextCover'

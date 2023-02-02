@@ -599,7 +599,7 @@ div.tabulator-cell.tabulator-editing {
   background-color: royalblue;
   border: 1px solid royalblue;
   color: white;
-  cursor: unset;
+  cursor: pointer;
   opacity: 1;
 }
 .LightText {
@@ -711,10 +711,5 @@ div.tabulator-cell.tabulator-editing {
   border-radius: 12px !important;
   border: none !important;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
-}
-
-sl-color-picker {
-  font-family: "Cairo";
-  font-size: 18px;
 }
 

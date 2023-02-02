@@ -1441,7 +1441,7 @@ begin
         }
 
 
-        // There are FOUR lights
+        // There are FOUR lights ;)
         this.LightsOn = hadata.result.filter(
           function(o) {
            return ((o.entity_id.indexOf("light.") == 0) && (o.state == "on") && (o.attributes.lights == undefined) && (o.entity_id.indexOf("_group") == -1) && (o.entity_id.indexOf("_hide") == -1));
@@ -1707,7 +1707,7 @@ var
 begin
   LightID := Copy(light,7,length(light));
   // Switching light on/off or Changing Color?
-  if ChangeMode = False then
+  if (ChangeMode = False) or (PopupVisible = True) then
   begin
     if pos('light-',light) = 1 then
     begin
@@ -1735,6 +1735,7 @@ begin
         cloneobj.id = 'lightswitch-'+LightID;
         cloneobj.classList.replace('LightButton','LightButtonLabel');
         cloneobj.style.setProperty("margin-top","0px");
+        cloneobj.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(light); e.stopPropagation;});
 
         // Figure out which kind of light control to display
         var lightattr = lightobj.attributes["supported_color_modes"];
@@ -1767,8 +1768,11 @@ begin
           // Setup Event
           dimmerlight.replaceWith(dimmerlight.cloneNode(true)); // get rid of any existing event listeners (?!)
           dimmerlight.addEventListener('sl-input',function(e){
-            divDimmerThumb.style.setProperty("left",50 + (e.target.value * 4.25) +'px');
             labelDimmerValue.textContent = e.target.value+' %';
+            divDimmerThumb.style.setProperty("left",50 + (e.target.value * 4.25) +'px');
+            e.stopPropagation;
+          });
+          dimmerlight.addEventListener('sl-change',function(e){
             pas.Unit1.Form1.LightButtonDimmed(light, parseInt(e.target.value * 2.56));
             e.stopPropagation;
           });
@@ -3589,9 +3593,12 @@ begin
 
           if (this.PopupVisible == true) {
             if (this.CurrentLightID !== '') {
-              var cloneobj = document.getElementById("light-"+this.CurrentLightID).cloneNode(true);
+              var currid = "light-"+this.CurrentLightID;
+              var cloneobj = document.getElementById(currid).cloneNode(true);
               cloneobj.id = 'lightswitch-'+this.CurrentLightID;
               cloneobj.classList.replace('LightButton','LightButtonLabel');
+              cloneobj.addEventListener('click',function(e){pas.Unit1.Form1.LightButtonClicked(currid); e.stopPropagation;});
+
               if (this.LightsWhichSwitch == 1) {
                 labelLightSwitch.replaceChildren(cloneobj);
                 if (this.Lights.find(o => o.entity_id === this.CurrentLightID).state == "on") {
@@ -3612,7 +3619,7 @@ begin
                 }
                 else {
                   dimmerlight.value = 0;
-                  divDimmerThum.style.setProperty("left","50px");
+                  divDimmerThumb.style.setProperty("left","50px");
                   labelDimmerValue.textContent = "0 %";
                 }
               }
