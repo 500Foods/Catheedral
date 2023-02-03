@@ -5101,9 +5101,6 @@ object Form1: TForm1
         '></sl-colorpicker>'
         ''
         '<style>'
-        'sl-color-picker {'
-        '  font-family: "Cairo";'
-        '}'
         '.fancyslider::part(base) {'
         '  border: none;'
         '  border-radius: 12px;'
@@ -5144,7 +5141,6 @@ object Form1: TForm1
         
           '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
           ' black);'
-        '  font-family: "Cairo";'
         '}'
         '.fancyslider::part(format-button) {'
         '  border:none'
@@ -5153,7 +5149,6 @@ object Form1: TForm1
         
           '  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px' +
           ' black);'
-        '  --sl-font-serif: "Cairo";'
         '}'
         '.fancyslider::part(eye-dropper-button) {'
         '  border: none;'
