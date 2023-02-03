@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 2
+    TabIndex = 1
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1924,7 +1924,7 @@ object Form1: TForm1
           Cursor = crHandPoint
           Alignment = taCenter
           AutoSize = False
-          Caption = 'Lights'
+          Caption = 'Lighting'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeLights'
@@ -1951,10 +1951,10 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object divHomeLightsCover: TWebHTMLDiv
-          Left = 96
+          Left = 75
           Top = 0
-          Width = 104
-          Height = 50
+          Width = 150
+          Height = 75
           Cursor = crHandPoint
           ElementClassName = 'TextCover'
           ElementID = 'divHomeLightsCover'
