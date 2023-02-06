@@ -791,6 +791,7 @@ end;
 procedure TForm1.Sparkline_Donut(CTop, CLeft, CWidth, CHeight: Integer; Chart: TWebHTMLDiv; ChartData: String; Fill: String; Rotation: String; InnerRadius: Double; DisplayText: String);
 var
   Element: TJSElement;
+  ChartID: String;
 //  ChartName: String;
 begin
 //  ChartName := StringReplace(StringReplace(Chart.ElementID,'circle','',[]),'Marker','M',[]);
@@ -805,6 +806,10 @@ begin
   Chart.Height := CHeight;
 
   // Create a place to attach the Sparkline
+  ChartID := Chart.ElementID;
+  asm
+    document.getElementById(ChartID).replaceChildren();
+  end;
   Chart.ElementHandle.innerHTML := '<span></span>';
 
   // Add data to this place
