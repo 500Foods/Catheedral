@@ -849,14 +849,14 @@ begin
   if (Entity = ClimateSensor) then
   begin
     asm
-      this.ClimateName = window.CapWords(State.attributes.friendly_name).replace('Thermostat','').trim();
-      this.ClimateMin = State.attributes.min_temp;
-      this.ClimateMax = State.attributes.max_temp;
-      this.ClimateHumidity = State.attributes.current_humidity;
-      this.ClimateCurrent = State.attributes.current_temperature;
-      this.ClimateSetPoint = State.attributes.temperature;
-      this.ClimateState = window.CapWords(State.state).trim();
-      this.ClimateMode = window.CapWords(State.attributes.hvac_action).trim();
+      this.ClimateName = window.CapWords(State.attributes.friendly_name || 'N/A').replace('Thermostat','').trim();
+      this.ClimateMin = parseInt(State.attributes.min_temp);
+      this.ClimateMax = parseInt(State.attributes.max_temp);
+      this.ClimateHumidity = parseInt(State.attributes.current_humidity);
+      this.ClimateCurrent = parseInt(State.attributes.current_temperature);
+      this.ClimateSetPoint = parseInt(State.attributes.temperature);
+      this.ClimateState = window.CapWords(State.state || 'N/A').trim();
+      this.ClimateMode = window.CapWords(State.attributes.hvac_action || 'N/A').trim();
     end;
   end
 
@@ -885,7 +885,7 @@ begin
       this.WeatherPressure = parseFloat(State.attributes.pressure) || 0;
       this.WeatherHumidity = parseFloat(State.attributes.humidity) || 0;
       this.WeatherPressureUnit = parseFloat(State.attributes.pressure_unit) || 0;
-      this.WeatherCondition = window.CapWords(State.state);
+      this.WeatherCondition = window.CapWords(State.state || 'N/A');
 
       var wind_bearing = parseInt(State.attributes.wind_bearing) || 0;
       var wind_heading = Math.round(((wind_bearing %= 360) < 0 ? wind_bearing + 360 : wind_bearing) / 22.5) % 16;
@@ -1030,13 +1030,13 @@ begin
   begin
     asm
       if (State.attributes["friendly_name"] !== undefined) {
-        this.Person1Name = window.CapWords(State.attributes["friendly_name"]);
+        this.Person1Name = window.CapWords(State.attributes["friendly_name"] || 'N/A');
       }
       if (State.attributes["entity_picture"] !== undefined) {
         this.Person1Photo = State.attributes["entity_picture"];
       }
       if (State.state !== undefined) {
-        this.Person1Location = window.CapWords(State.state.replace('_',' '));
+        this.Person1Location = window.CapWords((State.state || 'N/A').replace('_',' '));
       }
     end;
     if Person1Location = 'Stationary' then Person1Location := 'Somewhere';
@@ -1045,13 +1045,13 @@ begin
   begin
     asm
       if (State.attributes["friendly_name"] !== undefined) {
-        this.Person2Name = window.CapWords(State.attributes["friendly_name"]);
+        this.Person2Name = window.CapWords(State.attributes["friendly_name"] || 'N/A');
       }
       if (State.attributes["entity_picture"] !== undefined) {
         this.Person2Photo = State.attributes["entity_picture"];
       }
       if (State.state !== undefined) {
-        this.Person2Location = window.CapWords(State.state.replace('_',' '));
+        this.Person2Location = window.CapWords((State.state || 'N/A').replace('_',' '));
       }
     end;
     if Person2Location = 'Stationary' then Person2Location := 'Somewhere';
@@ -1065,7 +1065,7 @@ begin
     MoonIcon := '<img width="70" height="70" src="weather-icons-dev/production/fill/svg-static/moon'+StringReplace(StringReplace(StringReplace(MoonState,'_','-',[rfReplaceAll]),'mdi:moon','',[]),'-moon','',[])+'.svg">';
     MoonTitle := Trim(StringReplace(StringReplace(StringReplace(MoonState,'_',' ',[rfReplaceAll]),'mdi:moon','',[]),'-',' ',[rfReplaceAll]));
     asm
-      this.MoonTitle = window.CapWords(this.MoonTitle);
+      this.MoonTitle = window.CapWords(this.MoonTitle || 'N/A');
     end;
   end
 
@@ -2711,7 +2711,7 @@ begin
       memory := 0;
       asm
         if ((performance !== undefined) && (performance.memory !== undefined) && (performance.memory.totalJSHeapSize !== undefined)) {
-          memory = parseInt(performance.memory.totalJSHeapSize);
+          memory = parseInt(performance.memory.totalJSHeapSize) || 0;
         }
       end;
      dataInfoMemory.Caption := FloatToStrF(memory / (1024 * 1024), ffNumber, 6,1)+' MB';
