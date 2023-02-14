@@ -1643,7 +1643,7 @@ begin
   if dataConfigSTATUS.Caption = 'Connected' then
   begin
     dataConfigSTATUS.Caption := 'Not Connected';
-    tmrConnect.Tag := 15;
+    tmrConnect.Tag := 11;
     tmrConnect.Enabled := True;
 
     ShowDisconnected;
@@ -2541,11 +2541,11 @@ begin
   if (HAWebSocket.Active = False) then
   begin
 
-    if tmrConnect.Tag = 0 then
+    if tmrConnect.Tag <= 1 then
     begin
       tmrConnect.Enabled := False;
       dataConfigSTATUS.Caption := 'Connecting';
-      tmrConnect.Tag := 15;
+      tmrConnect.Tag := 11;
 
       if (editConfigURL.Text = '') or (editConfigTOKEN.Text = '') then
       begin
