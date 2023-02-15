@@ -563,6 +563,7 @@ type
     Battery3Status: String;
     Battery4Status: String;
 
+    EnergySensor: String;
     EnergyUse: Integer;
 
     // Lights Page
@@ -667,6 +668,7 @@ begin
       here.Battery4Sensor = table.getRow(25).getCell('entity_id').getValue();
       here.Person1Sensor = table.getRow(26).getCell('entity_id').getValue();
       here.Person2Sensor = table.getRow(27).getCell('entity_id').getValue();
+      here.EnergySensor = table.getRow(28).getCell('entity_id').getValue();
 
       window.SensorList = [
 
@@ -699,7 +701,8 @@ begin
         here.Battery1Sensor,
         here.Battery2Sensor,
         here.Battery3Sensor,
-        here.Battery4Sensor
+        here.Battery4Sensor,
+        here.EnergySensor
       ];
     }
 
@@ -1084,6 +1087,7 @@ begin
   else if (Entity = WeatherUVSensor) then asm this.WeatherUV = State.state end
   else if (Entity = WeatherAQHISensor) then asm this.WeatherAQHI = State.state end
 
+  else if (Entity = EnergySensor) then asm if (!isNaN(State.state)) { this.EnergyUse = parseInt(State.state) } end
 
   else
   begin
@@ -2220,6 +2224,8 @@ begin
   Battery3Sensor := '';
   Battery4Sensor := '';
 
+  EnergySensor := '';
+
   // Config Page Defaults
   editConfigURL.Text := 'http://homeassistant.local:8123';
   editConfigTOKEN.Text := '';
@@ -2293,7 +2299,7 @@ begin
   Person2Name := '';
   Person2Photo := '';
   Person2Location := '';
-  EnergyUse := 1234;
+  EnergyUse := 0;
 
   // Lights Page
   LightsMode := 3; // No Groups
@@ -3362,7 +3368,7 @@ begin
     begin
 
       // Display current energy use
-      display := FloatToStrF(EnergyUse/1000.0, ffNumber,5,3)+' kW';
+      display := FloatToStrF(EnergyUse, ffNumber,5,0)+' W';
       if dataEnergyUse.Caption <> display
       then dataEnergyUse.Caption := display;
 
@@ -4379,7 +4385,8 @@ begin
       {"id": 24, "feature":"Device 3"             , "example":"eg: device_tracker.someone_device" },
       {"id": 25, "feature":"Device 4"             , "example":"eg: device_tracker.someone_device" },
       {"id": 26, "feature":"Person 1"             , "example":"eg: person.someone" },
-      {"id": 27, "feature":"Person 2"             , "example":"eg: person.someone" }
+      {"id": 27, "feature":"Person 2"             , "example":"eg: person.someone" },
+      {"id": 28, "feature":"Energy Use"           , "example":"eg: sensor.consumption" }
     ];
     this.Features = FeatureData.length;
 
