@@ -154,6 +154,8 @@ input[type=text]:focus-visible.ConfigEdit  {
 
 /* Main TWebPageControl Component */
 #pages {
+  top: 0px !important;
+  left: 0px !important;
   transition: opacity 1.5s ease;
 }
 /* Individual TWebTabSheet Components */

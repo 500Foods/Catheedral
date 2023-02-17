@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 16
+    TabIndex = 20
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -2509,28 +2509,6 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           WidthPercent = 100.000000000000000000
         end
-        object dataEnergyUse: TWebLabel
-          Left = 0
-          Top = 162
-          Width = 300
-          Height = 73
-          Alignment = taCenter
-          AutoSize = False
-          Caption = 'Watts'
-          ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextXL White'
-          ElementID = 'dataEnergyUse'
-          ElementFont = efCSS
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -53
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          HeightStyle = ssAuto
-          HeightPercent = 100.000000000000000000
-          ParentFont = False
-          WidthPercent = 100.000000000000000000
-        end
         object dataBattery1Status: TWebLabel
           Left = 15
           Top = 20
@@ -2698,6 +2676,30 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           ParentFont = False
           WidthPercent = 100.000000000000000000
+        end
+        object dataEnergyUse: TWebLabel
+          Left = 0
+          Top = 162
+          Width = 300
+          Height = 73
+          Cursor = crHandPoint
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Watts'
+          ElementClassName = 'overflow-visible TextXL'
+          ElementLabelClassName = 'Text TextXL White'
+          ElementID = 'dataEnergyUse'
+          ElementFont = efCSS
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -53
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          ParentFont = False
+          WidthPercent = 100.000000000000000000
+          OnClick = dataEnergyUseClick
         end
         object ringEnergyUse: TWebHTMLDiv
           Left = 14
@@ -4657,7 +4659,7 @@ object Form1: TForm1
       ChildOrder = 16
       ElementFont = efCSS
       object btnLioghtsShowAll: TWebButton
-        Left = 50
+        Left = 45
         Top = 20
         Width = 140
         Height = 68
@@ -4673,7 +4675,7 @@ object Form1: TForm1
         OnClick = btnLioghtsShowAllClick
       end
       object btnLightsGroups: TWebButton
-        Left = 50
+        Left = 45
         Top = 93
         Width = 140
         Height = 68
@@ -4690,7 +4692,7 @@ object Form1: TForm1
         OnClick = btnLightsGroupsClick
       end
       object btnLightsNoGroups: TWebButton
-        Left = 50
+        Left = 45
         Top = 166
         Width = 140
         Height = 68
@@ -4707,7 +4709,7 @@ object Form1: TForm1
         OnClick = btnLightsNoGroupsClick
       end
       object btnLightsAllOn: TWebButton
-        Left = 50
+        Left = 45
         Top = 239
         Width = 140
         Height = 68
@@ -4724,7 +4726,7 @@ object Form1: TForm1
         OnClick = btnLightsAllOnClick
       end
       object btnLightsAllOff: TWebButton
-        Left = 50
+        Left = 45
         Top = 312
         Width = 140
         Height = 68
@@ -4741,7 +4743,7 @@ object Form1: TForm1
         OnClick = btnLightsAllOffClick
       end
       object divAllLights: TWebHTMLDiv
-        Left = 190
+        Left = 185
         Top = 2
         Width = 1050
         Height = 396
@@ -4811,6 +4813,125 @@ object Form1: TForm1
         ChildOrder = 2
         ElementFont = efCSS
         Role = ''
+      end
+    end
+    object pageEnergy: TWebTabSheet
+      Tag = 20
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageEnergy'
+      Caption = 'En'
+      ChildOrder = 19
+      ElementFont = efCSS
+      object WebButton1: TWebButton
+        Left = 45
+        Top = 20
+        Width = 140
+        Height = 68
+        Caption = 
+          '<div class="LightText">View All<br />Lights</div><div class="Lig' +
+          'htBtnIcon mdi mdi-home-lightbulb"></div>'
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLioghtsShowAll'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+        OnClick = btnLioghtsShowAllClick
+      end
+      object WebButton2: TWebButton
+        Left = 45
+        Top = 93
+        Width = 140
+        Height = 68
+        Caption = 
+          '<div class="LightText">Only<br />Groups</div><div class="LightBt' +
+          'nIcon mdi mdi-lightbulb-group"></div>'
+        ChildOrder = 1
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsGroups'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+        OnClick = btnLightsGroupsClick
+      end
+      object WebButton3: TWebButton
+        Left = 45
+        Top = 166
+        Width = 140
+        Height = 68
+        Caption = 
+          '<div class="LightText">Hide<br />Groups</div><div class="LightBt' +
+          'nIcon mdi mdi-lightbulb-group-off"></div>'
+        ChildOrder = 2
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsNoGroups'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+        OnClick = btnLightsNoGroupsClick
+      end
+      object WebButton4: TWebButton
+        Left = 45
+        Top = 239
+        Width = 140
+        Height = 68
+        Caption = 
+          '<div class="LightText">Turn<br />All On</div><div class="LightBt' +
+          'nIcon mdi mdi-lightbulb"></div>'
+        ChildOrder = 3
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsAllOn'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+        OnClick = btnLightsAllOnClick
+      end
+      object WebButton5: TWebButton
+        Left = 45
+        Top = 312
+        Width = 140
+        Height = 68
+        Caption = 
+          '<div class="LightText">Turn<br />All Off</div><div class="LightB' +
+          'tnIcon mdi mdi-lightbulb-outline"></div>'
+        ChildOrder = 4
+        ElementClassName = 'LightButton'
+        ElementID = 'btnLightsAllOff'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+        OnClick = btnLightsAllOffClick
+      end
+    end
+    object pageHelpEnergy: TWebTabSheet
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageHelpEnergy'
+      Caption = 'Help-En'
+      ChildOrder = 20
+      ElementFont = efCSS
+      object HelpEnergy: TWebHTMLDiv
+        Left = 50
+        Top = 0
+        Width = 1180
+        Height = 400
+        ElementClassName = 'Help Scroll'
+        ElementID = 'HelpEnergy'
+        ElementFont = efCSS
+        Role = ''
+        OnClick = ResetInactivityTimer
+        OnMouseMove = HelpConfigMouseMove
       end
     end
   end

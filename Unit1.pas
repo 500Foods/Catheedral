@@ -348,6 +348,14 @@ type
     btnSwatch22: TWebButton;
     btnSwatch17: TWebButton;
     btnSwatch23: TWebButton;
+    pageEnergy: TWebTabSheet;
+    pageHelpEnergy: TWebTabSheet;
+    HelpEnergy: TWebHTMLDiv;
+    WebButton1: TWebButton;
+    WebButton2: TWebButton;
+    WebButton3: TWebButton;
+    WebButton4: TWebButton;
+    WebButton5: TWebButton;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -416,6 +424,7 @@ type
     procedure divBackgroundClick(Sender: TObject);
     procedure MiletusFormClick(Sender: TObject);
     procedure ColorSwatchSelected(Sender: TObject);
+    procedure dataEnergyUseClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1218,6 +1227,11 @@ begin
   ResetInactivityTimer(Sender);
 end;
 
+procedure TForm1.dataEnergyUseClick(Sender: TObject);
+begin
+  SwitchPages(1,19);
+end;
+
 procedure TForm1.HelpConfigMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
@@ -2007,7 +2021,8 @@ begin
   HelpFile := 'help/'+HALanguage+'-'+HACountry+'/'+HelpDIV+'.html';
   HelpFileAlt := 'help/en-CA/'+HelpDIV+'.html';
   asm
-    var Help = document.getElementById(HelpDIV)
+    var Help = document.getElementById(HelpDIV);
+    Help.innerHTML = '<div class="HelpBody">Help File Missing: '+HelpFile+'</div>';
     fetch(HelpFile)
       .then(
         function(response) {
@@ -2016,24 +2031,27 @@ begin
               .then(
                 function(altresponse) {
                   if (altresponse.status !== 200) {
-                    Help.textContent = 'Help File Missing: '+HelpFileAlt;
                   }
-                  altresponse.text().then(function(AltHelpData) {
-                    Help.innerHTML = AltHelpData
-                  })
+                  else {
+                    altresponse.text().then(function(AltHelpData) {
+                      Help.innerHTML = AltHelpData;
+                    })
+                  }
                 }
               )
               .catch(function(err) {
-                console.log('Error ['+err+'] Loading Help: '+HelpDIV)
+                console.log('Error ['+err+'] Loading Help: '+HelpDIV);
               })
           }
-          response.text().then(function(HelpData) {
-            Help.innerHTML = HelpData
-          })
+          else {
+            response.text().then(function(HelpData) {
+              Help.innerHTML = HelpData
+            })
+          }
         }
       )
       .catch(function(err) {
-        console.log('Error ['+err+'] Loading Help: '+HelpDIV)
+         console.log('Error ['+err+'] Loading Help: '+HelpDIV);
       })
   end;
 end;
@@ -2395,6 +2413,8 @@ begin
   // 16 - Lights Page
   // 17 - HELP: Lights Page
   // 18 - Out - Shutting Down Page
+  // 19 - Energy Page
+  // 20 - HELP: Energy Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2416,8 +2436,8 @@ begin
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
   // Help Cycle: 5
-  // 13 - 04 - 12 - 14 - 15 - 17
-  // Cs - Cf - Ci - C1 - Hm - Lt
+  // 13 - 04 - 12 - 14 - 15 - 17 - 20
+  // Cs - Cf - Ci - C1 - Hm - Lt - En
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,  5)
@@ -2434,12 +2454,13 @@ begin
   else if (pages.TabIndex =  8) then SwitchPages(  8, Custom1)
 
   // Help
-  else if (pages.TabIndex = 13) then SwitchPages( 13, 17)
+  else if (pages.TabIndex = 13) then SwitchPages( 13, 20)
   else if (pages.TabIndex =  4) then SwitchPages(  4, 13)
   else if (pages.TabIndex = 12) then SwitchPages( 12,  4)
   else if (pages.TabIndex = 14) then SwitchPages( 14, 12)
   else if (pages.TabIndex = 15) then SwitchPages( 15, 14)
   else if (pages.TabIndex = 17) then SwitchPages( 17, 15)
+  else if (pages.TabIndex = 20) then SwitchPages( 20, 17)
 
   // Lights - Go back to Home
   else if (pages.TabIndex = 16) then SwitchPages( 16, 1)
@@ -2478,6 +2499,8 @@ begin
   // 16 - Lights Page
   // 17 - HELP: Lights Page
   // 18 - Out - Shutting Down Page
+  // 19 - Energy Page
+  // 20 - HELP: Energy Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2499,8 +2522,8 @@ begin
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
   // Help Cycle
-  // 13 - 04 - 12 - 14 - 15 - 17
-  // Cs - Cf - Ci - C1 - Hm - Lt
+  // 13 - 04 - 12 - 14 - 15 - 17 - 20
+  // Cs - Cf - Ci - C1 - Hm - Lt - En
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,   0)
@@ -2522,7 +2545,8 @@ begin
   else if (pages.TabIndex = 12) then SwitchPages( 12, 14)
   else if (pages.TabIndex = 14) then SwitchPages( 14, 15)
   else if (pages.TabIndex = 15) then SwitchPages( 15, 17)
-  else if (pages.TabIndex = 17) then SwitchPages( 17, 13)
+  else if (pages.TabIndex = 17) then SwitchPages( 17, 20)
+  else if (pages.TabIndex = 17) then SwitchPages( 20, 13)
 
   // Lights - Go back to Home
   else if (pages.TabIndex = 16) then SwitchPages( 16, 1)
