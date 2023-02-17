@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 7
+    TabIndex = 16
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -4657,7 +4657,7 @@ object Form1: TForm1
       ChildOrder = 16
       ElementFont = efCSS
       object btnLioghtsShowAll: TWebButton
-        Left = 45
+        Left = 50
         Top = 20
         Width = 140
         Height = 68
@@ -4673,7 +4673,7 @@ object Form1: TForm1
         OnClick = btnLioghtsShowAllClick
       end
       object btnLightsGroups: TWebButton
-        Left = 45
+        Left = 50
         Top = 93
         Width = 140
         Height = 68
@@ -4690,7 +4690,7 @@ object Form1: TForm1
         OnClick = btnLightsGroupsClick
       end
       object btnLightsNoGroups: TWebButton
-        Left = 45
+        Left = 50
         Top = 166
         Width = 140
         Height = 68
@@ -4707,7 +4707,7 @@ object Form1: TForm1
         OnClick = btnLightsNoGroupsClick
       end
       object btnLightsAllOn: TWebButton
-        Left = 45
+        Left = 50
         Top = 239
         Width = 140
         Height = 68
@@ -4724,7 +4724,7 @@ object Form1: TForm1
         OnClick = btnLightsAllOnClick
       end
       object btnLightsAllOff: TWebButton
-        Left = 45
+        Left = 50
         Top = 312
         Width = 140
         Height = 68
@@ -4741,7 +4741,7 @@ object Form1: TForm1
         OnClick = btnLightsAllOffClick
       end
       object divAllLights: TWebHTMLDiv
-        Left = 185
+        Left = 190
         Top = 2
         Width = 1050
         Height = 396

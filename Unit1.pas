@@ -2392,6 +2392,9 @@ begin
   // 13 - HELP: Configuration Sensors
   // 14 - HELP: Custom Pages
   // 15 - HELP: Home Page
+  // 16 - Lights Page
+  // 17 - HELP: Lights Page
+  // 18 - Out - Shutting Down Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2413,8 +2416,8 @@ begin
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
   // Help Cycle: 5
-  // 13 - 04 - 12 - 14 - 15
-  // Cs - Cf - Ci - C1 - Hm
+  // 13 - 04 - 12 - 14 - 15 - 17
+  // Cs - Cf - Ci - C1 - Hm - Lt
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,  5)
@@ -2431,11 +2434,20 @@ begin
   else if (pages.TabIndex =  8) then SwitchPages(  8, Custom1)
 
   // Help
-  else if (pages.TabIndex = 13) then SwitchPages( 13, 15)
+  else if (pages.TabIndex = 13) then SwitchPages( 13, 17)
   else if (pages.TabIndex =  4) then SwitchPages(  4, 13)
   else if (pages.TabIndex = 12) then SwitchPages( 12,  4)
   else if (pages.TabIndex = 14) then SwitchPages( 14, 12)
-  else if (pages.TabIndex = 15) then SwitchPages( 15, 14);
+  else if (pages.TabIndex = 15) then SwitchPages( 15, 14)
+  else if (pages.TabIndex = 17) then SwitchPages( 17, 15)
+
+  // Lights - Go back to Home
+  else if (pages.TabIndex = 16) then SwitchPages( 16, 1)
+
+  // Energy - Go back to home
+
+  // Otherwise - Go back to home
+  else SwitchPages(pages.TabIndex, 1);
 
   ResetInactivityTimer(Sender);
 end;
@@ -2463,6 +2475,9 @@ begin
   // 13 - HELP: Configuration Sensors
   // 14 - HELP: Custom Pages
   // 15 - HELP: Home Page
+  // 16 - Lights Page
+  // 17 - HELP: Lights Page
+  // 18 - Out - Shutting Down Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2484,8 +2499,8 @@ begin
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
   // Help Cycle
-  // 13 - 04 - 12 - 14 - 15
-  // Cs - Cf - Ci - C1 - Hm
+  // 13 - 04 - 12 - 14 - 15 - 17
+  // Cs - Cf - Ci - C1 - Hm - Lt
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,   0)
@@ -2506,8 +2521,16 @@ begin
   else if (pages.TabIndex =  4) then SwitchPages(  4, 12)
   else if (pages.TabIndex = 12) then SwitchPages( 12, 14)
   else if (pages.TabIndex = 14) then SwitchPages( 14, 15)
-  else if (pages.TabIndex = 15) then SwitchPages( 15, 13);
+  else if (pages.TabIndex = 15) then SwitchPages( 15, 17)
+  else if (pages.TabIndex = 17) then SwitchPages( 17, 13)
 
+  // Lights - Go back to Home
+  else if (pages.TabIndex = 16) then SwitchPages( 16, 1)
+
+  // Energy - Go back to home
+
+  // Otherwise - Go back to home
+  else SwitchPages(pages.TabIndex, 1);
 
   ResetInactivityTimer(Sender);
 end;
