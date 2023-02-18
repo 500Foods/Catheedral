@@ -356,6 +356,12 @@ type
     WebButton3: TWebButton;
     WebButton4: TWebButton;
     WebButton5: TWebButton;
+    pageWeather: TWebTabSheet;
+    pageHelpWeather: TWebTabSheet;
+    HelpWeather: TWebHTMLDiv;
+    WebLabel1: TWebLabel;
+    WebLabel2: TWebLabel;
+    WebLabel3: TWebLabel;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -425,6 +431,7 @@ type
     procedure MiletusFormClick(Sender: TObject);
     procedure ColorSwatchSelected(Sender: TObject);
     procedure dataEnergyUseClick(Sender: TObject);
+    procedure dataWeatherTemperatureClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1230,6 +1237,11 @@ end;
 procedure TForm1.dataEnergyUseClick(Sender: TObject);
 begin
   SwitchPages(1,19);
+end;
+
+procedure TForm1.dataWeatherTemperatureClick(Sender: TObject);
+begin
+  SwitchPages(1,21);
 end;
 
 procedure TForm1.HelpConfigMouseMove(Sender: TObject;
@@ -2415,6 +2427,8 @@ begin
   // 18 - Out - Shutting Down Page
   // 19 - Energy Page
   // 20 - HELP: Energy Page
+  // 21 - Weather Page
+  // 22 - HELP: Weather Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2436,8 +2450,8 @@ begin
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
   // Help Cycle: 5
-  // 13 - 04 - 12 - 14 - 15 - 17 - 20
-  // Cs - Cf - Ci - C1 - Hm - Lt - En
+  // 13 - 04 - 12 - 14 - 15 - 17 - 20 - 22
+  // Cs - Cf - Ci - C1 - Hm - Lt - En - Wx
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,  5)
@@ -2454,18 +2468,23 @@ begin
   else if (pages.TabIndex =  8) then SwitchPages(  8, Custom1)
 
   // Help
-  else if (pages.TabIndex = 13) then SwitchPages( 13, 20)
+  else if (pages.TabIndex = 13) then SwitchPages( 13, 22)
   else if (pages.TabIndex =  4) then SwitchPages(  4, 13)
   else if (pages.TabIndex = 12) then SwitchPages( 12,  4)
   else if (pages.TabIndex = 14) then SwitchPages( 14, 12)
   else if (pages.TabIndex = 15) then SwitchPages( 15, 14)
   else if (pages.TabIndex = 17) then SwitchPages( 17, 15)
   else if (pages.TabIndex = 20) then SwitchPages( 20, 17)
+  else if (pages.TabIndex = 22) then SwitchPages( 22, 20)
 
   // Lights - Go back to Home
   else if (pages.TabIndex = 16) then SwitchPages( 16, 1)
 
   // Energy - Go back to home
+  else if (pages.TabIndex = 19) then SwitchPages( 19, 1)
+
+  // Weather - Go back to home
+  else if (pages.TabIndex = 21) then SwitchPages( 21, 1)
 
   // Otherwise - Go back to home
   else SwitchPages(pages.TabIndex, 1);
@@ -2501,6 +2520,8 @@ begin
   // 18 - Out - Shutting Down Page
   // 19 - Energy Page
   // 20 - HELP: Energy Page
+  // 21 - Weather Page
+  // 22 - HELP: Weather Page
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2522,8 +2543,8 @@ begin
   // Custom3 - Custom4 - Scenes - Home - Rooms - Custom1 - Custom2
 
   // Help Cycle
-  // 13 - 04 - 12 - 14 - 15 - 17 - 20
-  // Cs - Cf - Ci - C1 - Hm - Lt - En
+  // 13 - 04 - 12 - 14 - 15 - 17 - 20 - 22
+  // Cs - Cf - Ci - C1 - Hm - Lt - En - Wx
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,   0)
@@ -2546,12 +2567,17 @@ begin
   else if (pages.TabIndex = 14) then SwitchPages( 14, 15)
   else if (pages.TabIndex = 15) then SwitchPages( 15, 17)
   else if (pages.TabIndex = 17) then SwitchPages( 17, 20)
-  else if (pages.TabIndex = 17) then SwitchPages( 20, 13)
+  else if (pages.TabIndex = 20) then SwitchPages( 20, 22)
+  else if (pages.TabIndex = 22) then SwitchPages( 22, 13)
 
   // Lights - Go back to Home
   else if (pages.TabIndex = 16) then SwitchPages( 16, 1)
 
   // Energy - Go back to home
+  else if (pages.TabIndex = 19) then SwitchPages( 19, 1)
+
+  // Weather - Go back to home
+  else if (pages.TabIndex = 21) then SwitchPages( 21, 1)
 
   // Otherwise - Go back to home
   else SwitchPages(pages.TabIndex, 1);

@@ -1,6 +1,6 @@
 object Form1: TForm1
   Width = 1280
-  Height = 808
+  Height = 400
   Color = clBlack
   CSSLibrary = cssBootstrap
   ElementFont = efCSS
@@ -9,7 +9,7 @@ object Form1: TForm1
   OnCreate = MiletusFormCreate
   OnKeyDown = MiletusFormKeyDown
   OnMouseMove = MiletusFormMouseMove
-  ClientHeight = 808
+  ClientHeight = 400
   ClientWidth = 1280
   BorderStyle = bsNoneBorder
   Position = poScreenCenter
@@ -27,7 +27,7 @@ object Form1: TForm1
   end
   object pages: TWebPageControl
     Tag = 16
-    Left = -4
+    Left = 8
     Top = 0
     Width = 1280
     Height = 400
@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 20
+    TabIndex = 3
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1659,10 +1659,11 @@ object Form1: TForm1
           Top = 162
           Width = 300
           Height = 73
+          Cursor = crHandPoint
           Alignment = taCenter
           AutoSize = False
           Caption = 'Temp'
-          ElementClassName = 'overflow-visible'
+          ElementClassName = 'overflow-visible TextXL'
           ElementLabelClassName = 'Text TextXL White'
           ElementID = 'dataHomeTemperature'
           ElementFont = efCSS
@@ -1781,7 +1782,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = '20C'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextLG Green'
+          ElementLabelClassName = 'Text TextLG Gray'
           ElementID = 'dataHomeSetPoint'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -1825,7 +1826,7 @@ object Form1: TForm1
           AutoSize = False
           Caption = 'Set Point'
           ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextSM Green'
+          ElementLabelClassName = 'Text TextSM White'
           ElementID = 'labelHomeSetPoint'
           ElementFont = efCSS
           HeightStyle = ssAuto
@@ -2031,7 +2032,7 @@ object Form1: TForm1
         end
         object btnHomeTempDown: TWebButton
           Left = 60
-          Top = 255
+          Top = 253
           Width = 50
           Height = 50
           HelpType = htKeyword
@@ -2047,7 +2048,7 @@ object Form1: TForm1
         end
         object btnHomeTempUp: TWebButton
           Left = 190
-          Top = 255
+          Top = 253
           Width = 50
           Height = 50
           HelpType = htKeyword
@@ -2142,10 +2143,11 @@ object Form1: TForm1
           Top = 162
           Width = 300
           Height = 73
+          Cursor = crHandPoint
           Alignment = taCenter
           AutoSize = False
           Caption = 'Temp'
-          ElementClassName = 'overflow-visible'
+          ElementClassName = 'overflow-visible TextXL'
           ElementLabelClassName = 'Text TextXL White'
           ElementID = 'dataWeatherTemperature'
           ElementFont = efCSS
@@ -2158,6 +2160,7 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           ParentFont = False
           WidthPercent = 100.000000000000000000
+          OnClick = dataWeatherTemperatureClick
         end
         object dataWeatherMin: TWebLabel
           Left = 15
@@ -2801,6 +2804,19 @@ object Form1: TForm1
       Caption = 'Rm'
       ChildOrder = 2
       ElementFont = efCSS
+      object WebLabel2: TWebLabel
+        Left = 447
+        Top = 264
+        Width = 154
+        Height = 50
+        AutoSize = False
+        Caption = 'Rooms'
+        ElementLabelClassName = 'Text TextXL White'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+      end
     end
     object pageScenes: TWebTabSheet
       Left = 0
@@ -2812,6 +2828,19 @@ object Form1: TForm1
       Caption = 'Sc'
       ChildOrder = 1
       ElementFont = efCSS
+      object WebLabel3: TWebLabel
+        Left = 455
+        Top = 272
+        Width = 154
+        Height = 50
+        AutoSize = False
+        Caption = 'Scenes'
+        ElementLabelClassName = 'Text TextXL White'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+      end
     end
     object pageHelpConfig: TWebTabSheet
       Left = 0
@@ -4829,11 +4858,11 @@ object Form1: TForm1
       object WebButton1: TWebButton
         Left = 45
         Top = 20
-        Width = 140
+        Width = 150
         Height = 68
         Caption = 
-          '<div class="LightText">View All<br />Lights</div><div class="Lig' +
-          'htBtnIcon mdi mdi-home-lightbulb"></div>'
+          '<div class="LightText">View All<br />Energy</div><div class="Lig' +
+          'htBtnIcon mdi mdi-home-lightning-bolt"></div>'
         ElementClassName = 'LightButton'
         ElementID = 'btnLioghtsShowAll'
         ElementFont = efCSS
@@ -4845,11 +4874,11 @@ object Form1: TForm1
       object WebButton2: TWebButton
         Left = 45
         Top = 93
-        Width = 140
+        Width = 150
         Height = 68
         Caption = 
-          '<div class="LightText">Only<br />Groups</div><div class="LightBt' +
-          'nIcon mdi mdi-lightbulb-group"></div>'
+          '<div class="LightText">All<br />Batteries</div><div class="Light' +
+          'BtnIcon mdi mdi-battery-charging"></div>'
         ChildOrder = 1
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsGroups'
@@ -4862,11 +4891,11 @@ object Form1: TForm1
       object WebButton3: TWebButton
         Left = 45
         Top = 166
-        Width = 140
+        Width = 150
         Height = 68
         Caption = 
-          '<div class="LightText">Hide<br />Groups</div><div class="LightBt' +
-          'nIcon mdi mdi-lightbulb-group-off"></div>'
+          '<div class="LightText">All<br />Devices</div><div class="LightBt' +
+          'nIcon mdi mdi-lightning-bolt-circle"></div>'
         ChildOrder = 2
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsNoGroups'
@@ -4879,11 +4908,11 @@ object Form1: TForm1
       object WebButton4: TWebButton
         Left = 45
         Top = 239
-        Width = 140
+        Width = 150
         Height = 68
         Caption = 
-          '<div class="LightText">Turn<br />All On</div><div class="LightBt' +
-          'nIcon mdi mdi-lightbulb"></div>'
+          '<div class="LightText">Grid<br />Power</div><div class="LightBtn' +
+          'Icon mdi mdi-transmission-tower"></div>'
         ChildOrder = 3
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsAllOn'
@@ -4896,11 +4925,11 @@ object Form1: TForm1
       object WebButton5: TWebButton
         Left = 45
         Top = 312
-        Width = 140
+        Width = 150
         Height = 68
         Caption = 
-          '<div class="LightText">Turn<br />All Off</div><div class="LightB' +
-          'tnIcon mdi mdi-lightbulb-outline"></div>'
+          '<div class="LightText">Solar<br />Power</div><div class="LightBt' +
+          'nIcon mdi mdi-solar-panel"></div>'
         ChildOrder = 4
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsAllOff'
@@ -4928,6 +4957,54 @@ object Form1: TForm1
         Height = 400
         ElementClassName = 'Help Scroll'
         ElementID = 'HelpEnergy'
+        ElementFont = efCSS
+        Role = ''
+        OnClick = ResetInactivityTimer
+        OnMouseMove = HelpConfigMouseMove
+      end
+    end
+    object pageWeather: TWebTabSheet
+      Tag = 22
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageWeather'
+      Caption = 'Wx'
+      ChildOrder = 21
+      ElementFont = efCSS
+      object WebLabel1: TWebLabel
+        Left = 439
+        Top = 256
+        Width = 265
+        Height = 58
+        AutoSize = False
+        Caption = 'Weather'
+        ElementLabelClassName = 'Text TextXL White'
+        ElementFont = efCSS
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        WidthPercent = 100.000000000000000000
+      end
+    end
+    object pageHelpWeather: TWebTabSheet
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageHelpWeather'
+      Caption = 'Help-Wx'
+      ChildOrder = 22
+      ElementFont = efCSS
+      object HelpWeather: TWebHTMLDiv
+        Left = 50
+        Top = 0
+        Width = 1180
+        Height = 400
+        ElementClassName = 'Help Scroll'
+        ElementID = 'HelpWeather'
         ElementFont = efCSS
         Role = ''
         OnClick = ResetInactivityTimer
@@ -5654,7 +5731,7 @@ object Form1: TForm1
     OnConnect = HAWebSocketConnect
     OnDisconnect = HAWebSocketDisconnect
     OnDataReceived = HAWebSocketDataReceived
-    Left = 888
+    Left = 272
     Top = 64
   end
   object tmrInactivity: TWebTimer
@@ -5681,7 +5758,7 @@ object Form1: TForm1
     Enabled = False
     Interval = 5000
     OnTimer = tmrExitTimer
-    Left = 962
+    Left = 874
     Top = 64
   end
   object tmrLights: TWebTimer
