@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 3
+    TabIndex = 1
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1216,9 +1216,9 @@ object Form1: TForm1
         ElementFont = efCSS
         Role = ''
         object labelDate: TWebLabel
-          Left = 0
+          Left = 50
           Top = 220
-          Width = 300
+          Width = 200
           Height = 62
           Alignment = taCenter
           AutoSize = False
@@ -1238,14 +1238,15 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelTime: TWebLabel
-          Left = 0
+          Left = 50
           Top = 162
-          Width = 300
+          Width = 200
           Height = 73
+          Cursor = crHandPoint
           Alignment = taCenter
           AutoSize = False
           Caption = 'ShortTime'
-          ElementClassName = 'overflow-visible'
+          ElementClassName = 'overflow-visible TextXL'
           ElementLabelClassName = 'Text TextXL White'
           ElementID = 'labelTime'
           ElementFont = efCSS
@@ -1258,11 +1259,12 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           ParentFont = False
           WidthPercent = 100.000000000000000000
+          OnClick = labelTimeClick
         end
         object labelDay: TWebLabel
-          Left = 0
+          Left = 50
           Top = 130
-          Width = 300
+          Width = 200
           Height = 62
           Alignment = taCenter
           AutoSize = False
@@ -1655,9 +1657,9 @@ object Form1: TForm1
         ElementFont = efCSS
         Role = ''
         object dataHomeTemperature: TWebLabel
-          Left = 0
-          Top = 162
-          Width = 300
+          Left = 50
+          Top = 166
+          Width = 200
           Height = 73
           Cursor = crHandPoint
           Alignment = taCenter
@@ -1676,6 +1678,7 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           ParentFont = False
           WidthPercent = 100.000000000000000000
+          OnClick = dataHomeTemperatureClick
         end
         object labelHomeMin: TWebLabel
           Left = 15
@@ -1774,9 +1777,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeSetPoint: TWebLabel
-          Left = 0
+          Left = 50
           Top = 220
-          Width = 300
+          Width = 200
           Height = 62
           Alignment = taCenter
           AutoSize = False
@@ -1796,9 +1799,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelHomeTempName: TWebLabel
-          Left = 0
+          Left = 50
           Top = 130
-          Width = 300
+          Width = 200
           Height = 62
           Alignment = taCenter
           AutoSize = False
@@ -1896,9 +1899,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataHomeLightLevel: TWebLabel
-          Left = 0
+          Left = 50
           Top = 100
-          Width = 300
+          Width = 200
           Height = 62
           Alignment = taCenter
           AutoSize = False
@@ -2139,9 +2142,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherTemperature: TWebLabel
-          Left = 0
+          Left = 50
           Top = 162
-          Width = 300
+          Width = 200
           Height = 73
           Cursor = crHandPoint
           Alignment = taCenter
@@ -2225,9 +2228,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object labelWeatherPressure: TWebLabel
-          Left = 0
+          Left = 50
           Top = 220
-          Width = 300
+          Width = 200
           Height = 62
           Alignment = taCenter
           AutoSize = False
@@ -2341,9 +2344,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataWeatherCondition: TWebLabel
-          Left = 0
+          Left = 50
           Top = 260
-          Width = 300
+          Width = 200
           Height = 62
           Alignment = taCenter
           AutoSize = False
@@ -2638,7 +2641,7 @@ object Form1: TForm1
         end
         object dataPerson1Location: TWebLabel
           Left = 0
-          Top = 143
+          Top = 141
           Width = 300
           Height = 62
           Alignment = taCenter
@@ -2681,9 +2684,9 @@ object Form1: TForm1
           WidthPercent = 100.000000000000000000
         end
         object dataEnergyUse: TWebLabel
-          Left = 0
+          Left = 50
           Top = 162
-          Width = 300
+          Width = 200
           Height = 73
           Cursor = crHandPoint
           Alignment = taCenter

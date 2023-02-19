@@ -432,6 +432,8 @@ type
     procedure ColorSwatchSelected(Sender: TObject);
     procedure dataEnergyUseClick(Sender: TObject);
     procedure dataWeatherTemperatureClick(Sender: TObject);
+    procedure labelTimeClick(Sender: TObject);
+    procedure dataHomeTemperatureClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1239,6 +1241,11 @@ begin
   SwitchPages(1,19);
 end;
 
+procedure TForm1.dataHomeTemperatureClick(Sender: TObject);
+begin
+//
+end;
+
 procedure TForm1.dataWeatherTemperatureClick(Sender: TObject);
 begin
   SwitchPages(1,21);
@@ -1683,6 +1690,11 @@ end;
 procedure TForm1.labelConfigSTATUSClick(Sender: TObject);
 begin
   SwitchPages(0, 6);
+end;
+
+procedure TForm1.labelTimeClick(Sender: TObject);
+begin
+//
 end;
 
 procedure TForm1.LightButtonSwitched(light: String);
