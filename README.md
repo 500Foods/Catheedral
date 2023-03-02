@@ -6,6 +6,7 @@ This repository contains the source code for Catheedral - an app that works with
 
 TMS WEB Core is a framework that uses Delphi, Visual Studio Code, or Lazarus to transpile Delphi/Pascal code into 100% native JavaScript, HTML and CSS code.  Miletus is a framework, similiar to Electron, that creates platform-specific binaries, supporting Windows, macOS, Linux and Raspberry Pi.  Catheedral has been created in part to run natively on a Raspberry Pi in an embedded context - much like a smart thermostat or a smart panel for your home, while also supporting the usual desktop-style deployments.
 
+## Dependencies
 As a modern web application, many additional JavaScript libraries/dependencies have been used in this project.  
 - [Bootstrap](https://getbootstrap.com/) - No introduction needed
 - [Tabulator](https://www.tabulator.info) - Fantastic tables
@@ -19,4 +20,4 @@ As a modern web application, many additional JavaScript libraries/dependencies h
 While this project is currently under active development, feel free to give it a try and post any issues you encounter.  Or start a dicussion if you would like to help steer the project in a particular direction.  Early days yet, so a good time to have your voice heard.  As the project unfolds, additional resources will be made available, including platform binaries, more documentation, demos, and so on.
 
 ## Sponsorship
-If you find this work interesting, helpful, or useful, saving you time, money, or both, please consider direclty supporting these efforts financially via [GitHub Sponsors](https://github.com/sponsors/500Foods) or donating via [Buy Me a Pizza](https://www.buymeacoffee.com/andrewsimard500).
+If you find this work interesting, helpful, or useful, or that it has sved you time, money, or both, please consider direclty supporting these efforts financially via [GitHub Sponsors](https://github.com/sponsors/500Foods) or donating via [Buy Me a Pizza](https://www.buymeacoffee.com/andrewsimard500). Also, be sure to check out these other [GitHub Repositories](https://github.com/500Foods?tab=repositories&q=&sort=stargazers) that may also be of interest to you.
