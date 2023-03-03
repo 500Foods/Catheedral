@@ -920,6 +920,7 @@ begin
     // https://github.com/home-assistant/core/blob/dev/homeassistant/components/environment_canada/weather.py
     if WeatherCondition = 'Partlycloudy' then WeatherCondition := 'Partly Cloudy';
     if WeatherCondition = 'Clear-night' then WeatherCondition := 'Clear Night';
+    if WeatherCondition = 'Snowy-rainy' then WeatherCondition := 'Snowy-Rainy';
     if      WeatherCondition = 'Sunny' then WeatherIcon := 'clear-day'
     else if WeatherCondition = 'Clear Night' then WeatherIcon := 'clear-night'
     else if WeatherCondition = 'Partly Cloudy' then WeatherIcon := 'partly-cloudy-day'
@@ -927,7 +928,7 @@ begin
     else if WeatherCondition = 'Rainy' then WeatherIcon := 'rain'
     else if WeatherCondition = 'Lightning Rainy' then WeatherIcon := 'thunderstorms-rain'
     else if WeatherCondition = 'Pouring' then WeatherIcon := 'extreme-rain'
-    else if WeatherCondition = 'Snowy Rainy' then WeatherIcon := 'thunderstorms-snow'
+    else if WeatherCondition = 'Snowy-Rainy' then WeatherIcon := 'extreme-snow'
     else if WeatherCondition = 'Snowy' then WeatherIcon := 'snow'
     else if WeatherCondition = 'Windy' then WeatherIcon := 'wind'
     else if WeatherCondition = 'Fog' then WeatherIcon := 'fog'
