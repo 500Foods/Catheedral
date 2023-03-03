@@ -11,7 +11,7 @@ As with any modern web application, other JavaScript libraries/dependencies have
 - [TMS WEB Core](https://www.tmssoftware.com/site/tmswebcore.asp) - This is a TMS WEB Core project, after all
 - [Home Assistant](https://www.home-assistant.io/) - Need a current Home Assistant server to be of much use
 - [Bootstrap](https://getbootstrap.com/) - No introduction needed
-- [Tabulator](https://www.tabulator.info) - Fantastic pure JavaScript wweb data tables
+- [Tabulator](https://www.tabulator.info) - Fantastic pure JavaScript web data tables
 - [Font Awesome](https://www.fontawesome.com) - The very best icons
 - [Material Design Icons](https://pictogrammers.com/library/mdi/) - Used throughout Home Assistant
 - [Luxon](https://moment.github.io/luxon/#/) - For handling date/time conversions
