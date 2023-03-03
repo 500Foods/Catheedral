@@ -6,10 +6,12 @@ This repository contains the source code for Catheedral - an app that works with
 
 TMS WEB Core is a framework that uses Delphi, Visual Studio Code, or Lazarus to transpile Delphi/Pascal code into 100% native JavaScript, HTML and CSS code.  Miletus is a framework, similiar to Electron, that creates platform-specific binaries, supporting Windows, macOS, Linux and Raspberry Pi.  Catheedral has been created in part to run natively on a Raspberry Pi in an embedded context - much like a smart thermostat or a smart panel for your home, while also supporting the usual desktop-style deployments.
 
-## Dependencies
-As a modern web application, many additional JavaScript libraries/dependencies have been used in this project.  
+## Key Dependencies
+As with any modern web application, other JavaScript libraries/dependencies have been used in this project. Most of the time, this is handled via a CDN link (usually JSDelivr) in the Project.html file. In some cases, for performance or other reasons, they may be included directly.
+- [TMS WEB Core](https://www.tmssoftware.com/site/tmswebcore.asp) - This is a TMS WEB Core project, after all
+- [Home Assistant](https://www.home-assistant.io/) - Need a current Home Assistant server to be of much use
 - [Bootstrap](https://getbootstrap.com/) - No introduction needed
-- [Tabulator](https://www.tabulator.info) - Fantastic tables
+- [Tabulator](https://www.tabulator.info) - Fantastic pure JavaScript wweb data tables
 - [Font Awesome](https://www.fontawesome.com) - The very best icons
 - [Material Design Icons](https://pictogrammers.com/library/mdi/) - Used throughout Home Assistant
 - [Luxon](https://moment.github.io/luxon/#/) - For handling date/time conversions
