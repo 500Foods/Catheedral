@@ -921,6 +921,8 @@ begin
     if WeatherCondition = 'Partlycloudy' then WeatherCondition := 'Partly Cloudy';
     if WeatherCondition = 'Clear-night' then WeatherCondition := 'Clear Night';
     if WeatherCondition = 'Snowy-rainy' then WeatherCondition := 'Snowy-Rainy';
+
+    // These are the ones we know about!
     if      WeatherCondition = 'Sunny' then WeatherIcon := 'clear-day'
     else if WeatherCondition = 'Clear Night' then WeatherIcon := 'clear-night'
     else if WeatherCondition = 'Partly Cloudy' then WeatherIcon := 'partly-cloudy-day'
@@ -1404,17 +1406,25 @@ var
   ResponseType: String;
   ResponseID: Integer;
 begin
-  ResponseType := 'unknown';
+  ResponseType := '';
   ResponseID := 0;
 
   if (dataConfigSTATUS.Caption <> 'Connected')
   then dataConfigSTATUS.Caption := 'Processing';
 
   asm
+    if (SocketData.jsobject !== null) {
+      var hadata = JSON.parse(SocketData.jsobject);
+      ResponseType = hadata.type;
+    }
+  end;
 
+  // Maybe we don't have anything to work with?
+  if ResponseType = ''  then exit;
+
+  asm
     var hadata = JSON.parse(SocketData.jsobject);
     ResponseType = hadata.type;
-
 
     if ((ResponseType == 'result') && (hadata.success == true)) {
       ResponseID = hadata.id;
