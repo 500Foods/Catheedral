@@ -1,4 +1,4 @@
-# Welcome to Catheedral.
+# Welcome to Catheedral
 
 This repository contains the source code for Catheedral - an app that works with [Home Assistant](https://www.home-assistant.io/) to provide another interface to the most important parts of your smart home.  Catheedral was developed using [TMS WEB Core](https://www.tmssoftware.com/site/tmswebcore.asp) from [TMS Software](https://www.tmssoftware.com), along with their [Miletus Framework](https://www.tmssoftware.com/site/blog.asp?post=775).  More details about this project can also be found on the TMS Software Blog, starting with this [first post](https://www.tmssoftware.com/site/blog.asp?post=1044). 
 
