@@ -128,6 +128,15 @@ html, body {
 }
 
 
+/* Dunno why Bootstrap only declares 1-5? */
+.order-6  {order:  6; }
+.order-7  {order:  7; }
+.order-8  {order:  8; }
+.order-9  {order:  9; }
+.order-10 {order: 10; }
+
+
+
 /* Style input elements - Configuration pages usually */
 input {
   color: white !important;
@@ -464,6 +473,9 @@ input[type=text]:focus-visible.ConfigEdit  {
 .White {
   color: white;
 }
+.Grey {
+  color: silver;
+}
 .Gray {
   color: silver;
 }
@@ -713,5 +725,14 @@ div.tabulator-cell.tabulator-editing {
   border-radius: 12px !important;
   border: none !important;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+
+
+/* Hourly/Daily Weather Panels */
+.WxPanel {
+  background: rgba(0,0,0,0.5);
+  border-radius: 16px !important;
+  justify-content: space-between;
+  padding-bottom: 10px !important;
 }
 

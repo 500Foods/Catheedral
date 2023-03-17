@@ -359,9 +359,31 @@ type
     pageWeather: TWebTabSheet;
     pageHelpWeather: TWebTabSheet;
     HelpWeather: TWebHTMLDiv;
-    WebLabel1: TWebLabel;
     WebLabel2: TWebLabel;
     WebLabel3: TWebLabel;
+    pageRadar: TWebTabSheet;
+    divRadar: TWebHTMLDiv;
+    btnRadar: TWebButton;
+    btnSatellite: TWebButton;
+    pageSatellite: TWebTabSheet;
+    divSatellite: TWebHTMLDiv;
+    divWx: TWebHTMLDiv;
+    divWxHourly: TWebHTMLDiv;
+    divWxDaily: TWebHTMLDiv;
+    divWxText: TWebHTMLDiv;
+    divWxD1: TWebHTMLDiv;
+    divWxD2: TWebHTMLDiv;
+    divWxD3: TWebHTMLDiv;
+    divWxD4: TWebHTMLDiv;
+    divWxD5: TWebHTMLDiv;
+    divWxD6: TWebHTMLDiv;
+    divWxH1: TWebHTMLDiv;
+    divWxH2: TWebHTMLDiv;
+    divWxH3: TWebHTMLDiv;
+    divWxH4: TWebHTMLDiv;
+    divWxH5: TWebHTMLDiv;
+    divWxH6: TWebHTMLDiv;
+    divWeatherCover: TWebHTMLDiv;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -431,9 +453,13 @@ type
     procedure MiletusFormClick(Sender: TObject);
     procedure ColorSwatchSelected(Sender: TObject);
     procedure dataEnergyUseClick(Sender: TObject);
-    procedure dataWeatherTemperatureClick(Sender: TObject);
     procedure labelTimeClick(Sender: TObject);
     procedure dataHomeTemperatureClick(Sender: TObject);
+    procedure btnRadarClick(Sender: TObject);
+    procedure btnSatelliteClick(Sender: TObject);
+    procedure divWeatherCoverClick(Sender: TObject);
+    function GetWeatherIcon(var Condition: String): String;
+    procedure DrawWeather(Element: TWebHTMLDiv; WeatherData: JSValue; ShowTime:Boolean);
 
   private
     { Private declarations }
@@ -519,15 +545,21 @@ type
     ClimateLight: String;
 
     // Weather Panel
-    WeatherSensor: String;
+    WeatherSensor1: String;
+    WeatherSensor2: String;
     WeatherMinTempSensor: String;
     WeatherMaxTempSensor: String;
     WeatherMinPressureSensor: String;
     WeatherMaxPressureSensor: String;
     WeatherMinHumiditySensor: String;
     WeatherMaxHumiditySensor: String;
+    WeatherTendencySensor: String;
     WeatherUVSensor: String;
     WeatherAQHISensor: String;
+    WeatherRadarLink: String;
+    WeatherSatelliteLink: String;
+    WeatherSummarySensor: String;
+    WeatherAdvisorySensor: String;
 
     WeatherIcon: String;
     WeatherCondition: String;
@@ -546,8 +578,15 @@ type
     WeatherMaxTempRange: Double;
     WeatherMinPressureRange: Double;
     WeatherMaxPressureRange: Double;
+    WeatherTendency: String;
     WeatherUV: String;
     WeatherAQHI: String;
+    WeatherForecast1: JSValue;
+    WeatherForecast2: JSValue;
+    WeatherSummary: String;
+    WeatherAdvisory: String;
+    WeatherPrecipUnits: String;
+    WeatherAttribution: String;
 
     // Energy Panel
     Person1Sensor: String;
@@ -669,15 +708,21 @@ begin
       here.ClimateMaxHumiditySensor = table.getRow(12).getCell('entity_id').getValue();
 
       // Weather Panel
-      here.WeatherSensor = table.getRow(13).getCell('entity_id').getValue();
+      here.WeatherSensor1 = table.getRow(13).getCell('entity_id').getValue();
       here.WeatherMinTempSensor = table.getRow(14).getCell('entity_id').getValue();
       here.WeatherMaxTempSensor = table.getRow(15).getCell('entity_id').getValue();
       here.WeatherMinPressureSensor = table.getRow(16).getCell('entity_id').getValue();
       here.WeatherMaxPressureSensor = table.getRow(17).getCell('entity_id').getValue();
       here.WeatherMinHumiditySensor = table.getRow(18).getCell('entity_id').getValue();
       here.WeatherMaxHumiditySensor = table.getRow(19).getCell('entity_id').getValue();
+      here.WeatherTendencySensor = table.getRow(29).getCell('entity_id').getValue();
       here.WeatherUVSensor = table.getRow(20).getCell('entity_id').getValue();
       here.WeatherAQHISensor = table.getRow(21).getCell('entity_id').getValue();
+      here.WeatherRadarLink = table.getRow(30).getCell('entity_id').getValue();
+      here.WeatherSatelliteLink = table.getRow(31).getCell('entity_id').getValue();
+      here.WeatherSensor2 = table.getRow(32).getCell('entity_id').getValue();
+      here.WeatherSummarySensor = table.getRow(33).getCell('entity_id').getValue();
+      here.WeatherAdvisorySensor = table.getRow(34).getCell('entity_id').getValue();
 
       // Energy Panel
       here.Battery1Sensor = table.getRow(22).getCell('entity_id').getValue();
@@ -703,15 +748,19 @@ begin
         here.ClimateMaxHumiditySensor,
 
         // Weather Panel
-        here.WeatherSensor,
+        here.WeatherSensor1,
+        here.WeatherSensor2,
         here.WeatherMinTempSensor,
         here.WeatherMaxTempSensor,
         here.WeatherMinPressureSensor,
         here.WeatherMaxPressureSensor,
         here.WeatherMinHumiditySensor,
         here.WeatherMaxHumiditySensor,
+        here.WeatherTendencySensor,
         here.WeatherUVSensor,
         here.WeatherAQHISensor,
+        here.WeatherSummarySensor,
+        here.WeatherAdvisorySensor,
 
         // Energy Panel
         here.Person1Sensor,
@@ -899,43 +948,40 @@ begin
   end
 
 
-  else if (Entity = WeatherSensor) then
+  else if (Entity = WeatherSensor1) then
   begin
     asm
       this.WeatherTemperature = parseFloat(State.attributes.temperature) || 0;
       this.WeatherPressure = parseFloat(State.attributes.pressure) || 0;
       this.WeatherHumidity = parseFloat(State.attributes.humidity) || 0;
       this.WeatherPressureUnit = parseFloat(State.attributes.pressure_unit) || 0;
-      this.WeatherCondition = window.CapWords(State.state || 'N/A');
+      this.WeatherCondition = State.state || 'N/A';
+      this.WeatherAttribution = State.attributes.attribution;
+
+      if ((Entity == this.WeatherSensor1) && (State.attributes.forecast !== undefined)) {
+        this.WeatherForecast1 = State.attributes.forecast;
+        this.WeatherPrecipUnits = State.attributes.precipitation_unit;
+      }
 
       var wind_bearing = parseInt(State.attributes.wind_bearing) || 0;
       var wind_heading = Math.round(((wind_bearing %= 360) < 0 ? wind_bearing + 360 : wind_bearing) / 22.5) % 16;
       var headings = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SWS','SW','WSW','W','WNW','NW','NWW'];
-      this.WeatherWind = State.attributes.wind_speed+' '+State.attributes.wind_speed_unit+' '+headings[wind_heading];
+      this.WeatherWind = parseInt(State.attributes.wind_speed)+' '+State.attributes.wind_speed_unit+' '+headings[wind_heading];
     end;
 
-    WeatherIcon := 'not-available';
+    WeatherIcon := GetWeatherIcon(WeatherCondition);
 
-    // Environment Canada Contitions - other data sources may be very different!!
-    // https://github.com/home-assistant/core/blob/dev/homeassistant/components/environment_canada/weather.py
-    if WeatherCondition = 'Partlycloudy' then WeatherCondition := 'Partly Cloudy';
-    if WeatherCondition = 'Clear-night' then WeatherCondition := 'Clear Night';
-    if WeatherCondition = 'Snowy-rainy' then WeatherCondition := 'Snowy-Rainy';
-
-    // These are the ones we know about!
-    if      WeatherCondition = 'Sunny' then WeatherIcon := 'clear-day'
-    else if WeatherCondition = 'Clear Night' then WeatherIcon := 'clear-night'
-    else if WeatherCondition = 'Partly Cloudy' then WeatherIcon := 'partly-cloudy-day'
-    else if WeatherCondition = 'Cloudy' then WeatherIcon := 'cloudy'
-    else if WeatherCondition = 'Rainy' then WeatherIcon := 'rain'
-    else if WeatherCondition = 'Lightning Rainy' then WeatherIcon := 'thunderstorms-rain'
-    else if WeatherCondition = 'Pouring' then WeatherIcon := 'extreme-rain'
-    else if WeatherCondition = 'Snowy-Rainy' then WeatherIcon := 'extreme-snow'
-    else if WeatherCondition = 'Snowy' then WeatherIcon := 'snow'
-    else if WeatherCondition = 'Windy' then WeatherIcon := 'wind'
-    else if WeatherCondition = 'Fog' then WeatherIcon := 'fog'
-    else if WeatherCondition = 'Hail' then WeatherIcon := 'hail'
   end
+  else if (Entity = WeatherSensor2) then
+  begin
+    asm
+      if (State.attributes.forecast !== undefined) {
+        this.WeatherForecast2 = State.attributes.forecast;
+        this.WeatherPrecipUnits = State.attributes.precipitation_unit;
+      }
+    end;
+  end
+
 
   else if (Entity = Battery1Sensor) then
   begin
@@ -1105,8 +1151,11 @@ begin
   else if (Entity = WeatherMaxPressureSensor) then asm if (!isNaN(State.state)) { this.WeatherMaxPressure = parseFloat(State.state) }end
   else if (Entity = WeatherMinHumiditySensor) then asm this.WeatherMinHumidity = parseFloat(State.state) end
   else if (Entity = WeatherMaxHumiditySensor) then asm this.WeatherMaxHumidity = parseFloat(State.state) end
+  else if (Entity = WeatherTendencySensor) then asm this.WeatherTendency = State.state end
   else if (Entity = WeatherUVSensor) then asm this.WeatherUV = State.state end
   else if (Entity = WeatherAQHISensor) then asm this.WeatherAQHI = State.state end
+  else if (Entity = WeatherSummarySensor) then asm this.WeatherSummary = State.state end
+  else if (Entity = WeatherAdvisorySensor) then asm this.WeatherAdvisory = State.state end
 
   else if (Entity = EnergySensor) then asm if (!isNaN(State.state)) { this.EnergyUse = parseInt(State.state) } end
 
@@ -1249,11 +1298,6 @@ begin
 //
 end;
 
-procedure TForm1.dataWeatherTemperatureClick(Sender: TObject);
-begin
-  SwitchPages(1,21);
-end;
-
 procedure TForm1.HelpConfigMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
@@ -1394,6 +1438,41 @@ begin
   dataConfigSTATUSClick(nil);
 end;
 
+function TForm1.GetWeatherIcon(var Condition: String): String;
+var
+  WeatherCondition: String;
+begin
+  Result := 'not-available';
+  WeatherCondition := Condition;
+
+  // Make this a little more presentable
+  asm WeatherCondition = window.CapWords(WeatherCondition); end;
+
+  // Environment Canada Contitions - other data sources may be very different!!
+  // https://github.com/home-assistant/core/blob/dev/homeassistant/components/environment_canada/weather.py
+
+  if WeatherCondition = 'Partlycloudy' then WeatherCondition := 'Partly Cloudy';
+  if WeatherCondition = 'Clear-night' then WeatherCondition := 'Clear Night';
+  if WeatherCondition = 'Snowy-rainy' then WeatherCondition := 'Snowy Rainy';
+
+  // These are the ones we know about!
+  if      WeatherCondition = 'Sunny' then Result := 'clear-day'
+  else if WeatherCondition = 'Clear Night' then Result := 'clear-night'
+  else if WeatherCondition = 'Partly Cloudy' then Result := 'partly-cloudy-day'
+  else if WeatherCondition = 'Cloudy' then Result := 'cloudy'
+  else if WeatherCondition = 'Rainy' then Result := 'rain'
+  else if WeatherCondition = 'Lightning Rainy' then Result := 'thunderstorms-rain'
+  else if WeatherCondition = 'Pouring' then Result := 'extreme-rain'
+  else if WeatherCondition = 'Snowy Rainy' then Result := 'extreme-snow'
+  else if WeatherCondition = 'Snowy' then Result := 'snow'
+  else if WeatherCondition = 'Windy' then Result := 'wind'
+  else if WeatherCondition = 'Fog' then Result := 'fog'
+  else if WeatherCondition = 'Hail' then Result := 'hail';
+
+  // Send back the new value in case it has changed
+  Condition := WeatherCondition;
+end;
+
 procedure TForm1.HAWebSocketConnect(Sender: TObject);
 begin
   dataConfigSTATUS.Caption := 'Connected';
@@ -1433,8 +1512,8 @@ begin
       if (hadata.id == this.HAGetConfig) {
 
         // Let's have a look at it, shall we??
-//        console.log('Config Information: '+SocketData.jsobject.length+' bytes');
-//        console.log(hadata);
+        console.log('Config Information: '+SocketData.jsobject.length+' bytes');
+        console.log(hadata);
 
         this.HASystemName = hadata.result.location_name;
         this.HATimeZone = hadata.result.time_zone;
@@ -2202,6 +2281,20 @@ begin
   btnConfiguration.Width := MainButtonSize;
   btnConfiguration.Height := MainButtonSize;
 
+  // Adjust <div> elements for satellite/radar
+  divRadar.Top := 0;
+  divRadar.Left := 45;
+  divRadar.Width := 1190;
+  divRadar.Height := 400;
+  // The iframe can be expanded beyond the borders of the page, still centered
+  divSatellite.Top := -50;
+  divSatellite.Left := -100;
+  divSatellite.Width := 1480;
+  divSatellite.Height := 500;
+  // If we didn't want any kind of interaction with the <iframe>
+  // divRadar.ElementHandle.classlist.add('pe-none');
+  // divSatellite.ElementHandle.classlist.add('pe-none');
+
   // Configure Tabulator list of Sensors
   ConfigureTabSensors;
 
@@ -2259,7 +2352,8 @@ begin
   ClimateMinHumiditySensor := '';
   ClimateMaxHumiditySensor := '';
 
-  WeatherSensor := '';
+  WeatherSensor1 := '';
+  WeatherSensor2 := '';
   WeatherMinTempSensor := '';
   WeatherMaxTempSensor := '';
   WeatherMinPressureSensor := '';
@@ -2268,6 +2362,17 @@ begin
   WeatherMaxHumiditySensor := '';
   WeatherUVSensor := '';
   WeatherAQHISensor := '';
+  WeatherTendency := '';
+  WeatherSummary := '';
+  WeatherAdvisory := '';
+  WeatherRadarLink := '';
+  WeatherSatelliteLink := '';
+  WeatherPrecipUnits := '';
+  asm
+    this.WeatherForecast1 = [];
+    this.WeatherForecast2 = [];
+  end;
+
 
   Person1Sensor := '';
   Person2Sensor := '';
@@ -3264,12 +3369,30 @@ begin
       end;
 
       // Main Pressure Display
-      display := Trim(FloatToStrF(WeatherPressure/10,ffNumber,5,1)+' kPa');
-      if labelWeatherPressure.Caption <> display then
+      display := '<span>'+Trim(FloatToStrF(WeatherPressure/10,ffNumber,5,1)+' kPa')+'</span>';
+      if WeatherTendency = 'Rising'
+      then display := display+'<i class="fa-solid fa-arrow-up ms-2"></i>';
+      if WeatherTendency = 'Falling'
+      then display := display+'<i class="fa-solid fa-arrow-down ms-2"></i>';
+      if labelWeatherPressure.HTML <> display then
       begin
-        labelWeatherPressure.Caption := display;
+        labelWeatherPressure.HTML := display;
         UpdateRing2 := True;
       end;
+
+      // Display Radar + Satellite links?
+      if Trim(WeatherRadarLink) <> '' then
+      begin
+        btnRadar.Visible := True;
+        btnRadar.ElementHandle.style.setProperty('opacity','0.25');
+      end
+      else btnRadar.Visible := False;
+      if Trim(WeatherSatelliteLink) <> '' then
+      begin
+        btnSatellite.Visible := True;
+        btnSatellite.ElementHandle.style.setProperty('opacity','0.25');
+      end
+      else btnSatellite.Visible := False;
 
       // UV Index Display
       if dataWeatherWind.Caption <> WeatherWind
@@ -4164,6 +4287,126 @@ begin
   SwitchPages(1,16);
 end;
 
+procedure TForm1.divWeatherCoverClick(Sender: TObject);
+begin
+  // Set middle text - Advisory and Summary values
+  if WeatherAdvisory ='0' then WeatherAdvisory := '';
+  if (WeatherAdvisory = '') and (WeatherSummary = '')
+  then divWxText.HTML.Text := '<span class="Gray TextSM">'+WeatherAttribution+'</span>'
+  else divWxText.HTML.Text := '<span class="Yellow">'+WeatherAdvisory+'</span>'+WeatherSummary+' <span class="Gray TextSM">'+WeatherAttribution+'</span>';
+
+  asm
+    // eg: Environment Canada Regular Forecast
+    if (this.WeatherForecast1.length == 6) {
+      this.DrawWeather(divWxD1, this.WeatherForecast1[0],false);
+      this.DrawWeather(divWxD2, this.WeatherForecast1[1],false);
+      this.DrawWeather(divWxD3, this.WeatherForecast1[2],false);
+      this.DrawWeather(divWxD4, this.WeatherForecast1[3],false);
+      this.DrawWeather(divWxD5, this.WeatherForecast1[4],false);
+      this.DrawWeather(divWxD6, this.WeatherForecast1[5],false);
+    }
+
+    // eg: Environment Canada Hourly Forecast
+    if (this.WeatherForecast2.length == 24) {
+      this.DrawWeather(divWxH1, this.WeatherForecast2[ 3],true);
+      this.DrawWeather(divWxH2, this.WeatherForecast2[ 7],true);
+      this.DrawWeather(divWxH3, this.WeatherForecast2[11],true);
+      this.DrawWeather(divWxH4, this.WeatherForecast2[15],true);
+      this.DrawWeather(divWxH5, this.WeatherForecast2[19],true);
+      this.DrawWeather(divWxH6, this.WeatherForecast2[23],true);
+    }
+
+    // eg: OpenWeatherMap Free API
+    if (this.WeatherForecast1.length == 40) {
+      this.DrawWeather(divWxH1, this.WeatherForecast1[ 0],true);
+      this.DrawWeather(divWxH2, this.WeatherForecast1[ 1],true);
+      this.DrawWeather(divWxH3, this.WeatherForecast1[ 2],true);
+      this.DrawWeather(divWxH4, this.WeatherForecast1[ 3],true);
+      this.DrawWeather(divWxH5, this.WeatherForecast1[ 4],true);
+      this.DrawWeather(divWxH6, this.WeatherForecast1[ 5],true);
+      this.DrawWeather(divWxD1, this.WeatherForecast1[ 6],true);
+      this.DrawWeather(divWxD2, this.WeatherForecast1[ 7],true);
+      this.DrawWeather(divWxD3, this.WeatherForecast1[15],true);
+      this.DrawWeather(divWxD4, this.WeatherForecast1[23],true);
+      this.DrawWeather(divWxD5, this.WeatherForecast1[31],true);
+      this.DrawWeather(divWxD6, this.WeatherForecast1[39],true);
+    }
+  end;
+
+  SwitchPages(1,21);
+end;
+
+procedure TForm1.DrawWeather(Element: TWebHTMLDiv; WeatherData: JSValue; ShowTime:Boolean);
+var
+  weathercondition: String;
+  weathericon: String;
+begin
+  // Get updated weather condition value (prettied up) and the icon
+  asm weathercondition = WeatherData.condition; end;
+  weathericon := GetWeatherIcon(weathercondition);
+
+  asm
+    // A fixed width implies a fixed height for the icon.
+    weathericon = '<img title="'+weathercondition+'" width="90" src="weather-icons-dev/production/fill/svg/'+weathericon+'.svg">'
+
+    // Use Luxon to get our UTC timestamp into today's date. Luxon('ccc') = FormatDateTime('ddd') if anyone is wondering
+    var wday = '<div class="Text TextLG White m-0 p-0 pb-2">'+luxon.DateTime.fromISO(WeatherData.datetime,{zone:"utc"}).setZone("system").toFormat('ccc')+'</div>';
+
+    // Same goes for the time. We're assuming :00 here just in case it isn't!
+    var wtime = '';
+    if (ShowTime == true) {
+      wtime = '<div class="Text TextSM Gray m-0 p-0">'+luxon.DateTime.fromISO(WeatherData.datetime,{zone:"utc"}).setZone("system").toFormat('HH:00')+'</div>';
+    }
+
+    // These should all be numbers.  But sometimes they are missing or are returned as null values
+    var maxtemp = WeatherData.temperature;
+    var mintemp = WeatherData.templow;
+    var pop = WeatherData.precipitation_probability;
+    var precip = WeatherData.precipitation;
+
+    // The first vertical section has the icon on the left and the date/time on the right
+    var weather = '<div class="d-flex m-0 p-0 flex-row align-items-between" style="margin-bottom:-10px !important;">'+
+                    weathericon+
+                    '<div class="d-flex flex-column m-0 p-0 h-100 w-100 align-items-center justify-content-center">'+
+                      wday+
+                      wtime+
+                    '</div>'+
+                  '</div>';
+
+    // The second vertical section has the Hi and Lo values, either of which may be missing
+    weather += '<div class="d-flex m-0 p-0 gap-3 flex-row justify-content-center align-items-baseline">';
+    if (!isNaN(maxtemp) && (maxtemp !== null)) {
+      weather += '<div><span class="Text TextSM Gray m-0 pe-2">Hi</span>'+
+                 '<span class="Text TextLG White m-0 p-0">'+maxtemp+'</span></div>';
+    }
+    if (!isNaN(mintemp) && (mintemp !== null)) {
+      weather += '<div><span class="Text TextSM Gray m-0 pe-2">Lo</span>'+
+                 '<span class="Text TextLG White m-0 p-0">'+mintemp+'</span></div>';
+    }
+    weather += '</div>';
+
+    // The third vertical section has the Pop and Precip values, either of which may be missing
+    weather += '<div class="d-flex m-0 p-0 gap-3 flex-row justify-content-center align-items-baseline">';
+    if (!isNaN(pop) && (pop !== null)) {
+      weather += '<div><span class="Text TextSM Gray m-0 pe-2">Pop</span>'+
+                 '<span class="Text TextRG White m-0 p-0">'+pop+'%</span></div>';
+    }
+    if (!isNaN(precip) && (precip !== null) && (precip !== 0)) {
+      weather += '<div><span class="Text TextSM Gray m-0 pe-2">'+this.WeatherPrecipUnits+'</span>'+
+                 '<span class="Text TextRG White m-0 p-0">'+precip+'</span></div>';
+    }
+    weather += '</div>';
+
+    // Assign all that to the box we're updating
+    Element.innerHTML = weather;
+
+    // And if we've got a Probability of Precipitation, lets change the background
+    // color of the block to indicate its value (0%..100% -> blue = 0..255 )
+    Element.style.setProperty('background','rgba(0,0,'+pop*2.55+',0.5)');
+  end;
+
+end;
+
 procedure TForm1.btnChangeClick(Sender: TObject);
 begin
 
@@ -4435,6 +4678,40 @@ begin
   ResetInactivityTimer(Sender);
 end;
 
+procedure TForm1.btnRadarClick(Sender: TObject);
+begin
+  // Load them both
+  if WeatherSatelliteLink <> '' then
+  begin
+    if divSatellite.HTML.Text <> '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
+    then divSatellite.HTML.Text := '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
+  end;
+
+  if WeatherRadarLink <> '' then
+  begin
+    if divRadar.HTML.Text <> '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
+    then divRadar.HTML.Text := '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
+    SwitchPages(1,23);
+  end;
+end;
+
+procedure TForm1.btnSatelliteClick(Sender: TObject);
+begin
+  // Load them both
+  if WeatherRadarLink <> '' then
+  begin
+    if divRadar.HTML.Text <> '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
+    then divRadar.HTML.Text := '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
+    SwitchPages(1,23);
+  end;
+  if WeatherSatelliteLink <> '' then
+  begin
+    if divSatellite.HTML.Text <> '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
+    then divSatellite.HTML.Text := '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
+    SwitchPages(1,24);
+  end;
+end;
+
 procedure TForm1.ColorSwatchSelected(Sender: TObject);
 var
   NewColor: String;
@@ -4467,7 +4744,7 @@ begin
       {"id": 10, "feature":"Max Climate Temp"     , "example":"eg: sensor.climate_maximum_temperature" },
       {"id": 11, "feature":"Min Climate Humidity" , "example":"eg: sensor.climate_minimum_humidity" },
       {"id": 12, "feature":"Max Climate Humidity" , "example":"eg: sensor.climate_maximum_humidity" },
-      {"id": 13, "feature":"Weather Sensor"       , "example":"eg: weather.city_forecast" },
+      {"id": 13, "feature":"Weather Sensor 1"     , "example":"eg: weather.city_forecast" },
       {"id": 14, "feature":"Min Weather Temp"     , "example":"eg: sensor.weather.minimum_temperature" },
       {"id": 15, "feature":"Max Weather Temp"     , "example":"eg: sensor.weather.maximum_temperature" },
       {"id": 16, "feature":"Min Weather Pressure" , "example":"eg: sensor.weather.minimum_pressure" },
@@ -4482,7 +4759,13 @@ begin
       {"id": 25, "feature":"Device 4"             , "example":"eg: device_tracker.someone_device" },
       {"id": 26, "feature":"Person 1"             , "example":"eg: person.someone" },
       {"id": 27, "feature":"Person 2"             , "example":"eg: person.someone" },
-      {"id": 28, "feature":"Energy Use"           , "example":"eg: sensor.consumption" }
+      {"id": 28, "feature":"Energy Use"           , "example":"eg: sensor.consumption" },
+      {"id": 29, "feature":"Weather Tendency"     , "example":"eg: sensor.city_tendency" },
+      {"id": 30, "feature":"Weather Radar"        , "example":"eg: RainViewer Link" },
+      {"id": 31, "feature":"Weather Satellite"    , "example":"eg: RainViewer Link" },
+      {"id": 32, "feature":"Weather Hourly"       , "example":"eg: weather.city_hourly_forecast" },
+      {"id": 33, "feature":"Weather Summary"      , "example":"eg: sensor.city_summary" },
+      {"id": 34, "feature":"Weather Advisory"     , "example":"eg: sensor.city_advisory" }
     ];
     this.Features = FeatureData.length;
 

@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 0
+    TabIndex = 21
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -2096,6 +2096,7 @@ object Form1: TForm1
           Top = 369
           Width = 100
           Height = 20
+          Cursor = crHandPoint
           Alignment = taCenter
           AutoSize = False
           Caption = 'Humidity'
@@ -2163,7 +2164,6 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           ParentFont = False
           WidthPercent = 100.000000000000000000
-          OnClick = dataWeatherTemperatureClick
         end
         object dataWeatherMin: TWebLabel
           Left = 15
@@ -2234,9 +2234,9 @@ object Form1: TForm1
           Height = 62
           Alignment = taCenter
           AutoSize = False
-          Caption = 'ShortDate'
-          ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Text TextLG Gray'
+          Caption = 'Pressure'
+          ElementClassName = 'overflow-visible d-block'
+          ElementLabelClassName = 'd-block Text TextLG Gray'
           ElementID = 'labelWeatherPressure'
           ElementFont = efCSS
           Font.Charset = DEFAULT_CHARSET
@@ -2441,6 +2441,51 @@ object Form1: TForm1
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
+        end
+        object btnRadar: TWebButton
+          Left = 3
+          Top = 47
+          Width = 50
+          Height = 50
+          Cursor = crHandPoint
+          HelpType = htKeyword
+          Caption = '<span class="mdi mdi-radar mdi-24px"></span>'
+          ChildOrder = 21
+          ElementClassName = 'MainButton btn btn-link text-decoration-none TextCover'
+          ElementID = 'btnRadar'
+          ElementFont = efCSS
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+          OnClick = btnRadarClick
+        end
+        object btnSatellite: TWebButton
+          Left = 247
+          Top = 47
+          Width = 50
+          Height = 50
+          Cursor = crHandPoint
+          HelpType = htKeyword
+          Caption = '<i class="fa-solid fa-satellite fa-xl"></i>'
+          ChildOrder = 21
+          ElementClassName = 'MainButton btn btn-link text-decoration-none TextCover'
+          ElementID = 'btnSatellite'
+          ElementFont = efCSS
+          HeightPercent = 100.000000000000000000
+          WidthPercent = 100.000000000000000000
+          OnClick = btnSatelliteClick
+        end
+        object divWeatherCover: TWebHTMLDiv
+          Left = 43
+          Top = 100
+          Width = 230
+          Height = 219
+          Cursor = crHandPoint
+          ElementClassName = 'TextCover'
+          ElementID = 'divWeatherCover'
+          ChildOrder = 25
+          ElementFont = efCSS
+          Role = ''
+          OnClick = divWeatherCoverClick
         end
       end
       object divEnergy: TWebHTMLDiv
@@ -4596,7 +4641,7 @@ object Form1: TForm1
       ChildOrder = 12
       ElementFont = efCSS
       object HelpConfigInfo: TWebHTMLDiv
-        Left = 50
+        Left = 55
         Top = 20
         Width = 1180
         Height = 360
@@ -4977,18 +5022,250 @@ object Form1: TForm1
       Caption = 'Wx'
       ChildOrder = 21
       ElementFont = efCSS
-      object WebLabel1: TWebLabel
-        Left = 439
-        Top = 256
-        Width = 265
-        Height = 58
-        AutoSize = False
-        Caption = 'Weather'
-        ElementLabelClassName = 'Text TextXL White'
+      object divWx: TWebHTMLDiv
+        Left = 45
+        Top = 5
+        Width = 1190
+        Height = 390
+        ElementClassName = 'd-flex flex-column gap-1 lh-1'
+        ElementID = 'divWx'
         ElementFont = efCSS
-        HeightStyle = ssAuto
-        HeightPercent = 100.000000000000000000
-        WidthPercent = 100.000000000000000000
+        Role = ''
+        object divWxHourly: TWebHTMLDiv
+          Left = 76
+          Top = 80
+          Width = 1050
+          Height = 90
+          ElementClassName = 'd-flex gap-2 order-1 flex-fill'
+          ElementID = 'divWxHourly'
+          HeightStyle = ssAuto
+          WidthStyle = ssPercent
+          ElementPosition = epIgnore
+          ElementFont = efCSS
+          Role = ''
+          object divWxH1: TWebHTMLDiv
+            Left = 45
+            Top = 11
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-1 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxH1'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxH2: TWebHTMLDiv
+            Left = 210
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-2 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxH2'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxH3: TWebHTMLDiv
+            Left = 370
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-3 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxH3'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxH4: TWebHTMLDiv
+            Left = 530
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-4 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxH4'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxH5: TWebHTMLDiv
+            Left = 690
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-5 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxH5'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxH6: TWebHTMLDiv
+            Left = 850
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-6 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxH6'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+        end
+        object divWxDaily: TWebHTMLDiv
+          Left = 75
+          Top = 246
+          Width = 1050
+          Height = 90
+          ElementClassName = 'd-flex gap-2 order-3 flex-fill'
+          ElementID = 'divWxDaily'
+          HeightStyle = ssAuto
+          WidthStyle = ssPercent
+          ChildOrder = 1
+          ElementPosition = epIgnore
+          ElementFont = efCSS
+          Role = ''
+          object divWxD1: TWebHTMLDiv
+            Left = 50
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-1 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxD1'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxD2: TWebHTMLDiv
+            Left = 210
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-2 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxD2'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxD3: TWebHTMLDiv
+            Left = 370
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-3 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxD3'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxD4: TWebHTMLDiv
+            Left = 530
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-4 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxD4'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxD5: TWebHTMLDiv
+            Left = 690
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-5 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxD5'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+          object divWxD6: TWebHTMLDiv
+            Left = 850
+            Top = 10
+            Width = 150
+            Height = 70
+            ElementClassName = 
+              'd-flex flex-column order-6 WxPanel flex-fill rounded border bord' +
+              'er-2 border-secondary'
+            ElementID = 'divWxD6'
+            HeightStyle = ssAuto
+            WidthStyle = ssAuto
+            ChildOrder = 1
+            ElementPosition = epIgnore
+            ElementFont = efCSS
+            Role = ''
+          end
+        end
+        object divWxText: TWebHTMLDiv
+          Left = 75
+          Top = 182
+          Width = 1050
+          Height = 45
+          ElementClassName = 
+            'order-2 flex-shrink-1 Text TextRG White text-wrap px-3 py-2 lh-s' +
+            'm'
+          ElementID = 'divWxText'
+          HeightStyle = ssAuto
+          WidthStyle = ssPercent
+          ChildOrder = 1
+          ElementPosition = epIgnore
+          ElementFont = efCSS
+          Role = ''
+        end
       end
     end
     object pageHelpWeather: TWebTabSheet
@@ -5012,6 +5289,46 @@ object Form1: TForm1
         Role = ''
         OnClick = ResetInactivityTimer
         OnMouseMove = HelpConfigMouseMove
+      end
+    end
+    object pageRadar: TWebTabSheet
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageRadar'
+      Caption = 'Rx'
+      ChildOrder = 23
+      ElementFont = efCSS
+      object divRadar: TWebHTMLDiv
+        Left = 50
+        Top = 0
+        Width = 1180
+        Height = 400
+        ElementID = 'divRadar'
+        ElementFont = efCSS
+        Role = ''
+      end
+    end
+    object pageSatellite: TWebTabSheet
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageSatellite'
+      Caption = 'Sx'
+      ChildOrder = 24
+      ElementFont = efCSS
+      object divSatellite: TWebHTMLDiv
+        Left = 50
+        Top = 0
+        Width = 1180
+        Height = 400
+        ElementID = 'divSatellite'
+        ElementFont = efCSS
+        Role = ''
       end
     end
   end
@@ -5739,7 +6056,7 @@ object Form1: TForm1
   end
   object tmrInactivity: TWebTimer
     Enabled = False
-    Interval = 45000
+    Interval = 450000
     OnTimer = tmrInactivityTimer
     Left = 808
     Top = 64
