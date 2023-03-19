@@ -952,9 +952,10 @@ begin
   begin
     asm
       this.WeatherTemperature = parseFloat(State.attributes.temperature) || 0;
-      this.WeatherPressure = parseFloat(State.attributes.pressure) || 0;
       this.WeatherHumidity = parseFloat(State.attributes.humidity) || 0;
-      this.WeatherPressureUnit = parseFloat(State.attributes.pressure_unit) || 0;
+      this.WeatherPressure = parseFloat(State.attributes.pressure) || 0;
+      this.WeatherPressureUnit = State.attributes.pressure_unit || 'kPa';
+      if (this.WeatherPressureUnit == 'hPa') { this.WeatherPressure = this.WeatherPressure / 10;}
       this.WeatherCondition = State.state || 'N/A';
       this.WeatherAttribution = State.attributes.attribution;
 
@@ -1512,8 +1513,8 @@ begin
       if (hadata.id == this.HAGetConfig) {
 
         // Let's have a look at it, shall we??
-        console.log('Config Information: '+SocketData.jsobject.length+' bytes');
-        console.log(hadata);
+//        console.log('Config Information: '+SocketData.jsobject.length+' bytes');
+//        console.log(hadata);
 
         this.HASystemName = hadata.result.location_name;
         this.HATimeZone = hadata.result.time_zone;
@@ -3369,7 +3370,7 @@ begin
       end;
 
       // Main Pressure Display
-      display := '<span>'+Trim(FloatToStrF(WeatherPressure/10,ffNumber,5,1)+' kPa')+'</span>';
+      display := '<span>'+Trim(FloatToStrF(WeatherPressure,ffNumber,5,1)+' kPa')+'</span>';
       if WeatherTendency = 'Rising'
       then display := display+'<i class="fa-solid fa-arrow-up ms-2"></i>';
       if WeatherTendency = 'Falling'
@@ -3412,9 +3413,10 @@ begin
       WeatherMinTempRange := (Round(WeatherMinTemp / 5) * 5) - 5;
       WeatherMaxTempRange := (Round(WeatherMaxTemp / 5) * 5) + 5;
 
-      // Temp rounded to 20, then +/- 20 to get Range
-      WeatherMinPressureRange := (Round(WeatherMinPressure / 20) * 20) - 20;
-      WeatherMaxPressureRange := (Round(WeatherMaxPressure / 20) * 20) + 20;
+      // Pressure rounded to 2, then +/- 2 to get Range
+      WeatherMinPressureRange := (Round(WeatherMinPressure / 2) * 2) - 2;
+      WeatherMaxPressureRange := (Round(WeatherMaxPressure / 2) * 2) + 2;
+
 
       if not(HAStatesLoaded) then
       begin
@@ -3460,7 +3462,7 @@ begin
 
 
       // Minimum Weather Pressure
-      display := Trim(FloatToStrF(WeatherMinPressure/10,ffNumber,5,1)+' kPa');
+      display := Trim(FloatToStrF(WeatherMinPressure,ffNumber,5,1)+' kPa');
 //      display := Trim(FloatToStrF(WeatherMinTPressure,ffGeneral,5,0);
       if DataWeatherMinPressure.Caption <> display then
       begin
@@ -3470,7 +3472,7 @@ begin
       end;
 
       // Maximum Weather Pressure
-      display := Trim(FloatToStrF(WeatherMaxPressure/10,ffNumber,5,1)+' kPa');
+      display := Trim(FloatToStrF(WeatherMaxPressure,ffNumber,5,1)+' kPa');
  //     display := Trim(FloatToStrF(WeatherMaxPressure,ffNumber,5,0));
       if DataWeatherMaxPressure.Caption <> display then
       begin
@@ -3523,6 +3525,7 @@ begin
 
       if (UpdateRing2 = True) or (tmrSeconds.Tag = 1) then
       begin
+
         // Pressure (Ring 2)
         segment_start := Trunc(((WeatherPressure-WeatherMinPressureRange)*290) / (WeatherMaxPressureRange-WeatherMinPressureRange));
         segment := IntToStr(segment_start)+','+IntToStr(290-segment_start)+',70';

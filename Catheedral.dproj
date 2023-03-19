@@ -789,7 +789,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="weather-icons-dev\production\fill\svg\extreme-day-drizzle.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg\glove.svg" Configuration="Build-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -4023,7 +4023,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="weather-icons-dev\production\fill\svg\glove.svg" Configuration="Build-Win32" Class="ProjectFile">
+                <DeployFile LocalName="weather-icons-dev\production\fill\svg\extreme-day-drizzle.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

@@ -35,7 +35,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 17
+    TabIndex = 7
     ShowTabs = False
     TabOrder = 0
     Visible = False
