@@ -2534,6 +2534,9 @@ var
   Custom2,
   Custom3,
   Custom4: Integer;
+  Weather1,
+  Weather2,
+  Weather3: Integer;
 begin
   // 00 - Configuration Main
   // 01 - Home
@@ -2558,6 +2561,8 @@ begin
   // 20 - HELP: Energy Page
   // 21 - Weather Page
   // 22 - HELP: Weather Page
+  // 23 - Weather Radar
+  // 24 - Weather Satellite
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2570,6 +2575,13 @@ begin
   if Trim(CustomPage3URL) = '' then Custom3 := Custom2;
   if Trim(CustomPage4URL) = '' then Custom4 := Custom3;
 
+  // Sort out weather pages
+  Weather1 := 21;
+  Weather2 := 23;
+  Weather3 := 24;
+  if (WeatherRadarLink = '') then Weather2 := 21;
+  if (WeatherSatelliteLink = '') then Weather3 := 21;
+
   // Configuration cycle: 3
   // 06 - 00 - 05
   // Sensors - Config - Info
@@ -2581,6 +2593,9 @@ begin
   // Help Cycle: 5
   // 13 - 04 - 12 - 14 - 15 - 17 - 20 - 22
   // Cs - Cf - Ci - C1 - Hm - Lt - En - Wx
+
+  // Weather Cycle
+  // W1 - W2 - W3
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,  5)
@@ -2613,7 +2628,9 @@ begin
   else if (pages.TabIndex = 19) then SwitchPages( 19, 1)
 
   // Weather - Go back to home
-  else if (pages.TabIndex = 21) then SwitchPages( 21, 1)
+  else if (pages.TabIndex = Weather1) then SwitchPages( Weather1, Weather3 )
+  else if (pages.TabIndex = Weather2) then SwitchPages( Weather2, Weather1 )
+  else if (pages.TabIndex = Weather3) then SwitchPages( Weather3, Weather2 )
 
   // Otherwise - Go back to home
   else SwitchPages(pages.TabIndex, 1);
@@ -2627,6 +2644,9 @@ var
   Custom2,
   Custom3,
   Custom4: Integer;
+  Weather1,
+  Weather2,
+  Weather3: Integer;
 begin
   // 00 - Configuration Main
   // 01 - Home
@@ -2651,6 +2671,8 @@ begin
   // 20 - HELP: Energy Page
   // 21 - Weather Page
   // 22 - HELP: Weather Page
+  // 23 - Weather Radar
+  // 24 - Weather Satellite
 
   // Not all custom pages are available, so if we kick out
   // some of them (or all of them), still want cycle to work
@@ -2663,6 +2685,13 @@ begin
   if Trim(CustomPage2URL) = '' then Custom2 := Custom3;
   if Trim(CustomPage1URL) = '' then Custom1 := Custom2;
 
+  // Sort out weather pages
+  Weather1 := 21;
+  Weather2 := 23;
+  Weather3 := 24;
+  if (WeatherRadarLink = '') then Weather2 := 21;
+  if (WeatherSatelliteLink = '') then Weather3 := 21;
+
   // Configuration cycle
   //  06 - 00 - 05
   // Sensors - Config - Info
@@ -2674,6 +2703,9 @@ begin
   // Help Cycle
   // 13 - 04 - 12 - 14 - 15 - 17 - 20 - 22
   // Cs - Cf - Ci - C1 - Hm - Lt - En - Wx
+
+  // Weather Cycle
+  // W1 - W2 - W3
 
   // Configuration Cycle
   if      (pages.TabIndex =  6) then SwitchPages(  6,   0)
@@ -2706,7 +2738,9 @@ begin
   else if (pages.TabIndex = 19) then SwitchPages( 19, 1)
 
   // Weather - Go back to home
-  else if (pages.TabIndex = 21) then SwitchPages( 21, 1)
+  else if (pages.TabIndex = Weather1) then SwitchPages( Weather1, Weather2 )
+  else if (pages.TabIndex = Weather2) then SwitchPages( Weather2, Weather3 )
+  else if (pages.TabIndex = Weather3) then SwitchPages( Weather3, Weather1 )
 
   // Otherwise - Go back to home
   else SwitchPages(pages.TabIndex, 1);
@@ -4093,8 +4127,8 @@ begin
     end;
   end;
 
-  // Update Change Button
-  if (EndPage in [0,5,6,7,8,9,10,18]) then
+  // Update Change bUtton with Reload Button
+  if (EndPage in [0,5,6,7,8,9,10,18,23,24]) then
   begin
     asm
       btnChange.firstElementChild.style.setProperty('opacity','0');
@@ -4108,6 +4142,11 @@ begin
       btnChange.lastElementChild.style.setProperty('opacity','0');
     end;
   end;
+
+  // Update Radar or  Satellite Image
+  if (EndPage in [23,24])
+  then btnChangeClick(Sender);
+
 
   // Home button on Home Page is bolt if connnected or
   if dataConfigSTATUS.Caption = 'Connected'
@@ -4436,6 +4475,18 @@ begin
     divCustom4.HTML.Text := '<iframe src="'+CustomPage4URL+'" class="CustomPage">';
   end
 
+  // Weather Radar
+  else if (pages.TabIndex = 23) then
+  begin
+    asm divRadar.replaceChildren(); end;
+    divRadar.HTML.Text := '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
+  end
+  // Weather Satellite
+  else if (pages.TabIndex = 24) then
+  begin
+    asm divSatellite.replaceChildren(); end;
+    divSatellite.HTML.Text := '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
+  end
 
   // Configuration Information
   // 0 = Configuration, 5 = Configuration Sensors, 6 = Configuration Information
@@ -4683,34 +4734,16 @@ end;
 
 procedure TForm1.btnRadarClick(Sender: TObject);
 begin
-  // Load them both
-  if WeatherSatelliteLink <> '' then
-  begin
-    if divSatellite.HTML.Text <> '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
-    then divSatellite.HTML.Text := '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
-  end;
-
   if WeatherRadarLink <> '' then
   begin
-    if divRadar.HTML.Text <> '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
-    then divRadar.HTML.Text := '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
     SwitchPages(1,23);
   end;
 end;
 
 procedure TForm1.btnSatelliteClick(Sender: TObject);
 begin
-  // Load them both
-  if WeatherRadarLink <> '' then
-  begin
-    if divRadar.HTML.Text <> '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
-    then divRadar.HTML.Text := '<iframe src="'+WeatherRadarLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
-    SwitchPages(1,23);
-  end;
   if WeatherSatelliteLink <> '' then
   begin
-    if divSatellite.HTML.Text <> '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>'
-    then divSatellite.HTML.Text := '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
     SwitchPages(1,24);
   end;
 end;

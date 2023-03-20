@@ -26,7 +26,6 @@ object Form1: TForm1
     OnClick = divBackgroundClick
   end
   object pages: TWebPageControl
-    Tag = 16
     Left = 8
     Top = 0
     Width = 1280
@@ -35,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 7
+    TabIndex = 19
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -5292,6 +5291,7 @@ object Form1: TForm1
       end
     end
     object pageRadar: TWebTabSheet
+      Tag = 22
       Left = 0
       Top = 20
       Width = 1280
@@ -5312,6 +5312,7 @@ object Form1: TForm1
       end
     end
     object pageSatellite: TWebTabSheet
+      Tag = 22
       Left = 0
       Top = 20
       Width = 1280

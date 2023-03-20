@@ -704,6 +704,8 @@
             <ResourceId>PngImage_3</ResourceId>
         </RcItem>
         <None Include="weather-icons-dev\production\fill\svg-static\not-available.svg"/>
+        <None Include="help\en-CA\HelpWeather.html"/>
+        <None Include="help\en-CA\HelpEnergy.html"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -2565,6 +2567,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpWeather.html" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\pollen-flower.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -3214,6 +3222,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\flag-gale-warning.svg" Configuration="Build-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpEnergy.html" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
