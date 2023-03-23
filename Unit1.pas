@@ -390,13 +390,14 @@ type
     divLocations: TWebHTMLDiv;
     divPersonInfo: TWebHTMLDiv;
     divLocationMap: TWebHTMLDiv;
+    tmrRefresh: TWebTimer;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
     procedure navLeftClick(Sender: TObject);
     procedure tmrConnectTimer(Sender: TObject);
     procedure dataConfigSTATUSClick(Sender: TObject);
-    procedure SwitchPages(StartPage: Integer; EndPage: Integer);
+    [async] procedure SwitchPages(StartPage: Integer; EndPage: Integer);
     procedure HAWebSocketConnect(Sender: TObject);
     procedure HAWebSocketDisconnect(Sender: TObject);
     procedure HAWebSocketDataReceived(Sender: TObject; Origin: string; SocketData: TJSObjectRecord);
@@ -469,6 +470,8 @@ type
     procedure DisplayPerson;
     procedure divPerson1Click(Sender: TObject);
     procedure divPerson2Click(Sender: TObject);
+    procedure tmrRefreshTimer(Sender: TObject);
+    procedure pageWeatherClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -665,6 +668,11 @@ type
     CustomPage3Refresh: String;
     CustomPage4Refresh: String;
 
+    procedure StopLinkerRemoval(P: Pointer);
+    procedure PreventCompilerHint(I: integer); overload;
+    procedure PreventCompilerHint(S: string); overload;
+    procedure PreventCompilerHint(J: JSValue); overload;
+    procedure PreventCompilerHint(H: TJSHTMLElement); overload;
   end;
 var
   Form1: TForm1;
@@ -681,6 +689,8 @@ implementation
 procedure TForm1.SetupJavaScriptFunctions;
 begin
   asm
+    // Global Sleep function :)
+    window.sleep = async function(msecs) {return new Promise((resolve) => setTimeout(resolve, msecs)); }
 
     // Load Swatch information from CSS
     var GetSwatch = function(SwatchNum) {
@@ -694,7 +704,6 @@ begin
     for (var i = 0; i <= 23; i++) {
       GetSwatch(i);
     }
-
 
     // Don't have any sensors yet
     window.SensorList = [];
@@ -921,6 +930,8 @@ begin
       Element.parentElement.appendChild(newdiv);
     }
   end;
+
+  PreventCompilerHint(ChartID);
 end;
 
 
@@ -1128,7 +1139,6 @@ begin
       }
     end;
     if Uppercase(Person1Location) = 'STATIONARY' then Person1Location := 'Somewhere';
-    if Uppercase(Person1Location) = 'NOTSET' then Person1Location := 'Nowhere';
     if Uppercase(Person1Location) = 'NOT_HOME' then Person1Location := 'Elsewhere';
   end
   else if (Entity = Person2Sensor) then
@@ -1145,7 +1155,6 @@ begin
       }
     end;
     if Uppercase(Person2Location) = 'STATIONARY' then Person2Location := 'Somewhere';
-    if Uppercase(Person2Location) = 'NOTSET' then Person2Location := 'Nowhere';
     if Uppercase(Person2Location) = 'NOT_HOME' then Person2Location := 'Elsewhere';
   end
 
@@ -1797,8 +1806,8 @@ begin
   begin
     asm
       var PeopleData = JSON.parse(SocketData.jsobject);
-      console.log(PeopleData.event.states[this.Person1Sensor]);
-      console.log(PeopleData.event.states[this.Person2Sensor]);
+//      console.log(PeopleData.event.states[this.Person1Sensor]);
+//      console.log(PeopleData.event.states[this.Person2Sensor]);
 
       if (this.CurrentPerson == 1) {
         var PeopleFilter = PeopleData.event.states[this.Person1Sensor].filter(
@@ -1896,7 +1905,6 @@ var
   Hue: Integer;
   Sat: Integer;
   Bri: Integer;
-  Command: String;
 begin
   LightID := Copy(light,7,length(light));
   hsv := StringReplace(StringReplace(StringReplace(StringReplace(hsv,'HSV(','',[]),')','',[]),'%','',[rfReplaceAll]),' ','',[rfReplaceAll]);
@@ -2200,8 +2208,8 @@ begin
 
   // Cleanup
   AppINIFile.Free;
-
   ConfigurationLoaded := True;
+  PreventCompilerHint(FeatureValue);
 end;
 
 procedure TForm1.LoadHelp(HelpDIV: String);
@@ -2245,6 +2253,8 @@ begin
          console.log('Error ['+err+'] Loading Help: '+HelpDIV);
       })
   end;
+  PreventCompilerHint(HelpFile);
+  PreventCompilerHint(HelpFileAlt);
 end;
 
 procedure TForm1.MiletusFormClick(Sender: TObject);
@@ -2717,6 +2727,18 @@ begin
   else if (pages.TabIndex = Weather2) then SwitchPages( Weather2, Weather1 )
   else if (pages.TabIndex = Weather3) then SwitchPages( Weather3, Weather2 )
 
+  // Person - Don't go anywhere
+  else if (pages.TabIndex = 25) then
+  begin
+    if CurrentPerson = 1
+    then CurrentPerson := 2
+    else CurrentPerson := 1;
+    divLocations.ElementHandle.style.setProperty('opacity','0');
+    divPersonPhoto.ElementHandle.style.setProperty('opacity','0');
+    divPersonInfo.ElementHandle.style.setProperty('opacity','0');
+    SwitchPages( 25, 25 );
+  end
+
   // Otherwise - Go back to home
   else SwitchPages(pages.TabIndex, 1);
 
@@ -2827,12 +2849,29 @@ begin
   else if (pages.TabIndex = Weather2) then SwitchPages( Weather2, Weather3 )
   else if (pages.TabIndex = Weather3) then SwitchPages( Weather3, Weather1 )
 
+  // Person - Don't go anywhere
+  else if (pages.TabIndex = 25) then
+  begin
+    if CurrentPerson = 1
+    then CurrentPerson := 2
+    else CurrentPerson := 1;
+    divLocations.ElementHandle.style.setProperty('opacity','0');
+    divPersonPhoto.ElementHandle.style.setProperty('opacity','0');
+    divPersonInfo.ElementHandle.style.setProperty('opacity','0');
+    SwitchPages( 25, 25 );
+  end
+
   // Otherwise - Go back to home
   else SwitchPages(pages.TabIndex, 1);
 
   ResetInactivityTimer(Sender);
 end;
 
+
+procedure TForm1.pageWeatherClick(Sender: TObject);
+begin
+  SwitchPages(21,1);
+end;
 
 procedure TForm1.ResetInactivityTimer(Sender: TObject);
 begin
@@ -2856,7 +2895,11 @@ begin
   HidePopups;
 
   // Get started on Person data referesh
-  if EndPage = 25 then DisplayPerson;
+  if EndPage = 25 then
+  begin
+    asm await sleep(400); end;
+    DisplayPerson;
+  end;
 
   tmrSwitchPage.Tag := EndPage;
   tmrSwitchPage.Enabled := True;
@@ -2947,6 +2990,14 @@ begin
 end;
 
 
+procedure TForm1.tmrRefreshTimer(Sender: TObject);
+begin
+  // Request full set of states again
+  HAID := HAID + 1;
+  HAGetStates := HAID;
+  HAWebSocket.Send('{"id":'+IntToStr(HAID)+',"type": "get_states"}');
+end;
+
 procedure TForm1.tmrSecondsTimer(Sender: TObject);
 var
   current_seconds: Integer;
@@ -2964,9 +3015,7 @@ var
 
   UpdateRing1,
   UpdateRing2,
-  UpdateRing3,
-  UpdateRing4,
-  UpdateRing5: Boolean;
+  UpdateRing3: Boolean;
 
   ElapsedTime: TDateTime;
 begin
@@ -3756,15 +3805,21 @@ begin
       // Person Photos
       if Person1Photo <> '' then
       begin
-        display := '<img style="border-radius:50%; width:50px; height:50px;" src='+editConfigURL.Text+Person1Photo+'>';
-        if divPerson1.HTML.Text <> display
-        then divPerson1.HTML.Text := display;
+        display := '<img style="width:50px; height:50px;" src='+editConfigURL.Text+Person1Photo+'>';
+        if divPerson1.HTML.Text <> display then
+        begin
+          divPerson1.HTML.Text := display;
+          divPerson1.ElementHandle.style.setProperty('opacity','1');
+        end;
       end;
       if Person2Photo <> '' then
       begin
-        display := '<img style="border-radius:50%; width:50px; height:50px;" src='+editConfigURL.Text+Person2Photo+'>';
-        if divPerson2.HTML.Text <> display
-        then divPerson2.HTML.Text := display;
+        display := '<img style="width:50px; height:50px;" src='+editConfigURL.Text+Person2Photo+'>';
+        if divPerson2.HTML.Text <> display then
+        begin
+          divPerson2.HTML.Text := display;
+          divPerson2.ElementHandle.style.setProperty('opacity','1');
+        end;
       end;
 
       // Energy Now (Ring 1)
@@ -4019,8 +4074,6 @@ begin
 end;
 
 procedure TForm1.tmrStartupTimer(Sender: TObject);
-var
-  HelpFilename: String;
 begin
 
   // This orchestrates a number of events at startup for
@@ -4237,6 +4290,9 @@ begin
 
   if (EndPage = 25) then
   begin
+    divLocations.ElementHandle.style.setProperty('opacity','1');
+    divPersonPhoto.ElementHandle.style.setProperty('opacity','1');
+    divPersonInfo.ElementHandle.style.setProperty('opacity','1');
     asm
       this.LocationMap.invalidateSize(true);
       this.LocationMap.flyTo([this.tabLocations.getRowFromPosition(1).getCell('a.latitude').getValue(),this.tabLocations.getRowFromPosition(1).getCell('a.longitude').getValue()]);
@@ -4637,6 +4693,7 @@ begin
     Element.style.setProperty('background','rgba(0,0,'+pop*2.55+',0.5)');
   end;
 
+  PreventCompilerHint(weathericon);
 end;
 
 procedure TForm1.btnChangeClick(Sender: TObject);
@@ -4676,6 +4733,39 @@ begin
   begin
     asm divSatellite.replaceChildren(); end;
     divSatellite.HTML.Text := '<iframe src="'+WeatherSatelliteLink+'" width="100%" frameborder="0" style="border:0;height:100%;" allowfullscreen></iframe>';
+  end
+
+  // Person page - Toggle stuff
+  else if (pages.Tabindex = 25) then
+  begin
+    if ChangeMode then
+    begin
+      ChangeMode := False;
+      btnChange.ElementHandle.firstElementChild.classList.remove('text-warning','fa-beat');
+      btnChange.ElementHandle.style.setProperty('opacity','0.25');
+      divLocations.ElementHandle.style.setProperty('opacity','1');
+      divLocations.ElementHandle.style.setProperty('pointer-events','unset');
+      divPersonPhoto.ElementHandle.style.setProperty('opacity','1');
+      divPersonInfo.ElementHandle.style.setProperty('opacity','1');
+      asm
+        var els = document.querySelectorAll('.leaflet-control-container,.leaflet-control-attribution');
+        for (var i = 0; i < els.length; i++) { els[i].classList.remove('d-none'); }
+      end;
+    end
+    else
+    begin
+      ChangeMode := True;
+      btnChange.ElementHandle.firstElementChild.classList.add('text-warning','fa-beat');
+      btnChange.ElementHandle.style.setProperty('opacity','1');
+      divLocations.ElementHandle.style.setProperty('opacity','0');
+      divLocations.ElementHandle.style.setProperty('pointer-events','none');
+      divPersonPhoto.ElementHandle.style.setProperty('opacity','0');
+      divPersonInfo.ElementHandle.style.setProperty('opacity','0');
+      asm
+        var els = document.querySelectorAll('.leaflet-control-container,.leaflet-control-attribution');
+        for (var i = 0; i < els.length; i++) { els[i].classList.add('d-none'); }
+      end;
+    end;
   end
 
   // Configuration Information
@@ -4952,6 +5042,7 @@ begin
       });
     end;
   end;
+  PreventCompilerHint(NewColor);
 end;
 
 procedure TForm1.ConfigureTabSensors;
@@ -5076,10 +5167,7 @@ begin
             var ZoneIcon = '<i class="fa-solid fa-person-walking"></i>';
             var Location = cell.getValue();
 
-            if (Location.toUpperCase() == 'NOTSET') {
-              Location = 'Nowhere';
-            }
-            else if (Location.toUpperCase() == 'STATIONARY') {
+            if (Location.toUpperCase() == 'STATIONARY') {
               Location = 'Somewhere';
               var ZoneIcon = '<i class="fa-solid fa-store"></i>';
             }
@@ -5104,10 +5192,7 @@ begin
         { title: "Location", field: "s", width: 170,
           formatter: function(cell, formatterParams, onRendered) {
             var Location = cell.getValue();
-            if (Location.toUpperCase() == 'NOTSET') {
-              Location = 'Nowhere';
-            }
-            else if (Location.toUpperCase() == 'STATIONARY') {
+            if (Location.toUpperCase() == 'STATIONARY') {
               Location = 'Somewhere';
             }
             else if (Location.toUpperCase() == 'NOT_HOME') {
@@ -5122,30 +5207,47 @@ begin
         },
         { title: "Duration", field: "lu", width: 110,
           formatter: function(cell, formatterParams, onRendered) {
+
             var Table = pas.Unit1.Form1.tabLocations;
             var StartTime = luxon.DateTime.fromMillis(cell.getValue()*1000);
             var EndTime = luxon.DateTime.fromMillis(cell.getValue()*1000);
             var Position  = Table.getRowPosition(cell.getRow());
+
             if (Position == 1) {
               EndTime = new luxon.DateTime.now();
             } else {
               EndTime = luxon.DateTime.fromMillis(Table.getRowFromPosition(Position - 1).getCell("lu").getValue()*1000);
             }
+
             var coded = EndTime.diff(StartTime).shiftTo('days','hours','minutes','seconds').toObject();
             var label ='';
+
             if (coded['days'] > 0) {
-              label = coded['days']+'d '+coded['hours']+'h '+coded['minutes']+'m';
+              if (coded['minutes'] !== 0) {
+                label = coded['days']+'d '+coded['hours']+'h '+coded['minutes']+'m';
+              } else {
+                if (coded['hours'] !== 0) {
+                  label = coded['days']+'d '+coded['hours']+'h';
+                } else {
+                  label = coded['days']+'d';
+                }
+              }
             } else if (coded['hours'] > 0) {
-              label = coded['hours']+'h '+coded['minutes']+'m';
+              if (coded['minutes'] !== 0) {
+                label = coded['hours']+'h '+coded['minutes']+'m';
+              } else {
+               label = coded['hours']+'h';
+              }
             } else {
               label = coded['minutes']+'m';
             }
+
             return '<div style="height: 100%; width:100%;">'+
                      '<div style="position: absolute; border-radius: 4px; height: 30px; left:0px; background: rgba(128,128,128,0.5); width: '+parseInt(105*(Math.max(15,Math.min(720,EndTime.diff(StartTime).shiftTo('minutes').toObject()['minutes'])) / 720))+'px"></div>'+
                      '<div style="position:absolute; color: white; text-align: center; left:0px; width:105px;">'+label+'</div>'+
                    '</div>';
 
-           },
+          },
           formatterParams: {}
         },
         { title: "Latitude", field: "a.latitude", visible: false },
@@ -5186,6 +5288,12 @@ begin
   dest.Width := src.Width;
   dest.Height := src.Height;
 end;
+
+procedure TForm1.StopLinkerRemoval(P: Pointer);                          begin end;
+procedure TForm1.PreventCompilerHint(I: integer);              overload; begin end;
+procedure TForm1.PreventCompilerHint(J: JSValue);              overload; begin end;
+procedure TForm1.PreventCompilerHint(S: string);               overload; begin end;
+procedure TForm1.PreventCompilerHint(H: TJSHTMLElement);       overload; begin end;
 
 initialization
   RegisterClass(TForm1);

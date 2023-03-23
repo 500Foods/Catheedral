@@ -5025,12 +5025,13 @@ object Form1: TForm1
       Caption = 'Wx'
       ChildOrder = 21
       ElementFont = efCSS
+      OnClick = pageWeatherClick
       object divWx: TWebHTMLDiv
         Left = 45
         Top = 5
         Width = 1190
         Height = 390
-        ElementClassName = 'd-flex flex-column gap-1 lh-1'
+        ElementClassName = 'd-flex flex-column gap-1 lh-1 pe-none'
         ElementID = 'divWx'
         ElementFont = efCSS
         Role = ''
@@ -6122,7 +6123,7 @@ object Form1: TForm1
   end
   object tmrInactivity: TWebTimer
     Enabled = False
-    Interval = 4500000
+    Interval = 45000
     OnTimer = tmrInactivityTimer
     Left = 808
     Top = 64
@@ -6159,6 +6160,12 @@ object Form1: TForm1
     Interval = 400
     OnTimer = tmrHidePopupsTimer
     Left = 384
+    Top = 64
+  end
+  object tmrRefresh: TWebTimer
+    Interval = 1800000
+    OnTimer = tmrRefreshTimer
+    Left = 936
     Top = 64
   end
 end

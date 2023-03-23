@@ -411,6 +411,7 @@ input[type=text]:focus-visible.ConfigEdit  {
 .Ring {
   z-index: 3;
   opacity: 0.65;
+  pointer-events: none;
 }
 .TxRing {
   filter: var(--TxRingF);
@@ -752,20 +753,30 @@ div.tabulator-row.tabulator-selected {
 }
 
 /* Fancier Fading Foto */
+#divPerson1,
+#divPerson2,
 #divPersonPhoto {
   -webkit-mask-image: radial-gradient(white 50%, rgba(255, 255, 255, 0) 70%);
   mask-image: radial-gradient(white 50%, rgba(255, 255, 255, 0) 70%);
-  pointer-events: none;
   z-index: 20;
+  opacity: 0;
+  transition: opacity var(--Delay-Short) ease;
 }
 
+#divPersonPhoto {
+  pointer-events: none;
+}
 #divPersonInfo {
   pointer-events: none;
   z-index: 20;
+  opacity: 0;
+  transition: opacity var(--Delay-Short) ease;
 }
 
 #divLocations {
   z-index: 20;
+  opacity: 0;
+  transition: opacity var(--Delay-Short) ease;
 }
 
 #divLocations .tabulator-row > div:nth-child(0) { color: white;}
@@ -777,7 +788,6 @@ div.tabulator-row.tabulator-selected {
 #divLocationMap {
   z-index: 10 !important;
 }
-
 .leaflet-control-container {
   position: absolute;
   top: -6px;
