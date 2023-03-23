@@ -384,6 +384,12 @@ type
     divWxH5: TWebHTMLDiv;
     divWxH6: TWebHTMLDiv;
     divWeatherCover: TWebHTMLDiv;
+    pagePerson: TWebTabSheet;
+    pagesSheet27: TWebTabSheet;
+    divPersonPhoto: TWebHTMLDiv;
+    divLocations: TWebHTMLDiv;
+    divPersonInfo: TWebHTMLDiv;
+    divLocationMap: TWebHTMLDiv;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -460,6 +466,9 @@ type
     procedure divWeatherCoverClick(Sender: TObject);
     function GetWeatherIcon(var Condition: String): String;
     procedure DrawWeather(Element: TWebHTMLDiv; WeatherData: JSValue; ShowTime:Boolean);
+    procedure DisplayPerson;
+    procedure divPerson1Click(Sender: TObject);
+    procedure divPerson2Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -496,10 +505,13 @@ type
     HAGetConfig: Integer;
     HAGetStates: Integer;
     HAGetEvents: Integer;
+    HAGetPeople: Integer;
     HAStates: JSValue;
     HAEntities: JSValue;
     HALoadConfig: Boolean;
     HAStatesLoaded: Boolean;
+    HAPeople: JSValue;
+    HAZones: JSValue;
 
     // Home Assistant values we'll use frequently
     HALanguage: String;
@@ -588,7 +600,12 @@ type
     WeatherPrecipUnits: String;
     WeatherAttribution: String;
 
-    // Energy Panel
+    // People + Energy Panel
+    tabLocations: JSValue;
+    LocationMap: JSValue;
+    PersonMarker: JSValue;
+    PersonCircle: JSValue;
+    CurrentPerson: Integer;
     Person1Sensor: String;
     Person2Sensor: String;
 
@@ -1110,7 +1127,9 @@ begin
         this.Person1Location = window.CapWords((State.state || 'N/A').replace('_',' '));
       }
     end;
-    if Person1Location = 'Stationary' then Person1Location := 'Somewhere';
+    if Uppercase(Person1Location) = 'STATIONARY' then Person1Location := 'Somewhere';
+    if Uppercase(Person1Location) = 'NOTSET' then Person1Location := 'Nowhere';
+    if Uppercase(Person1Location) = 'NOT_HOME' then Person1Location := 'Elsewhere';
   end
   else if (Entity = Person2Sensor) then
   begin
@@ -1125,7 +1144,9 @@ begin
         this.Person2Location = window.CapWords((State.state || 'N/A').replace('_',' '));
       }
     end;
-    if Person2Location = 'Stationary' then Person2Location := 'Somewhere';
+    if Uppercase(Person2Location) = 'STATIONARY' then Person2Location := 'Somewhere';
+    if Uppercase(Person2Location) = 'NOTSET' then Person2Location := 'Nowhere';
+    if Uppercase(Person2Location) = 'NOT_HOME' then Person2Location := 'Elsewhere';
   end
 
   else if (Entity = MoonSensor) then
@@ -1496,6 +1517,7 @@ begin
     if (SocketData.jsobject !== null) {
       var hadata = JSON.parse(SocketData.jsobject);
       ResponseType = hadata.type;
+      ResponseID = hadata.id;
     }
   end;
 
@@ -1598,6 +1620,13 @@ begin
 //        console.log('Lighting Information: '+JSON.stringify(this.Lights).length+' bytes');
 //        console.log(this.Lights);
 //        console.log(this.LightsOn);
+
+
+        // Lookup Zones
+        this.HAZones = hadata.result.filter(
+          function(o) {
+           return ((o.entity_id.indexOf("zone.") == 0) && (o.attributes.latitude !== undefined) && (o.attributes.longitude !== undefined) && (o.attributes.radius !== undefined)  && (o.attributes.passive == false));
+          });
 
 
         // Load Configuration from Home Assistant Data (triggered by button click - not automatic)
@@ -1707,7 +1736,12 @@ begin
 //    labelConfigSTATUS.Caption := HASystemName+ ' Status';
   end
 
-  // Response to our get_states request
+  // Response to our events request
+  else if (ResponseType = 'result') and (ResponseID = HAGetEvents) then
+  begin
+    // thank you - this is an empty result typically?
+    // console.log('HAGetEvents results have arrived');
+  end
   else if (ResponseType = 'event') and (ResponseID = HAGetEvents) then
   begin
     asm
@@ -1753,11 +1787,53 @@ begin
     end;
   end
 
-  // Some other message was received
-  else
+  // The result from a history/stream request for People entities
+  else if (ResponseType = 'result') and (ResponseID = HAGetPeople) then
+  begin
+    // thank you - this is an empty result typically?
+    // console.log('HAGetPeople results have arrived');
+  end
+  else if (ResponseType = 'event') and (ResponseID = HAGetPeople) then
   begin
     asm
-//      console.log(SocketData);
+      var PeopleData = JSON.parse(SocketData.jsobject);
+      console.log(PeopleData.event.states[this.Person1Sensor]);
+      console.log(PeopleData.event.states[this.Person2Sensor]);
+
+      if (this.CurrentPerson == 1) {
+        var PeopleFilter = PeopleData.event.states[this.Person1Sensor].filter(
+          function(o) {
+            return (o.s.toUpperCase().indexOf("NOTSET") !== 0);
+          });
+      } else {
+        var PeopleFilter = PeopleData.event.states[this.Person2Sensor].filter(
+          function(o) {
+            return (o.s.toUpperCase().indexOf("NOTSET") !== 0);
+          });
+      }
+      this.tabLocations.setData(PeopleFilter).then(() => {
+        if (this.tabLocations.getDataCount() > 0) {
+          this.tabLocations.deselectRow();
+          this.tabLocations.selectRow(this.tabLocations.getRowFromPosition(1));
+        }
+      })
+
+
+    end;
+
+  end
+
+
+  // Some other message was received unexpectedly
+  else
+  begin
+    console.log('HAGetConfig: '+InttoSTr(HAGetConfig));
+    console.log('HAGetStates: '+InttoSTr(HAGetStates));
+    console.log('HAGetEvents: '+InttoSTr(HAGetEvents));
+    console.log('HAGetPeople: '+InttoSTr(HAGetPeople));
+    asm
+      console.log('Unexpected HA Data');
+      console.log(SocketData);
     end;
   end;
 
@@ -2346,6 +2422,7 @@ begin
   SunSensor := '';
   MoonSensor := '';
 
+  // Climate
   DaylightSensor := '';
   ClimateSensor := '';
   ClimateMinTempSensor := '';
@@ -2353,6 +2430,7 @@ begin
   ClimateMinHumiditySensor := '';
   ClimateMaxHumiditySensor := '';
 
+  // Weather
   WeatherSensor1 := '';
   WeatherSensor2 := '';
   WeatherMinTempSensor := '';
@@ -2374,7 +2452,7 @@ begin
     this.WeatherForecast2 = [];
   end;
 
-
+  // People
   Person1Sensor := '';
   Person2Sensor := '';
 
@@ -2383,6 +2461,7 @@ begin
   Battery3Sensor := '';
   Battery4Sensor := '';
 
+  // Energy
   EnergySensor := '';
 
   // Config Page Defaults
@@ -2439,7 +2518,17 @@ begin
   WeatherAQHI := 'N/A';
   WeatherIcon := 'not-available';
 
-  // Home Page - Energy Panel
+  // Home Page - People
+  Person1Name := '';
+  Person1Photo := '';
+  Person1Location := '';
+  Person2Name := '';
+  Person2Photo := '';
+  Person2Location := '';
+  asm
+    this.HAPeople = [];
+    this.HAZones = [];
+  end;
   Battery1Name := '';
   Battery2Name := '';
   Battery3Name := '';
@@ -2452,12 +2541,8 @@ begin
   Battery2Status := '';
   Battery3Status := '';
   Battery4Status := '';
-  Person1Name := '';
-  Person1Photo := '';
-  Person1Location := '';
-  Person2Name := '';
-  Person2Photo := '';
-  Person2Location := '';
+
+  // Home Page - Energy
   EnergyUse := 0;
 
   // Lights Page
@@ -2769,6 +2854,9 @@ begin
 
   // Hide Popup if visible
   HidePopups;
+
+  // Get started on Person data referesh
+  if EndPage = 25 then DisplayPerson;
 
   tmrSwitchPage.Tag := EndPage;
   tmrSwitchPage.Enabled := True;
@@ -4147,6 +4235,13 @@ begin
   if (EndPage in [23,24])
   then btnChangeClick(Sender);
 
+  if (EndPage = 25) then
+  begin
+    asm
+      this.LocationMap.invalidateSize(true);
+      this.LocationMap.flyTo([this.tabLocations.getRowFromPosition(1).getCell('a.latitude').getValue(),this.tabLocations.getRowFromPosition(1).getCell('a.longitude').getValue()]);
+    end;
+  end;
 
   // Home button on Home Page is bolt if connnected or
   if dataConfigSTATUS.Caption = 'Connected'
@@ -4329,6 +4424,101 @@ begin
   SwitchPages(1,16);
 end;
 
+procedure TForm1.DisplayPerson;
+var
+  PersonalInfo: String;
+begin
+  // Try and get the very latest data
+  HAID := HAID + 1;
+  HAGetPeople := HAID;
+  HAWebSocket.Send('{"id":'+IntToStr(HAGetPeople)+',"type": "history/stream", "start_time":"'+FormatDateTime('yyyy-MM-dd HH:nn:ss',Now-10)+'", "entity_ids":["'+Person1Sensor+'","'+Person2Sensor+'"]}');
+
+  // Update the photo
+  if CurrentPerson = 1 then divPersonPhoto.HTML.Text := '<img style="width:150px; height:150px;" src='+editConfigURL.Text+Person1Photo+'>';
+  if CurrentPerson = 2 then divPersonPhoto.HTML.Text := '<img style="width:150px; height:150px;" src='+editConfigURL.Text+Person2Photo+'>';
+
+  PersonalInfo := '<div class="d-flex flex-column h-100 justify-content-center align-items-start">';
+  // Search for content
+  asm
+    var search = '';
+    var interesting = [];
+    var current_lat = 0.0;
+    var current_lon = 0.0;
+
+    // Searching for the name of a person
+    if (this.CurrentPerson == 1) { search = this.Person1Sensor.split('.')[1]; }
+    if (this.CurrentPerson == 2) { search = this.Person2Sensor.split('.')[1]; }
+
+    // Searching all the Home Assistant objects
+    for (var i = 0; i < this.HAStates.length; i++) {
+      if (this.HAStates[i].entity_id == 'person.'+search) {
+        current_lat = this.HAStates[i].attributes.latitude;
+        current_lon = this.HAStates[i].attributes.longitude;
+      }
+      // Matches search
+      if (this.HAStates[i].entity_id.indexOf(search) > -1) {
+        var item = this.HAStates[i];
+        // If it has all of our attributes, add it to our 'interesting' array
+        if ((item.attributes.icon !== undefined) && (item.attributes.unit_of_measurement !== undefined) && (item.attributes.friendly_name !== undefined) && !isNaN(item.state)) {
+          interesting.push({name:item.attributes.friendly_name, value:item.state, icon: item.attributes.icon, units: item.attributes.unit_of_measurement});
+        }
+      }
+    }
+
+    // Sort our interesting array by units and then by name
+    interesting.sort((a,b) => ((a.units+a.name) > (b.units+b.name)) - ((a.units+a.name) < (b.units+b.name)));
+
+    // Add our interesting array to the display
+    for (var i = 0; i < interesting.length; i++) {
+      PersonalInfo += '<div class="Text TextBG Blue p-0 m-0 d-flex justify-content-center align-items-center mdi '+interesting[i].icon.replace(':','-')+'">';
+      PersonalInfo += '<div class="Text TextBG White p-0 m-0 ms-2">'+parseInt(interesting[i].value)+'</div></div>';
+      PersonalInfo += '<div style="margin:-8px 0px 4px 0px;" class="Text TextXS Gray p-0">'+interesting[i].name+' - '+interesting[i].units+'</div>';
+    }
+
+
+
+    // Draw the map for the first time?
+    if (pas.Unit1.Form1.LocationMap == undefined) {
+      pas.Unit1.Form1.LocationMap = L.map('divLocationMap').setView([current_lat-0.1, current_lon], 12);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(pas.Unit1.Form1.LocationMap);
+
+      // Add locations we know about
+      for (var i = 0; i < this.HAZones.length; i++) {
+        var coords = [this.HAZones[i].attributes.latitude, this.HAZones[i].attributes.longitude];
+        var radius = this.HAZones[i].attributes.radius;
+        var ZoneMarker = L.ExtraMarkers.icon({
+          icon: this.HAZones[i].attributes.icon.replace(':','-'),
+          extraClasses: 'mdi md-20',
+          markerColor: 'green-dark',
+          shape: 'square'
+        });
+        L.marker(coords, {icon: ZoneMarker}).addTo(pas.Unit1.Form1.LocationMap);
+        L.circle(coords, radius, {color: "darkgren", fillOpacity: 0.75, fillColor: "darkgreen"}).addTo(pas.Unit1.Form1.LocationMap);
+      }
+
+    }
+  end;
+
+  PersonalInfo := PersonalInfo+'</div>';
+  divPersonInfo.HTML.Text := PersonalInfo;
+
+end;
+
+procedure TForm1.divPerson1Click(Sender: TObject);
+begin
+  CurrentPerson := 1;
+  SwitchPages(1,25);
+end;
+
+procedure TForm1.divPerson2Click(Sender: TObject);
+begin
+  CurrentPerson := 2;
+  SwitchPages(1,25);
+end;
+
 procedure TForm1.divWeatherCoverClick(Sender: TObject);
 begin
   // Set middle text - Advisory and Summary values
@@ -4389,10 +4579,10 @@ begin
 
   asm
     // A fixed width implies a fixed height for the icon.
-    weathericon = '<img title="'+weathercondition+'" width="90" src="weather-icons-dev/production/fill/svg/'+weathericon+'.svg">'
+    weathericon = '<img title="'+weathercondition+'" width="75" src="weather-icons-dev/production/fill/svg/'+weathericon+'.svg">'
 
     // Use Luxon to get our UTC timestamp into today's date. Luxon('ccc') = FormatDateTime('ddd') if anyone is wondering
-    var wday = '<div class="Text TextLG White m-0 p-0 pb-2">'+luxon.DateTime.fromISO(WeatherData.datetime,{zone:"utc"}).setZone("system").toFormat('ccc')+'</div>';
+    var wday = '<div class="Text TextRG White m-0 p-0 pb-1">'+luxon.DateTime.fromISO(WeatherData.datetime,{zone:"utc"}).setZone("system").toFormat('ccc')+'</div>';
 
     // Same goes for the time. We're assuming :00 here just in case it isn't!
     var wtime = '';
@@ -4409,7 +4599,7 @@ begin
     // The first vertical section has the icon on the left and the date/time on the right
     var weather = '<div class="d-flex m-0 p-0 flex-row align-items-between" style="margin-bottom:-10px !important;">'+
                     weathericon+
-                    '<div class="d-flex flex-column m-0 p-0 h-100 w-100 align-items-center justify-content-center">'+
+                    '<div class="d-flex flex-column m-0 mb-1 p-0 h-100 w-100 align-items-center justify-content-center">'+
                       wday+
                       wtime+
                     '</div>'+
@@ -4847,6 +5037,144 @@ begin
     });
     this.tabSensors.on("rowMouseOver", function(e, row){
       pas.Unit1.Form1.ResetInactivityTimer;
+    });
+  end;
+
+
+  asm
+    this.tabLocations = new Tabulator('#divLocations',{
+      layout: "fitColumns",
+      selectable: 1,
+      headerVisible: false,
+      initialSort: [
+        {column: "lu", dir: "desc"}
+      ],
+      columnDefaults: {
+        resizable: false,
+        visible: true
+      },
+      columns: [
+        { title: "Day", field: "lu", width: 50, hozAlign: "center",
+          formatter: function(cell, formatterParams, onRendered) {
+            return luxon.DateTime.fromMillis(cell.getValue()*1000).toFormat(formatterParams.outputFormat);
+          },
+          formatterParams: {
+            outputFormat: "ccc"
+          }
+        },
+        { title: "Time", field: "lu", width: 60, hozAlign: "center",
+          formatter: function(cell, formatterParams, onRendered) {
+            return luxon.DateTime.fromMillis(cell.getValue()*1000).toFormat(formatterParams.outputFormat);
+          },
+          formatterParams: {
+            outputFormat: "HH:mm"
+          }
+        },
+        { title: "Icon", field: "s", width: 40, hozAlign: "center",
+          formatter: function(cell, formatterParams, onRendered) {
+            var Zones = pas.Unit1.Form1.HAZones;
+            var ZoneIcon = '<i class="fa-solid fa-person-walking"></i>';
+            var Location = cell.getValue();
+
+            if (Location.toUpperCase() == 'NOTSET') {
+              Location = 'Nowhere';
+            }
+            else if (Location.toUpperCase() == 'STATIONARY') {
+              Location = 'Somewhere';
+              var ZoneIcon = '<i class="fa-solid fa-store"></i>';
+            }
+            else if (Location.toUpperCase() == 'NOT_HOME') {
+              Location = 'Elsewhere';
+              var ZoneIcon = '<i class="fa-solid fa-car-side"></i>';
+            }
+            else if (Location.toUpperCase() == 'HOME') {
+              Location = 'Home';
+              var ZoneIcon = '<i class="fa-solid fa-house-chimney"></i>';
+            }
+
+            for (var i = 0; i < Zones.length; i ++) {
+              if (Zones[i].attributes.friendly_name == cell.getValue()) {
+                ZoneIcon = '<span class="mdi '+Zones[i].attributes.icon.replace(':','-')+'"></span>';
+              }
+            }
+            return ZoneIcon;
+          },
+          formatterParams: {}
+        },
+        { title: "Location", field: "s", width: 170,
+          formatter: function(cell, formatterParams, onRendered) {
+            var Location = cell.getValue();
+            if (Location.toUpperCase() == 'NOTSET') {
+              Location = 'Nowhere';
+            }
+            else if (Location.toUpperCase() == 'STATIONARY') {
+              Location = 'Somewhere';
+            }
+            else if (Location.toUpperCase() == 'NOT_HOME') {
+              Location = 'Elsewhere';
+            }
+            else if (Location.toUpperCase() == 'HOME') {
+              Location = 'Home';
+            }
+            return Location;
+          },
+          formatterParams: {}
+        },
+        { title: "Duration", field: "lu", width: 110,
+          formatter: function(cell, formatterParams, onRendered) {
+            var Table = pas.Unit1.Form1.tabLocations;
+            var StartTime = luxon.DateTime.fromMillis(cell.getValue()*1000);
+            var EndTime = luxon.DateTime.fromMillis(cell.getValue()*1000);
+            var Position  = Table.getRowPosition(cell.getRow());
+            if (Position == 1) {
+              EndTime = new luxon.DateTime.now();
+            } else {
+              EndTime = luxon.DateTime.fromMillis(Table.getRowFromPosition(Position - 1).getCell("lu").getValue()*1000);
+            }
+            var coded = EndTime.diff(StartTime).shiftTo('days','hours','minutes','seconds').toObject();
+            var label ='';
+            if (coded['days'] > 0) {
+              label = coded['days']+'d '+coded['hours']+'h '+coded['minutes']+'m';
+            } else if (coded['hours'] > 0) {
+              label = coded['hours']+'h '+coded['minutes']+'m';
+            } else {
+              label = coded['minutes']+'m';
+            }
+            return '<div style="height: 100%; width:100%;">'+
+                     '<div style="position: absolute; border-radius: 4px; height: 30px; left:0px; background: rgba(128,128,128,0.5); width: '+parseInt(105*(Math.max(15,Math.min(720,EndTime.diff(StartTime).shiftTo('minutes').toObject()['minutes'])) / 720))+'px"></div>'+
+                     '<div style="position:absolute; color: white; text-align: center; left:0px; width:105px;">'+label+'</div>'+
+                   '</div>';
+
+           },
+          formatterParams: {}
+        },
+        { title: "Latitude", field: "a.latitude", visible: false },
+        { title: "Longitude", field: "a.longitude", visible: false },
+        { title: "Radius", field: "a.gps_accuracy", visible: false },
+      ]
+    });
+    this.tabLocations.on("rowMouseOver", function(e, row){
+      pas.Unit1.Form1.ResetInactivityTimer;
+    });
+    this.tabLocations.on("rowSelected", function(row){
+      var coords = [row.getCell('a.latitude').getValue(),row.getCell('a.longitude').getValue()];
+      var radius = row.getCell('a.gps_accuracy').getValue();
+      pas.Unit1.Form1.LocationMap.flyTo(coords);
+      if (pas.Unit1.Form1.PersonMarker == undefined) {
+        var PersonMarker = L.ExtraMarkers.icon({
+          icon: 'fa-map-pin',
+          extraClasses: 'fa-solid fa-3x',
+          markerColor: 'blue',
+          shape: 'circle'
+        });
+        pas.Unit1.Form1.PersonMarker = L.marker(coords, {icon:PersonMarker, zIndexOffset:100}).addTo(pas.Unit1.Form1.LocationMap);
+        pas.Unit1.Form1.PersonCircle = L.circle(coords,radius, {color: "royalblue", fillOpacity: 0.75, fillColor: "royalblue"}).addTo(pas.Unit1.Form1.LocationMap);
+      }
+      else {
+        pas.Unit1.Form1.PersonMarker.setLatLng(coords);
+        pas.Unit1.Form1.PersonCircle.setLatLng(coords);
+        pas.Unit1.Form1.PersonCircle.setRadius(radius);
+      }
     });
   end;
 end;

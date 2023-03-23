@@ -116,7 +116,7 @@ html, body {
   --Swatch-Name-22: 'Blue';
   --Swatch-Name-23: 'Fuchsia';
 
---sl-font-serif: "Cairo";
+  --sl-font-serif: "Cairo";
 
 }
 
@@ -182,7 +182,7 @@ input[type=text]:focus-visible.ConfigEdit  {
 
 /*  Main Left/Right Page Navigation Components */
 .Nav {
-  z-index: 10;
+  z-index: 100;
   background: black;
   width: 40px;
   height: 300px;
@@ -191,7 +191,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   transition: left var(--Delay-Long) ease, opacity var(--Delay-Short) ease;
 }
 .Nav:hover {
-  opacity: 0.5;
+  opacity: 0.75;
 }
 .NavLeft {
   left: -40px;
@@ -221,6 +221,7 @@ input[type=text]:focus-visible.ConfigEdit  {
 
 /* Main Buttons */
 .MainButton {
+  z-index: 100;
   opacity: 0;
   color: white !important;
   padding: 0px !important;
@@ -229,7 +230,7 @@ input[type=text]:focus-visible.ConfigEdit  {
 }
 .MainButton:hover {
   color: white !important;
-  opacity: 0.5 !important;
+  opacity: 0.75 !important;
 }
 .MainButton > i,
 .MainButton > div {
@@ -450,12 +451,20 @@ input[type=text]:focus-visible.ConfigEdit  {
 .TextCover {
   z-index: 15;
 }
+.TextXS {
+  font-size: 12px;
+  z-index: 10;
+}
 .TextSM {
   font-size: 18px;
   z-index: 10;
 }
 .TextRG {
   font-size: 24px;
+  z-index: 11;
+}
+.TextBG {
+  font-size: 26px;
   z-index: 11;
 }
 .TextLG {
@@ -507,20 +516,23 @@ input[type=text]:focus-visible.ConfigEdit  {
   font-family: Cairo !important;
   font-size: 20px !important;
   border-radius: 6px;
-  border: 2px solid white;
+  border: 2px solid rgba(255,255,255,0.5);
   opacity: 0.9;
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
-  background-color: #222222 !important;
+  background-color: rgba(64,64,64,0.5)  !important;
+}
+.tabulator-table {
+  background-color: rgba(0,0,0,0) !important;
 }
 .tabulator-tableholder {
   overflow-y: scroll !important;
   overflow-x: hidden !important;
 }
 .tabulator-row.tabulator-row-even {
- background-color: #333333 !important;
+ background-color: rgba(128,128,128,0.2) !important;
 }
 .tabulator-row.tabulator-row-odd {
-  background-color: #444444 !important;
+  background-color: rgba(64,64,64,0.2) !important;
 }
 .tabulator-cell {
   filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
@@ -565,7 +577,10 @@ div.tabulator-cell.tabulator-editing {
   height: 28px;
   padding: 0px 4px !important;
 }
-
+div.tabulator-row.tabulator-selected {
+  background-color: #4169E1B0 !important; /* royal blue @ 75% */
+  border-radius: 4px;
+}
 
 /* Customize scrollbars */
 ::-webkit-scrollbar {
@@ -577,7 +592,7 @@ div.tabulator-cell.tabulator-editing {
 }
 ::-webkit-scrollbar-track {
   background-color: #00000040;
-  border-radius: 200px;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb {
   background-color: #4169E1B0; /* royal blue @ 75% */
@@ -736,3 +751,53 @@ div.tabulator-cell.tabulator-editing {
   padding-bottom: 10px !important;
 }
 
+/* Fancier Fading Foto */
+#divPersonPhoto {
+  -webkit-mask-image: radial-gradient(white 50%, rgba(255, 255, 255, 0) 70%);
+  mask-image: radial-gradient(white 50%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  z-index: 20;
+}
+
+#divPersonInfo {
+  pointer-events: none;
+  z-index: 20;
+}
+
+#divLocations {
+  z-index: 20;
+}
+
+#divLocations .tabulator-row > div:nth-child(0) { color: white;}
+#divLocations .tabulator-row > div:nth-child(1) { color: royalblue;}
+#divLocations .tabulator-row > div:nth-child(2) { color: white;}
+#divLocations .tabulator-row > div:nth-child(3) { color: royalblue;}
+#divLocations .tabulator-row > div:nth-child(4) { color: white;}
+
+#divLocationMap {
+  z-index: 10 !important;
+}
+
+.leaflet-control-container {
+  position: absolute;
+  top: -6px;
+  left: 714px;
+  z-index: 500 !important;
+}
+.leaflet-control-attribution {
+  position: absolute;
+  left: -134px;
+  border-radius: 6px;
+  top: 377px;
+  padding: 2px 8px;
+  border: 2px solid rgba(128,128,128,.5);
+}
+
+.extra-marker i.fa-solid {
+    font-size: 18px;
+    margin-top: 10px;
+}
+.extra-marker i.md-20 {
+    font-size: 20px;
+    margin-top: 2px;
+}

@@ -215,9 +215,9 @@
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <SanitizedProjectName>Catheedral</SanitizedProjectName>
-        <TMSWebMiletusResIconMacOSFile>MiletusMac.icns</TMSWebMiletusResIconMacOSFile>
         <TMSWebMiletusResIconWindowsFile>MiletusWindows.ico</TMSWebMiletusResIconWindowsFile>
         <TMSWebHTMLFile>Project1.html</TMSWebHTMLFile>
+        <TMSWebMiletusResIconMacOSFile>MiletusMac.icns</TMSWebMiletusResIconMacOSFile>
         <TMSWebMiletusResIconLinuxFile>MiletusLinux.png</TMSWebMiletusResIconLinuxFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -352,8 +352,8 @@
     <PropertyGroup Condition="'$(Cfg_9_Win32)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <TMSWebEcmaScript>2</TMSWebEcmaScript>
         <TMSWebPrivExts>$(TMSWebPrivExts);*.html</TMSWebPrivExts>
+        <TMSWebEcmaScript>1</TMSWebEcmaScript>
         <TMSURLParams>desktop</TMSURLParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_9_Win64)'!=''">

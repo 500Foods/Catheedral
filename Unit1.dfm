@@ -34,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 19
+    TabIndex = 0
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -2775,25 +2775,29 @@ object Form1: TForm1
         end
         object divPerson1: TWebHTMLDiv
           Left = 125
-          Top = 90
+          Top = 93
           Width = 50
           Height = 50
+          Cursor = crHandPoint
           ElementClassName = 'Text TextLG'
           ElementID = 'divPerson1'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
+          OnClick = divPerson1Click
         end
         object divPerson2: TWebHTMLDiv
           Left = 125
           Top = 255
           Width = 50
           Height = 50
+          Cursor = crHandPoint
           ElementClassName = 'Text TextLG'
           ElementID = 'divPerson2'
           ChildOrder = 2
           ElementFont = efCSS
           Role = ''
+          OnClick = divPerson2Click
         end
         object ringEnergyToday: TWebHTMLDiv
           Left = 227
@@ -5332,6 +5336,67 @@ object Form1: TForm1
         Role = ''
       end
     end
+    object pagePerson: TWebTabSheet
+      Tag = 26
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pagePerson'
+      Caption = 'Px'
+      ChildOrder = 25
+      ElementBodyClassName = 'pagePersonBody'
+      ElementFont = efCSS
+      object divLocationMap: TWebHTMLDiv
+        Left = 0
+        Top = 0
+        Width = 1280
+        Height = 400
+        ElementID = 'divLocationMap'
+        ChildOrder = 3
+        ElementFont = efCSS
+        Role = ''
+      end
+      object divPersonPhoto: TWebHTMLDiv
+        Left = 40
+        Top = 5
+        Width = 150
+        Height = 150
+        ElementID = 'divPersonPhoto'
+        ElementFont = efCSS
+        Role = ''
+      end
+      object divLocations: TWebHTMLDiv
+        Left = 765
+        Top = 5
+        Width = 465
+        Height = 390
+        ElementID = 'divLocations'
+        ChildOrder = 1
+        ElementFont = efCSS
+        Role = ''
+      end
+      object divPersonInfo: TWebHTMLDiv
+        Left = 60
+        Top = 155
+        Width = 150
+        Height = 240
+        ElementID = 'divPersonInfo'
+        ChildOrder = 2
+        ElementFont = efCSS
+        Role = ''
+      end
+    end
+    object pagesSheet27: TWebTabSheet
+      Left = 0
+      Top = 20
+      Width = 1280
+      Height = 380
+      Caption = 'Help-Px'
+      ChildOrder = 26
+      ElementFont = efCSS
+    end
   end
   object navLeft: TWebHTMLDiv
     Left = 0
@@ -6057,7 +6122,7 @@ object Form1: TForm1
   end
   object tmrInactivity: TWebTimer
     Enabled = False
-    Interval = 45000
+    Interval = 4500000
     OnTimer = tmrInactivityTimer
     Left = 808
     Top = 64
