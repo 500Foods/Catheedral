@@ -26,7 +26,7 @@ object Form1: TForm1
     OnClick = divBackgroundClick
   end
   object pages: TWebPageControl
-    Left = 8
+    Left = 0
     Top = 0
     Width = 1280
     Height = 400
@@ -34,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 0
+    TabIndex = 19
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -5020,6 +5020,7 @@ object Form1: TForm1
       Top = 20
       Width = 1280
       Height = 380
+      Cursor = crHandPoint
       ElementClassName = 'Page'
       ElementID = 'pageWeather'
       Caption = 'Wx'
@@ -5389,14 +5390,28 @@ object Form1: TForm1
         Role = ''
       end
     end
-    object pagesSheet27: TWebTabSheet
+    object pageHelpPerson: TWebTabSheet
       Left = 0
       Top = 20
       Width = 1280
       Height = 380
+      ElementClassName = 'Page'
+      ElementID = 'pageHelpPerson'
       Caption = 'Help-Px'
       ChildOrder = 26
       ElementFont = efCSS
+      object HelpPerson: TWebHTMLDiv
+        Left = 50
+        Top = -20
+        Width = 1180
+        Height = 400
+        ElementClassName = 'Help Scroll'
+        ElementID = 'HelpPerson'
+        ElementFont = efCSS
+        Role = ''
+        OnClick = ResetInactivityTimer
+        OnMouseMove = HelpConfigMouseMove
+      end
     end
   end
   object navLeft: TWebHTMLDiv
@@ -6118,7 +6133,7 @@ object Form1: TForm1
     OnConnect = HAWebSocketConnect
     OnDisconnect = HAWebSocketDisconnect
     OnDataReceived = HAWebSocketDataReceived
-    Left = 272
+    Left = 224
     Top = 64
   end
   object tmrInactivity: TWebTimer
@@ -6166,6 +6181,13 @@ object Form1: TForm1
     Interval = 1800000
     OnTimer = tmrRefreshTimer
     Left = 936
+    Top = 64
+  end
+  object tmrCapture: TWebTimer
+    Enabled = False
+    Interval = 10000
+    OnTimer = tmrCaptureTimer
+    Left = 304
     Top = 64
   end
 end

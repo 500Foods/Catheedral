@@ -79,6 +79,12 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_4)'=='true') or '$(Cfg_4_Win32)'!=''">
+        <Cfg_4_Win32>true</Cfg_4_Win32>
+        <CfgParent>Cfg_4</CfgParent>
+        <Cfg_4>true</Cfg_4>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_4)'=='true') or '$(Cfg_4_Win64)'!=''">
         <Cfg_4_Win64>true</Cfg_4_Win64>
         <CfgParent>Cfg_4</CfgParent>
@@ -149,6 +155,12 @@
     <PropertyGroup Condition="'$(Config)'=='Debug-Win64' or '$(Cfg_10)'!=''">
         <Cfg_10>true</Cfg_10>
         <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_10)'=='true') or '$(Cfg_10_Win32)'!=''">
+        <Cfg_10_Win32>true</Cfg_10_Win32>
+        <CfgParent>Cfg_10</CfgParent>
+        <Cfg_10>true</Cfg_10>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_10)'=='true') or '$(Cfg_10_Win64)'!=''">
@@ -287,8 +299,9 @@
     <PropertyGroup Condition="'$(Cfg_3_Win32)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <TMSWebEcmaScript>2</TMSWebEcmaScript>
         <TMSWebPrivExts>$(TMSWebPrivExts);*.html,*.jpg,*.png,*.gif</TMSWebPrivExts>
+        <TMSWebEcmaScript>2</TMSWebEcmaScript>
+        <Debugger_CWD>TMSWeb\Build-Win32</Debugger_CWD>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_3_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -299,6 +312,12 @@
         <TMSWebOptimization>2</TMSWebOptimization>
         <TMSWebDefines>$(TMSWebDefines);RELEASE</TMSWebDefines>
         <TMSWebMiletusBuild>2</TMSWebMiletusBuild>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_4_Win32)'!=''">
+        <Debugger_CWD>TMSWeb\Build-Win64</Debugger_CWD>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <TMSWebPrivExts>$(TMSWebPrivExts);*.html</TMSWebPrivExts>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_4_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -356,8 +375,10 @@
         <Icon_MainIcon>Catheedral_Icon1.ico</Icon_MainIcon>
         <UWP_DelphiLogo150>images\Catheedral-128-Blue-ROYG.png</UWP_DelphiLogo150>
         <UWP_DelphiLogo44>images\Catheedral-128-Blue-ROYG.png</UWP_DelphiLogo44>
-        <TMSURLParams>desktop</TMSURLParams>
+        <TMSWebObfuscation>1</TMSWebObfuscation>
         <TMSWebEcmaScript>2</TMSWebEcmaScript>
+        <TMSWebOptimization>1</TMSWebOptimization>
+        <TMSURLParams>desktop capture</TMSURLParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_9_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -367,6 +388,13 @@
         <TMSWebDebugInfo>2</TMSWebDebugInfo>
         <TMSWebDefines>$(TMSWebDefines);DEBUG</TMSWebDefines>
         <TMSWebMiletusBuild>6</TMSWebMiletusBuild>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_10_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <TMSWebPrivExts>$(TMSWebPrivExts);*.html</TMSWebPrivExts>
+        <TMSWebEcmaScript>2</TMSWebEcmaScript>
+        <Debugger_CWD>TMSWeb\Debug-Win64</Debugger_CWD>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_10_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -709,6 +737,7 @@
             <ResourceType>ICON</ResourceType>
             <ResourceId>Icon_1</ResourceId>
         </RcItem>
+        <None Include="help\en-CA\HelpPerson.html"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -1509,6 +1538,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thunderstorms-night-overcast-rain.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="help\en-CA\HelpPerson.html" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

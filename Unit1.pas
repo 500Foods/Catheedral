@@ -385,12 +385,14 @@ type
     divWxH6: TWebHTMLDiv;
     divWeatherCover: TWebHTMLDiv;
     pagePerson: TWebTabSheet;
-    pagesSheet27: TWebTabSheet;
+    pageHelpPerson: TWebTabSheet;
     divPersonPhoto: TWebHTMLDiv;
     divLocations: TWebHTMLDiv;
     divPersonInfo: TWebHTMLDiv;
     divLocationMap: TWebHTMLDiv;
     tmrRefresh: TWebTimer;
+    HelpPerson: TWebHTMLDiv;
+    tmrCapture: TWebTimer;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -472,6 +474,7 @@ type
     procedure divPerson2Click(Sender: TObject);
     procedure tmrRefreshTimer(Sender: TObject);
     procedure pageWeatherClick(Sender: TObject);
+    procedure tmrCaptureTimer(Sender: TObject);
 
   private
     { Private declarations }
@@ -668,6 +671,10 @@ type
     CustomPage3Refresh: String;
     CustomPage4Refresh: String;
 
+
+    // For capturing web page
+    CaptureData: JSValue;
+
     procedure StopLinkerRemoval(P: Pointer);
     procedure PreventCompilerHint(I: integer); overload;
     procedure PreventCompilerHint(S: string); overload;
@@ -687,7 +694,24 @@ implementation
 {$R *.dfm}
 
 procedure TForm1.SetupJavaScriptFunctions;
+var
+  i: integer;
 begin
+
+  // Initialize capture
+  asm
+    pas.Unit1.Form1.CaptureData = [];
+  end;
+
+  // Initialize Swatches
+  i := 0;
+  while i < 24 do
+  begin
+    SwatchColors[i] := 'maroon';
+    SwatchNames[i] := 'Maroon';
+    i := i + 1;
+  end;
+
   asm
     // Global Sleep function :)
     window.sleep = async function(msecs) {return new Promise((resolve) => setTimeout(resolve, msecs)); }
@@ -1139,7 +1163,7 @@ begin
       }
     end;
     if Uppercase(Person1Location) = 'STATIONARY' then Person1Location := 'Somewhere';
-    if Uppercase(Person1Location) = 'NOT_HOME' then Person1Location := 'Elsewhere';
+    if Uppercase(Person1Location) = 'NOT HOME' then Person1Location := 'Elsewhere';
   end
   else if (Entity = Person2Sensor) then
   begin
@@ -1155,7 +1179,7 @@ begin
       }
     end;
     if Uppercase(Person2Location) = 'STATIONARY' then Person2Location := 'Somewhere';
-    if Uppercase(Person2Location) = 'NOT_HOME' then Person2Location := 'Elsewhere';
+    if Uppercase(Person2Location) = 'NOT HOME' then Person2Location := 'Elsewhere';
   end
 
   else if (Entity = MoonSensor) then
@@ -2269,8 +2293,8 @@ var
 begin
 
   // Let's just do this versioning stuff by hand
-  AppVersion := '1.0.6';
-  AppRelease := '2023-Jan-26';
+  AppVersion := '1.1.0';
+  AppRelease := '2023-Mar-23';
   AppStarted := Now;
 
   // Application State
@@ -2296,7 +2320,12 @@ begin
   begin
     if Pos('DESKTOP', Uppercase(ParamStr(i))) > 0
     then DesktopMode := True;
+
+    if Pos('CAPTURE', Uppercase(ParamStr(i))) > 0
+    then tmrCapture.Enabled := True;
+
   end;
+  tmrCapture.Enabled := True;
 
 
   dataInfoVersion.Caption := AppVersion;
@@ -2903,6 +2932,18 @@ begin
 
   tmrSwitchPage.Tag := EndPage;
   tmrSwitchPage.Enabled := True;
+end;
+
+procedure TForm1.tmrCaptureTimer(Sender: TObject);
+begin
+
+  asm
+    modernScreenshot.domToPng(document.querySelector('body')).then(dataURI => {
+      console.log(dataURI);
+      this.CaptureData.push(dataURI);
+    })
+  end;
+
 end;
 
 procedure TForm1.tmrConnectTimer(Sender: TObject);
