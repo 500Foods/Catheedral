@@ -14,6 +14,8 @@ As with any modern web application, other JavaScript libraries/dependencies have
 - [Tabulator](https://www.tabulator.info) - Fantastic pure JavaScript web data tables
 - [Font Awesome](https://www.fontawesome.com) - The very best icons
 - [Material Design Icons](https://pictogrammers.com/library/mdi/) - Used throughout Home Assistant
+- [Leaflet](https://www.leafletjs.com) - Excellent mapping library
+- [OpenStreetMap](https://www.openstreetmap.org) - Mapping tile data
 - [Luxon](https://moment.github.io/luxon/#/) - For handling date/time conversions
 - [Shoelace](https://shoelace.style/) - Web components, particularly the color picker for lights
 - [Peity Vanilla JS](https://github.com/railsjazz/peity_vanilla) - Fast and simple charts
