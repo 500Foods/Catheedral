@@ -26,7 +26,7 @@ object Form1: TForm1
     OnClick = divBackgroundClick
   end
   object pages: TWebPageControl
-    Left = 0
+    Left = -4
     Top = 0
     Width = 1280
     Height = 400
@@ -34,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 19
+    TabIndex = 0
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -72,6 +72,27 @@ object Form1: TForm1
         WidthStyle = ssAuto
         WidthPercent = 100.000000000000000000
       end
+      object dataConfigVERSION: TWebLabel
+        Left = 209
+        Top = 20
+        Width = 66
+        Height = 40
+        AutoSize = False
+        Caption = 'Unknown'
+        ElementClassName = 'd-none'
+        ElementLabelClassName = 'Label Data'
+        ElementID = 'dataConfigVERSION'
+        ElementFont = efCSS
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -24
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        HeightStyle = ssAuto
+        HeightPercent = 100.000000000000000000
+        ParentFont = False
+        WidthPercent = 100.000000000000000000
+      end
       object divConfigURL: TWebHTMLDiv
         Left = 40
         Top = 85
@@ -102,8 +123,9 @@ object Form1: TForm1
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           HTML = 
-            '<span class="mdi mdi-home-assistant pe-1" style="color:#3399CC;"' +
-            '></span>HA URL'
+            '<div class="d-flex justify-content-end align-items-center"><icon' +
+            'ify-icon icon="mdi:home-assistant" class="pe-2" style="color:#33' +
+            '99CC;font-size:28px;"></iconify-icon><div>HA URL</div></div>'
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
@@ -155,8 +177,9 @@ object Form1: TForm1
           HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           HTML = 
-            '<span class="mdi mdi-home-assistant pe-1" style="color:#3399CC;"' +
-            '></span>HA Token'
+            '<div class="d-flex justify-content-end align-items-center"><icon' +
+            'ify-icon icon="mdi:home-assistant" class="pe-2" style="color:#33' +
+            '99CC;font-size:28px;"></iconify-icon><div>HA Token</div></div>'
           ParentFont = False
           WidthPercent = 100.000000000000000000
         end
@@ -502,66 +525,9 @@ object Form1: TForm1
           OnClick = btnListDatesShortClick
         end
       end
-      object divConfigVERSION: TWebHTMLDiv
-        Left = 770
-        Top = 85
-        Width = 470
-        Height = 40
-        ElementClassName = 'overflow-visible'
-        ElementID = 'divConfigVERSION'
-        ChildOrder = 1
-        ElementFont = efCSS
-        Role = ''
-        object labelConfigVERSION: TWebLabel
-          Left = 0
-          Top = 0
-          Width = 150
-          Height = 40
-          Align = alLeft
-          Alignment = taRightJustify
-          AutoSize = False
-          Caption = 'Version'
-          ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label'
-          ElementID = 'labelConfigVERSION'
-          ElementFont = efCSS
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -24
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          HeightStyle = ssAuto
-          HeightPercent = 100.000000000000000000
-          ParentFont = False
-          WidthPercent = 100.000000000000000000
-        end
-        object dataConfigVERSION: TWebLabel
-          Left = 160
-          Top = 0
-          Width = 310
-          Height = 40
-          Align = alRight
-          AutoSize = False
-          Caption = 'Unknown'
-          ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label Data'
-          ElementID = 'dataConfigVERSION'
-          ElementFont = efCSS
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -24
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          HeightStyle = ssAuto
-          HeightPercent = 100.000000000000000000
-          ParentFont = False
-          WidthPercent = 100.000000000000000000
-          ExplicitLeft = 439
-        end
-      end
       object divConfigRELEASE: TWebHTMLDiv
         Left = 770
-        Top = 125
+        Top = 85
         Width = 470
         Height = 40
         ElementClassName = 'overflow-visible'
@@ -577,7 +543,7 @@ object Form1: TForm1
           Align = alLeft
           Alignment = taRightJustify
           AutoSize = False
-          Caption = 'Release'
+          Caption = 'Released'
           ElementClassName = 'overflow-visible'
           ElementLabelClassName = 'Label'
           ElementID = 'labelConfigRELEASE'
@@ -591,6 +557,8 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           ParentFont = False
           WidthPercent = 100.000000000000000000
+          ExplicitLeft = 4
+          ExplicitTop = -3
         end
         object dataConfigRELEASE: TWebLabel
           Left = 160
@@ -618,7 +586,7 @@ object Form1: TForm1
       end
       object divConfigSYSTEMDATE: TWebHTMLDiv
         Left = 770
-        Top = 165
+        Top = 125
         Width = 470
         Height = 40
         ElementClassName = 'overflow-visible'
@@ -677,7 +645,7 @@ object Form1: TForm1
       end
       object divConfigSYSTEMTIME: TWebHTMLDiv
         Left = 770
-        Top = 205
+        Top = 165
         Width = 470
         Height = 40
         ElementClassName = 'overflow-visible'
@@ -794,7 +762,7 @@ object Form1: TForm1
       end
       object divConfigSTARTDATE: TWebHTMLDiv
         Left = 770
-        Top = 245
+        Top = 205
         Width = 470
         Height = 40
         ElementClassName = 'overflow-visible'
@@ -824,8 +792,8 @@ object Form1: TForm1
           HeightPercent = 100.000000000000000000
           ParentFont = False
           WidthPercent = 100.000000000000000000
-          ExplicitLeft = -6
-          ExplicitTop = 6
+          ExplicitLeft = 4
+          ExplicitTop = -3
         end
         object dataConfigSTARTDATE: TWebLabel
           Left = 160
@@ -854,7 +822,7 @@ object Form1: TForm1
       end
       object divConfigSTARTTIME: TWebHTMLDiv
         Left = 770
-        Top = 285
+        Top = 245
         Width = 470
         Height = 40
         ElementClassName = 'overflow-visible'
@@ -911,65 +879,6 @@ object Form1: TForm1
           ExplicitLeft = 439
         end
       end
-      object divConfigRUNNINGTIME: TWebHTMLDiv
-        Left = 770
-        Top = 325
-        Width = 470
-        Height = 40
-        ElementClassName = 'overflow-visible'
-        ElementID = 'divConfigRUNNINGTIME'
-        ChildOrder = 1
-        ElementFont = efCSS
-        Role = ''
-        object labelConfigRUNNINGTIME: TWebLabel
-          Left = 0
-          Top = 0
-          Width = 150
-          Height = 40
-          Align = alLeft
-          Alignment = taRightJustify
-          AutoSize = False
-          Caption = 'Running Time'
-          ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label'
-          ElementID = 'labelConfigRUNNINGTIME'
-          ElementFont = efCSS
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -24
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          HeightStyle = ssAuto
-          HeightPercent = 100.000000000000000000
-          ParentFont = False
-          WidthPercent = 100.000000000000000000
-          ExplicitLeft = -6
-          ExplicitTop = 6
-        end
-        object dataConfigRUNNINGTIME: TWebLabel
-          Left = 160
-          Top = 0
-          Width = 310
-          Height = 40
-          Align = alRight
-          AutoSize = False
-          Caption = 'Unknown'
-          ElementClassName = 'overflow-visible'
-          ElementLabelClassName = 'Label Data'
-          ElementID = 'dataConfigRUNNINGTIME'
-          ElementFont = efCSS
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -24
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          HeightStyle = ssAuto
-          HeightPercent = 100.000000000000000000
-          ParentFont = False
-          WidthPercent = 100.000000000000000000
-          ExplicitLeft = 439
-        end
-      end
       object btnHALinks: TWebButton
         Left = 53
         Top = 320
@@ -978,10 +887,11 @@ object Form1: TForm1
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
           'ex-row"><i class="fa-solid fa-right-left fa-fw" style="color:bla' +
-          'ck; font-size:24px;"></i><div class="mdi mdi-home-assistant pe-2' +
-          '" style="color:#3399CC; font-size:32px;"></div><div class="lh-1"' +
-          ' style="color:black;text-align:left;">Update Links to<br />Home ' +
-          'Assistant</div></div>'
+          'ck; font-size:24px;"></i><div class="pe-2" style="color:#3399CC;' +
+          ' font-size:32px; height:40px;"><iconify-icon icon="mdi:home-assi' +
+          'stant"></iconify-icon></div><div class="lh-1" style="color:black' +
+          ';text-align:left;">Update Links to<br />Home Assistant</div></di' +
+          'v>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHALinks'
@@ -1000,10 +910,11 @@ object Form1: TForm1
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
           'ex-row"><i class="fa-solid fa-right-long fa-fw" style="color:bla' +
-          'ck; font-size:24px;"></i><div class="mdi mdi-home-assistant pe-2' +
-          '" style="color:#3399CC; font-size:32px;"></div><div class="lh-1"' +
-          ' style="color:black;text-align:left;">Save Configuration<br />to' +
-          ' Home Assistant</div></div>'
+          'ck; font-size:24px;"></i><div class="pe-2" style="color:#3399CC;' +
+          ' font-size:32px; height:40px;"><iconify-icon icon="mdi:home-assi' +
+          'stant"></iconify-icon></div><div class="lh-1" style="color:black' +
+          ';text-align:left;">Save Configuration<br />to Home Assistant</di' +
+          'v></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHASaveConfiguration'
@@ -1021,11 +932,12 @@ object Form1: TForm1
         Height = 60
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
-          'ex-row"><div class="mdi mdi-home-assistant" style="color:#3399CC' +
-          '; font-size:32px;"></div><i class="fa-solid fa-right-long fa-fw"' +
-          ' style="color:black; font-size:24px;"></i><div class="lh-1 ps-2"' +
-          ' style="color:black;text-align:left;">Load Configuration<br />fr' +
-          'om Home Assistant</div></div>'
+          'ex-row"><div style="color:#3399CC; font-size:32px; height:40px;"' +
+          '><iconify-icon icon="mdi:home-assistant"></iconify-icon></div><i' +
+          ' class="fa-solid fa-right-long fa-fw" style="color:black; font-s' +
+          'ize:24px;"></i><div class="lh-1 ps-2" style="color:black;text-al' +
+          'ign:left;">Load Configuration<br />from Home Assistant</div></di' +
+          'v>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHALoadConfiguration'
@@ -1101,7 +1013,7 @@ object Form1: TForm1
         ItemIndex = -1
       end
       object listDatesLong: TWebListBox
-        Left = 214
+        Left = 216
         Top = 225
         Width = 219
         Height = 14
@@ -1191,6 +1103,198 @@ object Form1: TForm1
           'h:nn am/pm'
           't'
           'tt')
+        ItemIndex = -1
+      end
+      object btnRecord: TWebButton
+        Left = 1013
+        Top = 305
+        Width = 210
+        Height = 36
+        Caption = 
+          '<div class="d-flex align-items-center justify-content-start"><i ' +
+          'class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Start R' +
+          'ecording</div>'
+        ChildOrder = 14
+        ElementClassName = 'btn btn-light opacity-75 p-0 m-0  ConfigButton'
+        ElementID = 'btnRecord'
+        ElementFont = efCSS
+        HeightPercent = 100.000000000000000000
+        TabOrder = 114
+        WidthPercent = 100.000000000000000000
+        OnClick = btnRecordClick
+      end
+      object divConfigRecordRate: TWebHTMLDiv
+        Left = 770
+        Top = 302
+        Width = 235
+        Height = 43
+        ElementClassName = 'Holder'
+        ElementID = 'divConfigRecordRate'
+        ChildOrder = 1
+        ElementFont = efCSS
+        Role = ''
+        object editConfigRecordRate: TWebEdit
+          Left = 0
+          Top = 0
+          Width = 205
+          Height = 43
+          Align = alClient
+          ChildOrder = 1
+          ElementClassName = 'ConfigEdit'
+          ElementID = 'editConfigRecordRate'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          ReadOnly = True
+          SpellCheck = False
+          TabOrder = 102
+          TextHint = 'Select Recording Rate'
+          WidthPercent = 100.000000000000000000
+          OnChange = editConfigBACKGROUNDChange
+          ExplicitLeft = 150
+          ExplicitWidth = 520
+          ExplicitHeight = 40
+        end
+        object btnListRecord: TWebButton
+          Left = 205
+          Top = 0
+          Width = 30
+          Height = 43
+          Align = alRight
+          Caption = '<i class="fa-solid fa-caret-down"></i>'
+          ChildOrder = 2
+          ElementClassName = 'ConfigListButton btn btn-light opacity-75'
+          ElementID = 'btnListRecord'
+          ElementFont = efCSS
+          HeightPercent = 100.000000000000000000
+          TabOrder = 103
+          WidthPercent = 100.000000000000000000
+          OnClick = btnListRecordClick
+          ExplicitLeft = 237
+          ExplicitTop = -4
+        end
+      end
+      object divPlaybackRate: TWebHTMLDiv
+        Left = 770
+        Top = 342
+        Width = 235
+        Height = 43
+        ElementClassName = 'Holder'
+        ElementID = 'divPlaybackRate'
+        ChildOrder = 1
+        ElementFont = efCSS
+        Role = ''
+        object editConfigPlaybackRate: TWebEdit
+          Left = 0
+          Top = 0
+          Width = 205
+          Height = 43
+          Align = alClient
+          ChildOrder = 1
+          ElementClassName = 'ConfigEdit'
+          ElementID = 'editConfigPlaybackRate'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          ReadOnly = True
+          SpellCheck = False
+          TabOrder = 102
+          TextHint = 'Select Playback Rate'
+          WidthPercent = 100.000000000000000000
+          OnChange = editConfigBACKGROUNDChange
+          ExplicitWidth = 235
+          ExplicitHeight = 40
+        end
+        object btnListPlayback: TWebButton
+          Left = 205
+          Top = 0
+          Width = 30
+          Height = 43
+          Align = alRight
+          Caption = '<i class="fa-solid fa-caret-down"></i>'
+          ChildOrder = 2
+          ElementClassName = 'ConfigListButton btn btn-light opacity-75'
+          ElementID = 'btnListPlayback'
+          ElementFont = efCSS
+          HeightStyle = ssAuto
+          HeightPercent = 100.000000000000000000
+          TabOrder = 103
+          WidthPercent = 100.000000000000000000
+          OnClick = btnListPlaybackClick
+          ExplicitLeft = 235
+          ExplicitHeight = 40
+        end
+      end
+      object btnPlayback: TWebButton
+        Left = 1013
+        Top = 345
+        Width = 210
+        Height = 36
+        Caption = 
+          '<div class="d-flex align-items-center justify-content-start"><i ' +
+          'class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i> Start' +
+          ' Playback</div>'
+        ChildOrder = 14
+        ElementClassName = 'btn btn-light opacity-75 p-0 m-0 ConfigButton'
+        ElementID = 'btnPlayback'
+        ElementFont = efCSS
+        HeightPercent = 100.000000000000000000
+        TabOrder = 114
+        WidthPercent = 100.000000000000000000
+        OnClick = btnPlaybackClick
+      end
+      object listRecord: TWebListBox
+        Left = 782
+        Top = 319
+        Width = 200
+        Height = 15
+        ElementClassName = 'ConfigList'
+        ElementID = 'listRecord'
+        ElementFont = efCSS
+        HeightPercent = 100.000000000000000000
+        ItemHeight = 13
+        WidthPercent = 100.000000000000000000
+        OnChange = listRecordChange
+        Items.Strings = (
+          'Record at 30 fps'
+          'Record at 15 fps'
+          'Record at 10 fps'
+          'Record at 5 fps'
+          'Record at 2 fps'
+          'Record at 1 fps'
+          'Record at 30 fpm'
+          'Record at 15 fpm'
+          'Record at 10 fpm'
+          'Record at 5 fpm'
+          'Record at 2 fpm'
+          'Record at 1 fpm ')
+        ItemIndex = -1
+      end
+      object listPlayback: TWebListBox
+        Left = 782
+        Top = 352
+        Width = 200
+        Height = 15
+        ElementClassName = 'ConfigList'
+        ElementID = 'listPlayback'
+        ElementFont = efCSS
+        HeightPercent = 100.000000000000000000
+        ItemHeight = 13
+        WidthPercent = 100.000000000000000000
+        OnChange = listPlaybackChange
+        Items.Strings = (
+          'Playback at 30 fps'
+          'Playback at 15 fps'
+          'Playback at 10 fps'
+          'Playback at 5 fps'
+          'Playback at 2 fps'
+          'Playback at 1 fps'
+          'Playback at 30 fpm'
+          'Playback at 15 fpm'
+          'Playback at 10 fpm'
+          'Playback at 5 fpm'
+          'Playback at 2 fpm'
+          'Playback at 1 fpm')
         ItemIndex = -1
       end
     end
@@ -4744,8 +4848,8 @@ object Form1: TForm1
         Width = 140
         Height = 68
         Caption = 
-          '<div class="LightText">View All<br />Lights</div><div class="Lig' +
-          'htBtnIcon mdi mdi-home-lightbulb"></div>'
+          '<div class="LightText">View All<br />Lights</div><iconify-icon i' +
+          'con=mdi:lightbulb class="LightBtnIcon"></iconify-icon>'
         ElementClassName = 'LightButton'
         ElementID = 'btnLioghtsShowAll'
         ElementFont = efCSS
@@ -4760,8 +4864,8 @@ object Form1: TForm1
         Width = 140
         Height = 68
         Caption = 
-          '<div class="LightText">Only<br />Groups</div><div class="LightBt' +
-          'nIcon mdi mdi-lightbulb-group"></div>'
+          '<div class="LightText">Only<br />Groups</div><iconify-icon icon=' +
+          'mdi:lightbulb-group class="LightBtnIcon"></iconify-icon>'
         ChildOrder = 1
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsGroups'
@@ -4777,8 +4881,8 @@ object Form1: TForm1
         Width = 140
         Height = 68
         Caption = 
-          '<div class="LightText">Hide<br />Groups</div><div class="LightBt' +
-          'nIcon mdi mdi-lightbulb-group-off"></div>'
+          '<div class="LightText">Hide<br />Groups</div><iconify-icon icon=' +
+          'mdi:lightbulb-group-off class="LightBtnIcon"></iconify-icon>'
         ChildOrder = 2
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsNoGroups'
@@ -4794,8 +4898,8 @@ object Form1: TForm1
         Width = 140
         Height = 68
         Caption = 
-          '<div class="LightText">Turn<br />All On</div><div class="LightBt' +
-          'nIcon mdi mdi-lightbulb"></div>'
+          '<div class="LightText">Turn<br />All On</div><iconify-icon icon=' +
+          'mdi:lightbulb-on class="LightBtnIcon"></iconify-icon>'
         ChildOrder = 3
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsAllOn'
@@ -4811,8 +4915,8 @@ object Form1: TForm1
         Width = 140
         Height = 68
         Caption = 
-          '<div class="LightText">Turn<br />All Off</div><div class="LightB' +
-          'tnIcon mdi mdi-lightbulb-outline"></div>'
+          '<div class="LightText">Turn<br />All Off</div><iconify-icon icon' +
+          '=mdi:lightbulb-outline class="LightBtnIcon"></iconify-icon>'
         ChildOrder = 4
         ElementClassName = 'LightButton'
         ElementID = 'btnLightsAllOff'
@@ -5469,9 +5573,9 @@ object Form1: TForm1
     Width = 40
     Height = 40
     Caption = 
-      '<div class="mdi mdi-help-rhombus icon-default" style="font-size:' +
-      '40px;"></div><i class="fa-solid fa-caret-left fa-3x fa-fw icon-a' +
-      'lternate"></i>'
+      '<iconify-icon icon="mdi:help-rhombus" class="icon-default" style' +
+      '="font-size:40px;"></iconify-icon><i class="fa-solid fa-caret-le' +
+      'ft fa-3x fa-fw icon-alternate"></i>'
     ChildOrder = 22
     ElementClassName = 'btn btn-link MainButton'
     ElementID = 'btnHelp'
@@ -6138,7 +6242,7 @@ object Form1: TForm1
   end
   object tmrInactivity: TWebTimer
     Enabled = False
-    Interval = 45000
+    Interval = 4500000
     OnTimer = tmrInactivityTimer
     Left = 808
     Top = 64

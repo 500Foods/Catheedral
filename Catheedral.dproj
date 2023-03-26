@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Catheedral.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Build-Win32</Config>
+        <Config Condition="'$(Config)'==''">Debug-Win32</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -377,7 +377,7 @@
         <TMSWebObfuscation>1</TMSWebObfuscation>
         <TMSWebEcmaScript>2</TMSWebEcmaScript>
         <TMSWebOptimization>1</TMSWebOptimization>
-        <TMSURLParams>desktop capture</TMSURLParams>
+        <TMSURLParams>desktop</TMSURLParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_9_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -737,6 +737,14 @@
         </RcItem>
         <None Include="help\en-CA\HelpPerson.html"/>
         <None Include="Catheedral.css"/>
+        <None Include="css\materialdesignicons.min.css"/>
+        <None Include="fonts\materialdesignicons-webfont.eot"/>
+        <RcItem Include="fonts\materialdesignicons-webfont.ttf">
+            <ResourceType>FONT</ResourceType>
+            <ResourceId>1</ResourceId>
+        </RcItem>
+        <None Include="fonts\materialdesignicons-webfont.woff"/>
+        <None Include="fonts\materialdesignicons-webfont.woff2"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -1951,6 +1959,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="fonts\materialdesignicons-webfont.woff" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thermometer-snow.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -2048,6 +2062,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="help\en-CA\HelpConfigSensors.html" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="fonts\materialdesignicons-webfont.eot" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -3782,6 +3802,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="css\materialdesignicons.min.css" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\thunderstorms-night-overcast.svg" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -4329,7 +4355,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="catheedral.css" Configuration="Debug-Win32" Class="ProjectFile">
+                <DeployFile LocalName="Catheedral.css" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -4899,6 +4925,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="fonts\materialdesignicons-webfont.ttf" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\partly-cloudy-night-hail.svg" Configuration="Build-Win64" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -5434,6 +5466,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="weather-icons-dev\production\fill\svg\wind-snow.svg" Configuration="Debug-Win32" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="fonts\materialdesignicons-webfont.woff2" Configuration="Debug-Win32" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

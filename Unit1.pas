@@ -36,9 +36,6 @@ type
     labelConfigSHJORTDATE: TWebLabel;
     editConfigSHORTDATE: TWebEdit;
     editConfigSHORTTIME: TWebEdit;
-    divConfigVERSION: TWebHTMLDiv;
-    labelConfigVERSION: TWebLabel;
-    dataConfigVERSION: TWebLabel;
     divConfigRELEASE: TWebHTMLDiv;
     labelConfigRELEASE: TWebLabel;
     dataConfigRELEASE: TWebLabel;
@@ -57,9 +54,6 @@ type
     divConfigSTARTTIME: TWebHTMLDiv;
     labelConfigSTARTTIME: TWebLabel;
     dataConfigSTARTTIME: TWebLabel;
-    divConfigRUNNINGTIME: TWebHTMLDiv;
-    labelConfigRUNNINGTIME: TWebLabel;
-    dataConfigRUNNINGTIME: TWebLabel;
     tmrSeconds: TWebTimer;
     tmrConnect: TWebTimer;
     HAWebSocket: TWebSocketClient;
@@ -393,6 +387,17 @@ type
     tmrRefresh: TWebTimer;
     HelpPerson: TWebHTMLDiv;
     tmrCapture: TWebTimer;
+    dataConfigVERSION: TWebLabel;
+    btnRecord: TWebButton;
+    divConfigRecordRate: TWebHTMLDiv;
+    editConfigRecordRate: TWebEdit;
+    btnListRecord: TWebButton;
+    divPlaybackRate: TWebHTMLDiv;
+    editConfigPlaybackRate: TWebEdit;
+    btnListPlayback: TWebButton;
+    btnPlayback: TWebButton;
+    listRecord: TWebListBox;
+    listPlayback: TWebListBox;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -475,6 +480,12 @@ type
     procedure tmrRefreshTimer(Sender: TObject);
     procedure pageWeatherClick(Sender: TObject);
     procedure tmrCaptureTimer(Sender: TObject);
+    procedure btnListRecordClick(Sender: TObject);
+    procedure btnListPlaybackClick(Sender: TObject);
+    procedure listRecordChange(Sender: TObject);
+    procedure listPlaybackChange(Sender: TObject);
+    procedure btnRecordClick(Sender: TObject);
+    procedure btnPlaybackClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -728,6 +739,23 @@ begin
     for (var i = 0; i <= 23; i++) {
       GetSwatch(i);
     }
+
+
+//    // Convert an image URL into a dataurl
+//    window.ImageToDataURL = function(src, callback){
+//      var image = new Image();
+//      image.crossOrigin = 'Anonymous';
+//      image.onload = function(){
+//        var canvas = document.createElement('canvas');
+//        var context = canvas.getContext('2d');
+//        canvas.height = this.naturalHeight;
+//        canvas.width = this.naturalWidth;
+//        context.drawImage(this, 0, 0);
+//        var dataURL = canvas.toDataURL('image/jpeg');
+//        callback(dataURL);
+//     };
+//     image.src = src;
+//    }
 
     // Don't have any sensors yet
     window.SensorList = [];
@@ -1234,7 +1262,7 @@ begin
   // Change icon to indicate an update is happening.
   // Though in this case it might be too quick to be visible
   btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
-                                      '<div class="mdi mdi-home-assistant" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<div <iconify-icon icon=mdi:home-assistant style="color:#3399CC; font-size:32px;"></iconfiy-icon>'+
                                       '<i class="fa-solid fa-rotate fa-spin fa-fw" style="color:black; font-size:24px;"></i>'+
                                       '<div class="ps-2 lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
                                     '</div>';
@@ -1262,7 +1290,7 @@ begin
   // Though in this case it might be too quick to be visible
   btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
                                       '<i class="fa-solid fa-rotate fa-fw fa-spin" style="color:black; font-size:24px;"></i>'+
-                                      '<div class="mdi mdi-home-assistant pe-2" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<iconify-icon icon=mdi:home-assistant class="pe-2" style="color:#3399CC; font-size:32px;"></iconify-icon>'+
                                       '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
                                     '</div>';
 
@@ -1278,6 +1306,8 @@ begin
            '"SD":"'+editConfigShortDate.Text+'",'+
            '"LT":"'+editConfigLongTime.Text+'",'+
            '"ST":"'+editConfigShortTime.Text+'",'+
+           '"RR":"'+editConfigRecordRate.Text+'",'+
+           '"PR":"'+editConfigPlaybackRate.Text+'",'+
            '"BG":"'+editConfigBackground.Text+'"}';
   asm Data = JSON.stringify(Data); end;
   Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_configuration","value":"'+FormatDateTime('yyyy-mm-dd hh:nn:ss',Now)+'","attributes":{"feature_000":'+Data+',';
@@ -1299,7 +1329,7 @@ begin
   // Revert to normal icon
   btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
                                       '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
-                                      '<div class="mdi mdi-home-assistant pe-2" style="color:#3399CC; font-size:32px;"></div>'+
+                                      '<iconfiy-icon icon=mdi:home-assistant class="pe-2" style="color:#3399CC; font-size:32px;"></div>'+
                                       '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
                                     '</div>';
 
@@ -1431,6 +1461,8 @@ begin
   AppIniFile.WriteString('Configuration', 'LONGTIME', editConfigLONGTIME.Text);
   AppIniFile.WriteString('Configuration', 'SHORTDATE', editConfigSHORTDATE.Text);
   AppIniFile.WriteString('Configuration', 'SHORTTIME', editConfigSHORTTIME.Text);
+  AppIniFile.WriteString('Configuration', 'RECORDRATE', editConfigRecordRate.Text);
+  AppIniFile.WriteString('Configuration', 'PLAYBACKRATE', editConfigPlaybackRate.Text);
 
   // Save each of the links to Home Assistant to the INI file as well
   // Kind of a pain to get it out of Tabulator, but it is an odd thing we're doing...
@@ -1676,6 +1708,8 @@ begin
                   editConfigLONGTIME.value = param.LT;
                   editConfigSHORTTIME.value = param.ST;
                   editConfigBACKGROUND.value = param.BG;
+                  editConfigRecordRate.value = param.RR;
+                  editConfigPlaybackRate.value = param.PR;
                 }
                 // List of sensors stored in 001..Features
                 else {
@@ -1695,7 +1729,7 @@ begin
 
           // Put back the normal icon
           this.btnHALoadConfiguration.SetCaption('<div class="d-flex align-items-center justify-content-stretch flex-row">'+
-                                                   '<div class="mdi mdi-home-assistant pe-2" style="color:#3399CC; font-size:32px;"></div>'+
+                                                   '<iconify-icon icon=mdi:home-assistant class="pe-2" style="color:#3399CC; font-size:32px;"></div>'+
                                                    '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
                                                    '<div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
                                                  '</div>');
@@ -1830,19 +1864,27 @@ begin
   begin
     asm
       var PeopleData = JSON.parse(SocketData.jsobject);
-//      console.log(PeopleData.event.states[this.Person1Sensor]);
-//      console.log(PeopleData.event.states[this.Person2Sensor]);
+      console.log(PeopleData.event.states[this.Person1Sensor]);
+      console.log(PeopleData.event.states[this.Person2Sensor]);
 
-      if (this.CurrentPerson == 1) {
-        var PeopleFilter = PeopleData.event.states[this.Person1Sensor].filter(
-          function(o) {
-            return (o.s.toUpperCase().indexOf("NOTSET") !== 0);
-          });
+      if (this.CurrentPerson == 1)  {
+        if (PeopleData.event.states[this.Person1Sensor] !== undefined) {
+          var PeopleFilter = PeopleData.event.states[this.Person1Sensor].filter(
+            function(o) {
+              return (o.s.toUpperCase().indexOf("NOTSET") !== 0);
+            });
+        } else {
+          var PeopleFilter = [];
+        }
       } else {
-        var PeopleFilter = PeopleData.event.states[this.Person2Sensor].filter(
-          function(o) {
-            return (o.s.toUpperCase().indexOf("NOTSET") !== 0);
-          });
+        if (PeopleData.event.states[this.Person2Sensor] !== undefined) {
+          var PeopleFilter = PeopleData.event.states[this.Person2Sensor].filter(
+            function(o) {
+              return (o.s.toUpperCase().indexOf("NOTSET") !== 0);
+            });
+        } else {
+          var PeopleFilter = [];
+        }
       }
       this.tabLocations.setData(PeopleFilter).then(() => {
         if (this.tabLocations.getDataCount() > 0) {
@@ -2106,6 +2148,20 @@ begin
   editConfigChange(Sender);
 end;
 
+procedure TForm1.listPlaybackChange(Sender: TObject);
+begin
+  editConfigPlaybackRate.Text := listPlayback.Items[listPlayback.ItemIndex];
+  btnListPlaybackClick(Sender);
+  editConfigChange(Sender);
+end;
+
+procedure TForm1.listRecordChange(Sender: TObject);
+begin
+  editConfigRecordRate.Text := listRecord.Items[listRecord.ItemIndex];
+  btnListRecordClick(Sender);
+  editConfigChange(Sender);
+end;
+
 procedure TForm1.listTimesLongChange(Sender: TObject);
 begin
   editConfigLONGTIME.Text := listTimesLong.Items[listTimesLong.ItemIndex];
@@ -2189,6 +2245,11 @@ begin
   StoredValue := await(String, AppINIFile.ReadString('Configuration', 'SHORTTIME', ''));
   if StoredValue <> '' then editConfigSHORTTIME.Text := StoredValue;
 
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'RECORDRATE', ''));
+  if StoredValue <> '' then editConfigRecordRate.Text := StoredValue;
+
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'PLAYBACKRATE', ''));
+  if StoredValue <> '' then editConfigPlaybackRate.Text := StoredValue;
 
   // Add each of the links for Home Assistant from the INI file as well
   // Kind of a pain to get it back into Tabulator, but it is an odd thing we're doing...
@@ -2320,12 +2381,7 @@ begin
   begin
     if Pos('DESKTOP', Uppercase(ParamStr(i))) > 0
     then DesktopMode := True;
-
-    if Pos('CAPTURE', Uppercase(ParamStr(i))) > 0
-    then tmrCapture.Enabled := True;
-
   end;
-  tmrCapture.Enabled := True;
 
 
   dataInfoVersion.Caption := AppVersion;
@@ -2445,6 +2501,23 @@ begin
   listTimesShort.Height := 0;
   listTimesShort.Tag := 98;
 
+  asm
+    listRecord.style.removeProperty('top');
+    listRecord.style.setProperty('bottom','96px');
+  end;
+  listRecord.Left := 770;
+  listRecord.Width := 205;
+  listRecord.Height := 0;
+  listRecord.Tag := 213;
+
+  asm
+    listPlayback.style.removeProperty('top');
+    listPlayback.style.setProperty('bottom','57px');
+  end;
+  listPlayback.Left := 770;
+  listPlayback.Width := 205;
+  listPlayback.Height := 0;
+  listPlayback.Tag := 252;
 
   // Initialize various States
 
@@ -2936,14 +3009,15 @@ end;
 
 procedure TForm1.tmrCaptureTimer(Sender: TObject);
 begin
-
   asm
-    modernScreenshot.domToPng(document.querySelector('body')).then(dataURI => {
-      console.log(dataURI);
-      this.CaptureData.push(dataURI);
-    })
+    // Maximum capture - 1800 frames (1m @ 30fps, > 1d at 1fpm)
+    if (pas.Unit1.Form1.CaptureData.length <= 1800) {
+      modernScreenshot.domToPng(document.querySelector('body')).then(dataURI => {
+        pas.Unit1.Form1.CaptureData.push(dataURI);
+        btnRecord.innerHTML = '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recorded '+pas.Unit1.Form1.CaptureData.length+' frames</div>'
+      });
+    }
   end;
-
 end;
 
 procedure TForm1.tmrConnectTimer(Sender: TObject);
@@ -3110,8 +3184,6 @@ begin
     except on E: Exception do
       dataConfigSYSTEMTIME.Caption := 'Invalid Format';
     end;
-
-    dataConfigRUNNINGTIME.Caption := IntToStr(Trunc(Now-AppStarted))+'d '+FormatDateTime('h"h "n"m "s"s"', Now-AppStarted);
 
   end;
 
@@ -3851,6 +3923,7 @@ begin
         begin
           divPerson1.HTML.Text := display;
           divPerson1.ElementHandle.style.setProperty('opacity','1');
+          divPerson1.ElementHandle.firstElementChild.setAttribute('crossorigin','anonymous');
         end;
       end;
       if Person2Photo <> '' then
@@ -3860,6 +3933,7 @@ begin
         begin
           divPerson2.HTML.Text := display;
           divPerson2.ElementHandle.style.setProperty('opacity','1');
+          divPerson2.ElementHandle.firstElementChild.setAttribute('crossorigin','anonymous');
         end;
       end;
 
@@ -4021,10 +4095,10 @@ begin
             }
 
             // Find the Home Assistant Icon to use
-            var lighticon = document.createElement("div");
-            var icon = "mdi-lightbulb";
+            var lighticon = document.createElement("iconify-icon");
+            var icon = "mdi:lightbulb";
             if (all[i].attributes["icon"] !== undefined) {
-              icon = all[i].attributes["icon"].replace(":","-");
+              icon = all[i].attributes["icon"];
             }
 
             // Add button to the page
@@ -4032,7 +4106,8 @@ begin
 
             // Add Icon to the button
             lightbtn.appendChild(lighticon);
-            lighticon.classList.add("LightIcon","mdi",icon);
+            lighticon.setAttribute("icon",icon);
+            lighticon.classList.add("LightIcon");
 
             // Add Text to the button
             lightbtn.appendChild(lighttxt);
@@ -4336,7 +4411,9 @@ begin
     divPersonInfo.ElementHandle.style.setProperty('opacity','1');
     asm
       this.LocationMap.invalidateSize(true);
-      this.LocationMap.flyTo([this.tabLocations.getRowFromPosition(1).getCell('a.latitude').getValue(),this.tabLocations.getRowFromPosition(1).getCell('a.longitude').getValue()]);
+      if (this.tabLocations.getDataCount() > 0) {
+        this.LocationMap.flyTo([this.tabLocations.getRowFromPosition(1).getCell('a.latitude').getValue(),this.tabLocations.getRowFromPosition(1).getCell('a.longitude').getValue()]);
+      }
     end;
   end;
 
@@ -4395,6 +4472,8 @@ begin
     btnListDatesShortClick(Sender);
     btnListTimesLongClick(Sender);
     btnListTimesShortClick(Sender);
+    btnListRecordClick(Sender);
+    btnListPlaybackClick(Sender);
 
     if DesktopMode then
     begin
@@ -4528,11 +4607,12 @@ begin
   // Try and get the very latest data
   HAID := HAID + 1;
   HAGetPeople := HAID;
-  HAWebSocket.Send('{"id":'+IntToStr(HAGetPeople)+',"type": "history/stream", "start_time":"'+FormatDateTime('yyyy-MM-dd HH:nn:ss',Now-10)+'", "entity_ids":["'+Person1Sensor+'","'+Person2Sensor+'"]}');
+  HAWebSocket.Send('{"id":'+IntToStr(HAGetPeople)+',"type": "history/stream", "start_time":"'+FormatDateTime('yyyy-MM-dd HH:nn:ss',Now-15)+'", "entity_ids":["'+Person1Sensor+'","'+Person2Sensor+'"]}');
 
   // Update the photo
   if CurrentPerson = 1 then divPersonPhoto.HTML.Text := '<img style="width:150px; height:150px;" src='+editConfigURL.Text+Person1Photo+'>';
   if CurrentPerson = 2 then divPersonPhoto.HTML.Text := '<img style="width:150px; height:150px;" src='+editConfigURL.Text+Person2Photo+'>';
+
 
   PersonalInfo := '<div class="d-flex flex-column h-100 justify-content-center align-items-start">';
   // Search for content
@@ -4567,7 +4647,7 @@ begin
 
     // Add our interesting array to the display
     for (var i = 0; i < interesting.length; i++) {
-      PersonalInfo += '<div class="Text TextBG Blue p-0 m-0 d-flex justify-content-center align-items-center mdi '+interesting[i].icon.replace(':','-')+'">';
+      PersonalInfo += '<div class="Text TextBG Blue p-0 m-0 d-flex justify-content-center align-items-center"><iconify-icon icon='+interesting[i].icon+'></iconify-icon>';
       PersonalInfo += '<div class="Text TextBG White p-0 m-0 ms-2">'+parseInt(interesting[i].value)+'</div></div>';
       PersonalInfo += '<div style="margin:-8px 0px 4px 0px;" class="Text TextXS Gray p-0">'+interesting[i].name+' - '+interesting[i].units+'</div>';
     }
@@ -4587,8 +4667,7 @@ begin
         var coords = [this.HAZones[i].attributes.latitude, this.HAZones[i].attributes.longitude];
         var radius = this.HAZones[i].attributes.radius;
         var ZoneMarker = L.ExtraMarkers.icon({
-          icon: this.HAZones[i].attributes.icon.replace(':','-'),
-          extraClasses: 'mdi md-20',
+          innerHTML: '<iconify-icon icon='+this.HAZones[i].attributes.icon+' style="color: white; font-size:20px; margin-top:7px;"></iconify-icon>',
           markerColor: 'green-dark',
           shape: 'square'
         });
@@ -4621,8 +4700,8 @@ begin
   // Set middle text - Advisory and Summary values
   if WeatherAdvisory ='0' then WeatherAdvisory := '';
   if (WeatherAdvisory = '') and (WeatherSummary = '')
-  then divWxText.HTML.Text := '<span class="Gray TextSM">'+WeatherAttribution+'</span>'
-  else divWxText.HTML.Text := '<span class="Yellow">'+WeatherAdvisory+'</span>'+WeatherSummary+' <span class="Gray TextSM">'+WeatherAttribution+'</span>';
+  then divWxText.HTML.Text := '<div style="width:1180px;"><span class="Gray TextSM">'+WeatherAttribution+'</span></div>'
+  else divWxText.HTML.Text := '<div style="width:1180px !important; white-space:normal;"><span class="Yellow">'+WeatherAdvisory+'</span><span>'+WeatherSummary+'</span><span class="Gray TextSM">'+WeatherAttribution+'</span></div>';
 
   asm
     // eg: Environment Canada Regular Forecast
@@ -4903,6 +4982,8 @@ begin
     btnListDatesShortClick(Sender);
     btnListTimesLongClick(Sender);
     btnListTimesShortClick(Sender);
+    btnListRecordClick(Sender);
+    btnListPlaybackClick(Sender);
     exit;
   end;
 
@@ -4939,6 +5020,8 @@ begin
     btnListDatesShortClick(Sender);
     btnListTimesLongClick(Sender);
     btnListTimesShortClick(Sender);
+    btnListRecordClick(Sender);
+    btnListPlaybackClick(Sender);
     exit;
   end;
 
@@ -4975,6 +5058,92 @@ begin
 //    btnListDatesShortClick(Sender);
     btnListTimesLongClick(Sender);
     btnListTimesShortClick(Sender);
+    btnListRecordClick(Sender);
+    btnListPlaybackClick(Sender);
+    exit;
+  end;
+
+  ResetInactivityTimer(Sender);
+end;
+
+procedure TForm1.btnListPlaybackClick(Sender: TObject);
+begin
+  asm
+    listPlayback.style.removeProperty('top');
+  end;
+
+  if (Sender is TWebButton) and (Sender = btnListPlayback)
+  then btnlistPlayback.Tag := (btnlistPlayback.Tag + 1) mod 2
+  else btnListPlayback.Tag := 0;
+
+  if btnListPlayback.Tag = 1 then
+  begin
+    asm
+      btnListPlayback.firstElementChild.style.setProperty('transform','rotate(180deg)');
+    end;
+    listPlayback.ElementHandle.style.setProperty('height',IntToStr(listPlayback.Tag)+'px');
+    listPlayback.ElementHandle.style.setProperty('opacity','1');
+  end
+  else
+  begin
+    asm
+      btnListPlayback.firstElementChild.style.setProperty('transform','rotate(0deg)');
+    end;
+    listPlayback.ElementHandle.style.setProperty('height','0px');
+    listPlayback.ElementHandle.style.setProperty('opacity','0');
+  end;
+
+  if (Sender is TWebButton) and (Sender = btnlistPlayback) then
+  begin
+    btnListBackgroundsClick(Sender);
+    btnListDatesLongClick(Sender);
+    btnListDatesShortClick(Sender);
+    btnListTimesLongClick(Sender);
+    btnListTimesShortClick(Sender);
+    btnListRecordClick(Sender);
+//    btnListPlaybackClick(Sender);
+    exit;
+  end;
+
+  ResetInactivityTimer(Sender);
+end;
+
+procedure TForm1.btnListRecordClick(Sender: TObject);
+begin
+  asm
+    listRecord.style.removeProperty('top');
+  end;
+
+  if (Sender is TWebButton) and (Sender = btnListRecord)
+  then btnlistRecord.Tag := (btnlistRecord.Tag + 1) mod 2
+  else btnListRecord.Tag := 0;
+
+  if btnListRecord.Tag = 1 then
+  begin
+    asm
+      btnListRecord.firstElementChild.style.setProperty('transform','rotate(180deg)');
+    end;
+    listRecord.ElementHandle.style.setProperty('height',IntToStr(listRecord.Tag)+'px');
+    listRecord.ElementHandle.style.setProperty('opacity','1');
+  end
+  else
+  begin
+    asm
+      btnListRecord.firstElementChild.style.setProperty('transform','rotate(0deg)');
+    end;
+    listRecord.ElementHandle.style.setProperty('height','0px');
+    listRecord.ElementHandle.style.setProperty('opacity','0');
+  end;
+
+  if (Sender is TWebButton) and (Sender = btnlistRecord) then
+  begin
+    btnListBackgroundsClick(Sender);
+    btnListDatesLongClick(Sender);
+    btnListDatesShortClick(Sender);
+    btnListTimesLongClick(Sender);
+    btnListTimesShortClick(Sender);
+//    btnListRecordClick(Sender);
+    btnListPlaybackClick(Sender);
     exit;
   end;
 
@@ -5011,6 +5180,8 @@ begin
     btnListDatesShortClick(Sender);
 //    btnListTimesLongClick(Sender);
     btnListTimesShortClick(Sender);
+    btnListRecordClick(Sender);
+    btnListPlaybackClick(Sender);
     exit;
   end;
 
@@ -5047,10 +5218,36 @@ begin
     btnListDatesShortClick(Sender);
     btnListTimesLongClick(Sender);
 //    btnListTimesShortClick(Sender);
+    btnListRecordClick(Sender);
+    btnListPlaybackClick(Sender);
    exit;
   end;
 
   ResetInactivityTimer(Sender);
+end;
+
+procedure TForm1.btnPlaybackClick(Sender: TObject);
+var
+  FrameCount: Integer;
+begin
+  // If recording, stop
+  if btnRecord.Tag = 1
+  then btnRecordClick(Sender);
+
+  asm FrameCount = pas.Unit1.Form1.CaptureData.length; end;
+
+  if FrameCount = 0 then
+  begin
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-light','btn-warning',[]);
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-danger','btn-warning',[]);
+    btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>No Data Recorded</div>';
+  end
+  else
+  begin
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-light','btn-danger',[]);
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-warning','btn-danger',[]);
+    btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>No Data Recorded</div>';
+  end;
 end;
 
 procedure TForm1.btnRadarClick(Sender: TObject);
@@ -5059,6 +5256,46 @@ begin
   begin
     SwitchPages(1,23);
   end;
+end;
+
+procedure TForm1.btnRecordClick(Sender: TObject);
+var
+  RecordRate: Integer;
+begin
+  if btnRecord.tag = 0 then
+  begin
+    btnRecord.Tag := 1;
+
+
+    // Default 1 fps
+    RecordRate := 1000;
+
+    if pos('fps', editConfigRecordRate.Text) > 0
+    then RecordRate := 1000 div StrToInt(Trim(Copy(editConfigRecordRate.Text,11,2)));
+
+    if pos('fpm', editConfigRecordRate.Text) > 0
+    then RecordRate := 60000 div StrToInt(Trim(Copy(editConfigRecordRate.Text,11,2)));
+
+    tmrCapture.Interval := RecordRate;
+    tmrCapture.Enabled := True;
+
+    // Start with fresh capture
+    asm this.CaptureData = []; end;
+
+    // Configure Record button as recording
+    btnRecord.ElementClassName := StringReplace(btnRecord.ElementClassName,'btn-light','btn-danger',[]);
+    btnRecord.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recording...</div>';
+  end
+  else
+  begin
+    btnRecord.Tag := 0;
+    tmrCapture.Enabled := False;
+
+    // Reset Record Button
+    btnRecord.ElementClassName := StringReplace(btnRecord.ElementClassName,'btn-danger','btn-light',[]);
+    btnRecord.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Start Recording</div>';
+  end;
+
 end;
 
 procedure TForm1.btnSatelliteClick(Sender: TObject);
@@ -5223,7 +5460,7 @@ begin
 
             for (var i = 0; i < Zones.length; i ++) {
               if (Zones[i].attributes.friendly_name == cell.getValue()) {
-                ZoneIcon = '<span class="mdi '+Zones[i].attributes.icon.replace(':','-')+'"></span>';
+                ZoneIcon = '<iconify-icon icon='+Zones[i].attributes.icon+'></iconify-icon>';
               }
             }
             return ZoneIcon;
