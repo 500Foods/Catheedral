@@ -26,7 +26,7 @@ object Form1: TForm1
     OnClick = divBackgroundClick
   end
   object pages: TWebPageControl
-    Left = -4
+    Left = 0
     Top = 0
     Width = 1280
     Height = 400
@@ -34,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 0
+    TabIndex = 1
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1108,7 +1108,7 @@ object Form1: TForm1
       object btnRecord: TWebButton
         Left = 1013
         Top = 305
-        Width = 210
+        Width = 215
         Height = 36
         Caption = 
           '<div class="d-flex align-items-center justify-content-start"><i ' +
@@ -1151,9 +1151,6 @@ object Form1: TForm1
           TextHint = 'Select Recording Rate'
           WidthPercent = 100.000000000000000000
           OnChange = editConfigBACKGROUNDChange
-          ExplicitLeft = 150
-          ExplicitWidth = 520
-          ExplicitHeight = 40
         end
         object btnListRecord: TWebButton
           Left = 205
@@ -1170,8 +1167,6 @@ object Form1: TForm1
           TabOrder = 103
           WidthPercent = 100.000000000000000000
           OnClick = btnListRecordClick
-          ExplicitLeft = 237
-          ExplicitTop = -4
         end
       end
       object divPlaybackRate: TWebHTMLDiv
@@ -1202,8 +1197,6 @@ object Form1: TForm1
           TextHint = 'Select Playback Rate'
           WidthPercent = 100.000000000000000000
           OnChange = editConfigBACKGROUNDChange
-          ExplicitWidth = 235
-          ExplicitHeight = 40
         end
         object btnListPlayback: TWebButton
           Left = 205
@@ -1221,14 +1214,12 @@ object Form1: TForm1
           TabOrder = 103
           WidthPercent = 100.000000000000000000
           OnClick = btnListPlaybackClick
-          ExplicitLeft = 235
-          ExplicitHeight = 40
         end
       end
       object btnPlayback: TWebButton
-        Left = 1013
-        Top = 345
-        Width = 210
+        Left = 1011
+        Top = 344
+        Width = 215
         Height = 36
         Caption = 
           '<div class="d-flex align-items-center justify-content-start"><i ' +
@@ -1283,18 +1274,18 @@ object Form1: TForm1
         WidthPercent = 100.000000000000000000
         OnChange = listPlaybackChange
         Items.Strings = (
-          'Playback at 30 fps'
-          'Playback at 15 fps'
-          'Playback at 10 fps'
-          'Playback at 5 fps'
-          'Playback at 2 fps'
-          'Playback at 1 fps'
-          'Playback at 30 fpm'
-          'Playback at 15 fpm'
-          'Playback at 10 fpm'
-          'Playback at 5 fpm'
-          'Playback at 2 fpm'
-          'Playback at 1 fpm')
+          'Play at 30 fps'
+          'Play at 15 fps'
+          'Play at 10 fps'
+          'Play at 5 fps'
+          'Play at 2 fps'
+          'Play at 1 fps'
+          'Play at 30 fpm'
+          'Play at 15 fpm'
+          'Play at 10 fpm'
+          'Play at 5 fpm'
+          'Play at 2 fpm'
+          'Play at 1 fpm')
         ItemIndex = -1
       end
     end
@@ -2552,7 +2543,9 @@ object Form1: TForm1
           Height = 50
           Cursor = crHandPoint
           HelpType = htKeyword
-          Caption = '<span class="mdi mdi-radar mdi-24px"></span>'
+          Caption = 
+            '<iconify-icon icon="mdi:radar" style="font-size:28px; padding-to' +
+            'p:5px;"></iconify-icon>'
           ChildOrder = 21
           ElementClassName = 'MainButton btn btn-link text-decoration-none TextCover'
           ElementID = 'btnRadar'

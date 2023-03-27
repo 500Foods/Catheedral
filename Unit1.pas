@@ -484,8 +484,8 @@ type
     procedure btnListPlaybackClick(Sender: TObject);
     procedure listRecordChange(Sender: TObject);
     procedure listPlaybackChange(Sender: TObject);
-    procedure btnRecordClick(Sender: TObject);
-    procedure btnPlaybackClick(Sender: TObject);
+    [async] procedure btnRecordClick(Sender: TObject);
+    [async] procedure btnPlaybackClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -2996,6 +2996,54 @@ begin
   // Hide Popup if visible
   HidePopups;
 
+  // Update Weather Information
+  if EndPage = 21 then
+  begin
+    // Set middle text - Advisory and Summary values
+    if WeatherAdvisory ='0' then WeatherAdvisory := '';
+    if (WeatherAdvisory = '') and (WeatherSummary = '')
+    then divWxText.HTML.Text := '<div style="width:1180px;"><span class="Gray TextSM">'+WeatherAttribution+'</span></div>'
+    else divWxText.HTML.Text := '<div style="width:1180px !important; white-space:normal;"><span class="Yellow">'+WeatherAdvisory+'</span><span>'+WeatherSummary+'</span><span class="Gray TextSM">'+WeatherAttribution+'</span></div>';
+
+    asm
+      // eg: Environment Canada Regular Forecast
+      if (this.WeatherForecast1.length == 6) {
+        this.DrawWeather(divWxD1, this.WeatherForecast1[0],false);
+        this.DrawWeather(divWxD2, this.WeatherForecast1[1],false);
+        this.DrawWeather(divWxD3, this.WeatherForecast1[2],false);
+        this.DrawWeather(divWxD4, this.WeatherForecast1[3],false);
+        this.DrawWeather(divWxD5, this.WeatherForecast1[4],false);
+        this.DrawWeather(divWxD6, this.WeatherForecast1[5],false);
+      }
+
+      // eg: Environment Canada Hourly Forecast
+      if (this.WeatherForecast2.length == 24) {
+        this.DrawWeather(divWxH1, this.WeatherForecast2[ 3],true);
+        this.DrawWeather(divWxH2, this.WeatherForecast2[ 7],true);
+         this.DrawWeather(divWxH3, this.WeatherForecast2[11],true);
+        this.DrawWeather(divWxH4, this.WeatherForecast2[15],true);
+        this.DrawWeather(divWxH5, this.WeatherForecast2[19],true);
+        this.DrawWeather(divWxH6, this.WeatherForecast2[23],true);
+      }
+
+      // eg: OpenWeatherMap Free API
+      if (this.WeatherForecast1.length == 40) {
+        this.DrawWeather(divWxH1, this.WeatherForecast1[ 0],true);
+        this.DrawWeather(divWxH2, this.WeatherForecast1[ 1],true);
+        this.DrawWeather(divWxH3, this.WeatherForecast1[ 2],true);
+        this.DrawWeather(divWxH4, this.WeatherForecast1[ 3],true);
+        this.DrawWeather(divWxH5, this.WeatherForecast1[ 4],true);
+        this.DrawWeather(divWxH6, this.WeatherForecast1[ 5],true);
+        this.DrawWeather(divWxD1, this.WeatherForecast1[ 6],true);
+        this.DrawWeather(divWxD2, this.WeatherForecast1[ 7],true);
+        this.DrawWeather(divWxD3, this.WeatherForecast1[15],true);
+        this.DrawWeather(divWxD4, this.WeatherForecast1[23],true);
+        this.DrawWeather(divWxD5, this.WeatherForecast1[31],true);
+        this.DrawWeather(divWxD6, this.WeatherForecast1[39],true);
+      }
+    end;
+  end;
+
   // Get started on Person data referesh
   if EndPage = 25 then
   begin
@@ -3014,7 +3062,7 @@ begin
     if (pas.Unit1.Form1.CaptureData.length <= 1800) {
       modernScreenshot.domToPng(document.querySelector('body')).then(dataURI => {
         pas.Unit1.Form1.CaptureData.push(dataURI);
-        btnRecord.innerHTML = '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recorded '+pas.Unit1.Form1.CaptureData.length+' frames</div>'
+        btnRecord.innerHTML = '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recording frame #'+pas.Unit1.Form1.CaptureData.length+'</div>'
       });
     }
   end;
@@ -4667,7 +4715,7 @@ begin
         var coords = [this.HAZones[i].attributes.latitude, this.HAZones[i].attributes.longitude];
         var radius = this.HAZones[i].attributes.radius;
         var ZoneMarker = L.ExtraMarkers.icon({
-          innerHTML: '<iconify-icon icon='+this.HAZones[i].attributes.icon+' style="color: white; font-size:20px; margin-top:7px;"></iconify-icon>',
+          innerHTML: '<iconify-icon title="'+this.HAZones[i].attributes.friendly_name+'" icon='+this.HAZones[i].attributes.icon+' style="color: white; font-size:20px; margin-top:7px;"></iconify-icon>',
           markerColor: 'green-dark',
           shape: 'square'
         });
@@ -4697,50 +4745,6 @@ end;
 
 procedure TForm1.divWeatherCoverClick(Sender: TObject);
 begin
-  // Set middle text - Advisory and Summary values
-  if WeatherAdvisory ='0' then WeatherAdvisory := '';
-  if (WeatherAdvisory = '') and (WeatherSummary = '')
-  then divWxText.HTML.Text := '<div style="width:1180px;"><span class="Gray TextSM">'+WeatherAttribution+'</span></div>'
-  else divWxText.HTML.Text := '<div style="width:1180px !important; white-space:normal;"><span class="Yellow">'+WeatherAdvisory+'</span><span>'+WeatherSummary+'</span><span class="Gray TextSM">'+WeatherAttribution+'</span></div>';
-
-  asm
-    // eg: Environment Canada Regular Forecast
-    if (this.WeatherForecast1.length == 6) {
-      this.DrawWeather(divWxD1, this.WeatherForecast1[0],false);
-      this.DrawWeather(divWxD2, this.WeatherForecast1[1],false);
-      this.DrawWeather(divWxD3, this.WeatherForecast1[2],false);
-      this.DrawWeather(divWxD4, this.WeatherForecast1[3],false);
-      this.DrawWeather(divWxD5, this.WeatherForecast1[4],false);
-      this.DrawWeather(divWxD6, this.WeatherForecast1[5],false);
-    }
-
-    // eg: Environment Canada Hourly Forecast
-    if (this.WeatherForecast2.length == 24) {
-      this.DrawWeather(divWxH1, this.WeatherForecast2[ 3],true);
-      this.DrawWeather(divWxH2, this.WeatherForecast2[ 7],true);
-      this.DrawWeather(divWxH3, this.WeatherForecast2[11],true);
-      this.DrawWeather(divWxH4, this.WeatherForecast2[15],true);
-      this.DrawWeather(divWxH5, this.WeatherForecast2[19],true);
-      this.DrawWeather(divWxH6, this.WeatherForecast2[23],true);
-    }
-
-    // eg: OpenWeatherMap Free API
-    if (this.WeatherForecast1.length == 40) {
-      this.DrawWeather(divWxH1, this.WeatherForecast1[ 0],true);
-      this.DrawWeather(divWxH2, this.WeatherForecast1[ 1],true);
-      this.DrawWeather(divWxH3, this.WeatherForecast1[ 2],true);
-      this.DrawWeather(divWxH4, this.WeatherForecast1[ 3],true);
-      this.DrawWeather(divWxH5, this.WeatherForecast1[ 4],true);
-      this.DrawWeather(divWxH6, this.WeatherForecast1[ 5],true);
-      this.DrawWeather(divWxD1, this.WeatherForecast1[ 6],true);
-      this.DrawWeather(divWxD2, this.WeatherForecast1[ 7],true);
-      this.DrawWeather(divWxD3, this.WeatherForecast1[15],true);
-      this.DrawWeather(divWxD4, this.WeatherForecast1[23],true);
-      this.DrawWeather(divWxD5, this.WeatherForecast1[31],true);
-      this.DrawWeather(divWxD6, this.WeatherForecast1[39],true);
-    }
-  end;
-
   SwitchPages(1,21);
 end;
 
@@ -5229,10 +5233,13 @@ end;
 procedure TForm1.btnPlaybackClick(Sender: TObject);
 var
   FrameCount: Integer;
+  PlaybackRate: Double;
 begin
   // If recording, stop
-  if btnRecord.Tag = 1
-  then btnRecordClick(Sender);
+  if btnRecord.Tag = 1 then
+  begin
+    await(btnRecordClick(Sender));
+  end;
 
   asm FrameCount = pas.Unit1.Form1.CaptureData.length; end;
 
@@ -5246,7 +5253,79 @@ begin
   begin
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-light','btn-danger',[]);
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-warning','btn-danger',[]);
-    btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>No Data Recorded</div>';
+
+    PlaybackRate := 1.0; //fps
+
+    if pos('fps', editConfigPlaybackRate.Text) > 0
+    then PlaybackRate := StrToInt(Trim(Copy(editConfigPlaybackRate.Text,9,2)));
+
+    if pos('fpm', editConfigPlaybackRate.Text) > 0
+    then PlaybackRate := StrToInt(Trim(Copy(editConfigPlaybackRate.Text,9,2))) / 60.0;
+
+    if PlayBackRate >= 1.0
+    then btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>Play '+IntToStr(FrameCount)+'f  @ '+FloatToStrF(PlaybackRate,ffNumber,5,0)+' fps</div>'
+    else btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>Play '+IntToStr(FrameCount)+'f @ '+FloatToStrF(PlaybackRate,ffNumber,5,4)+' fps</div>';
+
+
+    asm
+
+      // Load and initialize ffmpeg
+      const { createFFmpeg, fetchFile } = FFmpeg;
+      const ffmpeg = createFFmpeg({
+        log: true,
+        mainName: 'main',
+        corePath: 'https://unpkg.com/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js'
+      });
+      await ffmpeg.load();
+
+      function dataURLtoFile(dataurl, filename) {
+        var arr = dataurl.split(","),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new File([u8arr], filename, { type: mime });
+      }
+
+      const image2video = async () => {
+
+        FrameCount = pas.Unit1.Form1.CaptureData.length;
+
+        // Add image files to ffmpeg internal filesystem
+        for (let i = 0; i < FrameCount; i += 1) {
+          const num = `000${i}`.slice(-4);
+          ffmpeg.FS('writeFile', `tmp.${num}.png`, await fetchFile(dataURLtoFile(pas.Unit1.Form1.CaptureData[i],'frame-'+i+'.png')));
+        }
+
+        // Perform the conversion the conversion
+        await ffmpeg.run('-framerate', '30', '-pattern_type', 'glob', '-i', '*.png','-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'out.mp4');
+
+        // Get the resulting video file
+        const data = ffmpeg.FS('readFile', 'out.mp4');
+
+        // Delete image files from ffmpeg internal filesystem
+        for (let i = 0; i < FrameCount; i += 1) {
+          const num = `000${i}`.slice(-4);
+          ffmpeg.FS('unlink', `tmp.${num}.png`);
+        }
+
+        // Create a place to show the video
+        const video = document.createElement('video');
+        // Load the video file into the page element
+        video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+        video.load();
+        document.body.appendChild(video);
+      }
+
+      image2video();
+
+    end;
+
   end;
 end;
 
@@ -5261,6 +5340,7 @@ end;
 procedure TForm1.btnRecordClick(Sender: TObject);
 var
   RecordRate: Integer;
+  FrameCount: Integer;
 begin
   if btnRecord.tag = 0 then
   begin
@@ -5285,15 +5365,24 @@ begin
     // Configure Record button as recording
     btnRecord.ElementClassName := StringReplace(btnRecord.ElementClassName,'btn-light','btn-danger',[]);
     btnRecord.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recording...</div>';
+
+    // Reset Playback button
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-danger','btn-light',[]);
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-warning','btn-light',[]);
+    btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Start Playback</div>';
   end
   else
   begin
     btnRecord.Tag := 0;
     tmrCapture.Enabled := False;
+    asm
+      await sleep(1000);
+      FrameCount = pas.Unit1.Form1.CaptureData.length;
+    end;
 
     // Reset Record Button
     btnRecord.ElementClassName := StringReplace(btnRecord.ElementClassName,'btn-danger','btn-light',[]);
-    btnRecord.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Start Recording</div>';
+    btnRecord.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recorded '+IntToStr(FrameCount)+' frames</div>';
   end;
 
 end;

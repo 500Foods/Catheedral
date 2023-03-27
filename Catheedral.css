@@ -307,7 +307,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   height: 36px !important;
   padding-left: 8px;
   padding-bottom: 5px;
-  border: 2px solid var(--bs-light);
+  border: 2px solid white;
   border-radius: 6px;
   background: black;
   color: white;
@@ -327,7 +327,7 @@ input[type=text]:focus-visible.ConfigEdit  {
   font-size: 20px;
   margin: 3px;
   padding-left: 8px;
-  border: 2px solid var(--bs-light);
+  border: 2px solid white;
   border-radius: 6px;
   background: black;
   color: white;
