@@ -685,6 +685,7 @@ type
 
     // For capturing web page
     CaptureData: JSValue;
+    PlayBackRate: Double;
 
     procedure StopLinkerRemoval(P: Pointer);
     procedure PreventCompilerHint(I: integer); overload;
@@ -726,6 +727,23 @@ begin
   asm
     // Global Sleep function :)
     window.sleep = async function(msecs) {return new Promise((resolve) => setTimeout(resolve, msecs)); }
+
+    // console.image function
+    function getBox(width, height) {
+      return {
+        string: "+",
+        style: "font-size: 1px; padding: " + Math.floor(height/4) + "px " + Math.floor(width/2) + "px; line-height: " + height/2 + "px;"
+    }}
+
+    console.image = function(url, scale) {
+      scale = scale || 1;
+      var img = new Image();
+      img.onload = function() {
+        var dim = getBox(this.width * scale, this.height * scale);
+        console.log("%c" + dim.string, dim.style + "background: url(" + url + "); background-size: " + (this.width * scale) + "px " + (this.height * scale) + "px; color: transparent;");
+      };
+      img.src = url;
+    }
 
     // Load Swatch information from CSS
     var GetSwatch = function(SwatchNum) {
@@ -1690,7 +1708,7 @@ begin
         // Lookup Zones
         this.HAZones = hadata.result.filter(
           function(o) {
-           return ((o.entity_id.indexOf("zone.") == 0) && (o.attributes.latitude !== undefined) && (o.attributes.longitude !== undefined) && (o.attributes.radius !== undefined)  && (o.attributes.passive == false));
+           return ((o.entity_id.indexOf("zone.") == 0) && (o.entity_id.indexOf("stationary") == -1) && (o.attributes.latitude !== undefined) && (o.attributes.longitude !== undefined) && (o.attributes.radius !== undefined)  && (o.attributes.passive == false));
           });
 
 
@@ -1864,8 +1882,8 @@ begin
   begin
     asm
       var PeopleData = JSON.parse(SocketData.jsobject);
-      console.log(PeopleData.event.states[this.Person1Sensor]);
-      console.log(PeopleData.event.states[this.Person2Sensor]);
+//      console.log(PeopleData.event.states[this.Person1Sensor]);
+//      console.log(PeopleData.event.states[this.Person2Sensor]);
 
       if (this.CurrentPerson == 1)  {
         if (PeopleData.event.states[this.Person1Sensor] !== undefined) {
@@ -2470,6 +2488,18 @@ begin
   // Configure Tabulator list of Sensors
   ConfigureTabSensors;
 
+  // Add borders to editconfig elements - this is for modern-screenshot
+  // which doesn't seem to pickup the border from the CSS for some reason
+  editConfigURL.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigTOKEN.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigBACKGROUND.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigLONGDATE.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigSHORTDATE.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigLONGTIME.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigSHORTTIME.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigRecordRate.ElementHandle.style.setProperty('border','2px solid white','important');
+  editConfigPlaybackRate.ElementHandle.style.setProperty('border','2px solid white','important');
+
   // Adjust sizes of Config Listboxes
   listBackgrounds.Top := 205;
   listBackgrounds.Left := 190;
@@ -3061,6 +3091,7 @@ begin
     // Maximum capture - 1800 frames (1m @ 30fps, > 1d at 1fpm)
     if (pas.Unit1.Form1.CaptureData.length <= 1800) {
       modernScreenshot.domToPng(document.querySelector('body')).then(dataURI => {
+//        console.image(dataURI,0.5);
         pas.Unit1.Form1.CaptureData.push(dataURI);
         btnRecord.innerHTML = '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recording frame #'+pas.Unit1.Form1.CaptureData.length+'</div>'
       });
@@ -5233,7 +5264,6 @@ end;
 procedure TForm1.btnPlaybackClick(Sender: TObject);
 var
   FrameCount: Integer;
-  PlaybackRate: Double;
 begin
   // If recording, stop
   if btnRecord.Tag = 1 then
@@ -5247,36 +5277,38 @@ begin
   begin
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-light','btn-warning',[]);
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-danger','btn-warning',[]);
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-primary','btn-warning',[]);
     btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>No Data Recorded</div>';
   end
   else
   begin
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-light','btn-danger',[]);
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-warning','btn-danger',[]);
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-primary','btn-danger',[]);
 
     PlaybackRate := 1.0; //fps
 
     if pos('fps', editConfigPlaybackRate.Text) > 0
-    then PlaybackRate := StrToInt(Trim(Copy(editConfigPlaybackRate.Text,9,2)));
+    then PlaybackRate := StrToFloat(Trim(Copy(editConfigPlaybackRate.Text,9,2)));
 
     if pos('fpm', editConfigPlaybackRate.Text) > 0
-    then PlaybackRate := StrToInt(Trim(Copy(editConfigPlaybackRate.Text,9,2))) / 60.0;
+    then PlaybackRate := StrToFloat(Trim(Copy(editConfigPlaybackRate.Text,9,2))) / 60.0;
 
     if PlayBackRate >= 1.0
-    then btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>Play '+IntToStr(FrameCount)+'f  @ '+FloatToStrF(PlaybackRate,ffNumber,5,0)+' fps</div>'
-    else btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>Play '+IntToStr(FrameCount)+'f @ '+FloatToStrF(PlaybackRate,ffNumber,5,4)+' fps</div>';
+    then btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>Play '+IntToStr(FrameCount)+'f  @ '+FloatToStrF(PlaybackRate,ffNumber,5,0)+' fps<i id="ffprogress" class="fa-solid fa-xl" style="margin: 0px 8px 0px auto;"></i></div>'
+    else btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw fa-xl ps-1 me-2"></i>Play '+IntToStr(FrameCount)+'f @ '+FloatToStrF(PlaybackRate,ffNumber,5,4)+' fps<i id="ffprogress" class="fa-solid fa-xl" style="margin: 0px 8px 0px auto;"></i></div>';
 
 
     asm
-
       // Load and initialize ffmpeg
       const { createFFmpeg, fetchFile } = FFmpeg;
       const ffmpeg = createFFmpeg({
-        log: true,
+//        log: true,
         mainName: 'main',
-        corePath: 'https://unpkg.com/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js'
+        corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js'
       });
       await ffmpeg.load();
+
 
       function dataURLtoFile(dataurl, filename) {
         var arr = dataurl.split(","),
@@ -5284,26 +5316,41 @@ begin
         bstr = atob(arr[1]),
         n = bstr.length,
         u8arr = new Uint8Array(n);
-
         while (n--) {
           u8arr[n] = bstr.charCodeAt(n);
         }
-
         return new File([u8arr], filename, { type: mime });
       }
 
+      ffmpeg.setProgress(async function({ ratio })  {
+        console.log('FFmpeg Progress: '+ratio);
+      });
+
+
       const image2video = async () => {
 
-        FrameCount = pas.Unit1.Form1.CaptureData.length;
+        // This is the icon at the end of the Playback button
+        ffprogress.classList.add('fa-file-circle-plus');
 
         // Add image files to ffmpeg internal filesystem
+        FrameCount = pas.Unit1.Form1.CaptureData.length;
         for (let i = 0; i < FrameCount; i += 1) {
           const num = `000${i}`.slice(-4);
-          ffmpeg.FS('writeFile', `tmp.${num}.png`, await fetchFile(dataURLtoFile(pas.Unit1.Form1.CaptureData[i],'frame-'+i+'.png')));
+          ffmpeg.FS('writeFile', 'tmp.'+num+'.png', await fetchFile(dataURLtoFile(pas.Unit1.Form1.CaptureData[i],'frame-'+i+'.png')));
         }
 
+        // Done with files, lets start with the notch
+        ffprogress.classList.remove('fa-file-circle-plus');
+        ffprogress.classList.add('fa-circle-notch', 'fa-spin');
+        await sleep(50);
+
+
         // Perform the conversion the conversion
-        await ffmpeg.run('-framerate', '30', '-pattern_type', 'glob', '-i', '*.png','-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'out.mp4');
+        await ffmpeg.run('-framerate', String(pas.Unit1.Form1.PlayBackRate), '-pattern_type', 'glob', '-i', '*.png','-c:v', 'libx264', '-pix_fmt', 'yuv420p', 'out.mp4');
+
+        // Done with the notch, back to the files
+        ffprogress.classList.remove('fa-circle-notch','fa-spin');
+        ffprogress.classList.add('fa-file-circle-minus');
 
         // Get the resulting video file
         const data = ffmpeg.FS('readFile', 'out.mp4');
@@ -5311,21 +5358,56 @@ begin
         // Delete image files from ffmpeg internal filesystem
         for (let i = 0; i < FrameCount; i += 1) {
           const num = `000${i}`.slice(-4);
-          ffmpeg.FS('unlink', `tmp.${num}.png`);
+          ffmpeg.FS('unlink', 'tmp.'+num+'.png');
         }
+        ffmpeg.exit;
 
         // Create a place to show the video
         const video = document.createElement('video');
+
         // Load the video file into the page element
         video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-        video.load();
+
+        // Set some attributes
+        video.id = "video";
+        video.controls = true;
+        video.loop = true;
+
+        // Set some styles
+        video.style.setProperty('position','fixed');
+        video.style.setProperty('left','0px');
+        video.style.setProperty('top','0px');
+        video.style.setProperty('width','1280px');
+        video.style.setProperty('height','400px');
+        video.style.setProperty('z-index','1000');
+
+        // Add to the page
         document.body.appendChild(video);
+
+        // Load and start playing the video
+        video.load();
+        video.play();
+
+        // Wait for a double-click to unload the video
+        video.addEventListener('dblclick',function() {
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+          video.src = '';
+          video.srcObject = null;
+          video.remove()
+        });
+
+        // Set our buttons to indicate the final state
+        btnPlayback.classList.replace('btn-light','btn-primary');
+        btnPlayback.classList.replace('btn-warning','btn-primary');
+        btnPlayback.classList.replace('btn-danger','btn-primary');
+        ffprogress.classList.remove('fa-file-circle-minus');
       }
 
       image2video();
 
     end;
-
   end;
 end;
 
@@ -5362,6 +5444,17 @@ begin
     // Start with fresh capture
     asm this.CaptureData = []; end;
 
+    // Set <input>.value so it gets rendered
+    editConfigURL.ElementHandle.setAttribute('value',editConfigURL.Text);
+    editConfigToken.ElementHandle.setAttribute('value',editConfigTOKEN.Text);
+    editConfigBackground.ElementHandle.setAttribute('value',editConfigBACKGROUND.Text);
+    editConfigSHORTDATE.ElementHandle.setAttribute('value',editConfigSHORTDATE.Text);
+    editConfigLONGDATE.ElementHandle.setAttribute('value',editConfigLONGDATE.Text);
+    editConfigSHORTTIME.ElementHandle.setAttribute('value',editConfigSHORTTIME.Text);
+    editConfigLONGTIME.ElementHandle.setAttribute('value',editConfigLONGTIME.Text);
+    editConfigRecordRate.ElementHandle.setAttribute('value',editConfigRecordRate.Text);
+    editConfigPlaybackRate.ElementHandle.setAttribute('value',editConfigPlaybackRate.Text);
+
     // Configure Record button as recording
     btnRecord.ElementClassName := StringReplace(btnRecord.ElementClassName,'btn-light','btn-danger',[]);
     btnRecord.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Recording...</div>';
@@ -5369,7 +5462,8 @@ begin
     // Reset Playback button
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-danger','btn-light',[]);
     btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-warning','btn-light',[]);
-    btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-dot fa-fw ps-1 me-2 fa-xl"></i>Start Playback</div>';
+    btnPlayback.ElementClassName := StringReplace(btnPlayback.ElementClassName,'btn-primary','btn-light',[]);
+    btnPlayback.Caption := '<div class="d-flex align-items-center justify-content-start"><i class="fa-solid fa-circle-play fa-fw ps-1 me-2 fa-xl"></i>Start Playback</div>';
   end
   else
   begin

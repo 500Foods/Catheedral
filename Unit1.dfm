@@ -34,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 1
+    TabIndex = 0
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -1209,7 +1209,6 @@ object Form1: TForm1
           ElementClassName = 'ConfigListButton btn btn-light opacity-75'
           ElementID = 'btnListPlayback'
           ElementFont = efCSS
-          HeightStyle = ssAuto
           HeightPercent = 100.000000000000000000
           TabOrder = 103
           WidthPercent = 100.000000000000000000
@@ -1217,7 +1216,7 @@ object Form1: TForm1
         end
       end
       object btnPlayback: TWebButton
-        Left = 1011
+        Left = 1013
         Top = 344
         Width = 215
         Height = 36
@@ -1247,16 +1246,20 @@ object Form1: TForm1
         WidthPercent = 100.000000000000000000
         OnChange = listRecordChange
         Items.Strings = (
-          'Record at 30 fps'
           'Record at 15 fps'
           'Record at 10 fps'
           'Record at 5 fps'
+          'Record at 4 fps'
+          'Record at 3 fps'
           'Record at 2 fps'
           'Record at 1 fps'
           'Record at 30 fpm'
+          'Record at 20 fpm'
           'Record at 15 fpm'
           'Record at 10 fpm'
           'Record at 5 fpm'
+          'Record at 4 fpm'
+          'Record at 3 fpm'
           'Record at 2 fpm'
           'Record at 1 fpm ')
         ItemIndex = -1
@@ -1274,16 +1277,22 @@ object Form1: TForm1
         WidthPercent = 100.000000000000000000
         OnChange = listPlaybackChange
         Items.Strings = (
+          'Play at 60 fps'
           'Play at 30 fps'
           'Play at 15 fps'
           'Play at 10 fps'
           'Play at 5 fps'
+          'Play at 4 fps'
+          'Play at 3 fps'
           'Play at 2 fps'
           'Play at 1 fps'
           'Play at 30 fpm'
+          'Play at 20 fpm'
           'Play at 15 fpm'
           'Play at 10 fpm'
           'Play at 5 fpm'
+          'Play at 4 fpm'
+          'Play at 3 fpm'
           'Play at 2 fpm'
           'Play at 1 fpm')
         ItemIndex = -1
