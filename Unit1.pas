@@ -3089,7 +3089,7 @@ procedure TForm1.tmrCaptureTimer(Sender: TObject);
 begin
   asm
     // Maximum capture - 1800 frames (1m @ 30fps, > 1d at 1fpm)
-    if (pas.Unit1.Form1.CaptureData.length <= 1800) {
+    if (pas.Unit1.Form1.CaptureData.length < 1800) {
       modernScreenshot.domToPng(document.querySelector('body')).then(dataURI => {
 //        console.image(dataURI,0.5);
         pas.Unit1.Form1.CaptureData.push(dataURI);
@@ -4799,7 +4799,10 @@ begin
     var wtime = '';
     if (ShowTime == true) {
       wtime = '<div class="Text TextSM Gray m-0 p-0">'+luxon.DateTime.fromISO(WeatherData.datetime,{zone:"utc"}).setZone("system").toFormat('HH:00')+'</div>';
+    } else {
+      wtime = '<div class="Text TextSM Gray m-0 p-0">'+luxon.DateTime.fromISO(WeatherData.datetime,{zone:"utc"}).setZone("system").toFormat('MMM dd')+'</div>';
     }
+
 
     // These should all be numbers.  But sometimes they are missing or are returned as null values
     var maxtemp = WeatherData.temperature;
