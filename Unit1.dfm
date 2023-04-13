@@ -34,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 0
+    TabIndex = 15
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -6244,7 +6244,7 @@ object Form1: TForm1
   end
   object tmrInactivity: TWebTimer
     Enabled = False
-    Interval = 4500000
+    Interval = 45000
     OnTimer = tmrInactivityTimer
     Left = 808
     Top = 64
