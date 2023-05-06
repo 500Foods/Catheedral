@@ -815,3 +815,65 @@ div.tabulator-row.tabulator-selected {
     font-size: 20px;
     margin-top: 2px;
 }
+
+.SceneButton {
+  position: relative;
+  font-size: 20px;
+  line-height: 1.1;
+  white-space: normal;
+  width: 290px;
+  height: 68px;
+  border-radius: 15px;
+  filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+  background-color: royalblue;
+  border: 2px solid royalblue;
+  color: white;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.SceneText {
+  display: flex;
+  position: absolute;
+  white-space: pre-line;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  padding-right: 10px;
+  padding-left: 64px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  filter: drop-shadow(0px 0px 1px black);
+  pointer-events: none;
+  z-index: 2;
+  font-size: 24px;
+}
+.SceneButton:hover {
+  opacity: 1;
+}
+.SceneIcon {
+  display: flex;
+  position:absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  font-size: 64px;
+  opacity: 0.5;
+  justify-content: start;
+  align-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+#divScenes {
+  transition: opacity var(--Delay-Short) ease;
+}
+
+@keyframes jigglysmall {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}

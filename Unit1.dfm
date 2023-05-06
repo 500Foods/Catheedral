@@ -26,7 +26,7 @@ object Form1: TForm1
     OnClick = divBackgroundClick
   end
   object pages: TWebPageControl
-    Left = 0
+    Left = -4
     Top = 0
     Width = 1280
     Height = 400
@@ -34,7 +34,7 @@ object Form1: TForm1
     ElementClassName = 'Page'
     ElementID = 'pages'
     ElementFont = efCSS
-    TabIndex = 15
+    TabIndex = 0
     ShowTabs = False
     TabOrder = 0
     Visible = False
@@ -910,11 +910,10 @@ object Form1: TForm1
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
           'ex-row"><i class="fa-solid fa-right-long fa-fw" style="color:bla' +
-          'ck; font-size:24px;"></i><div class="pe-2" style="color:#3399CC;' +
-          ' font-size:32px; height:40px;"><iconify-icon icon="mdi:home-assi' +
-          'stant"></iconify-icon></div><div class="lh-1" style="color:black' +
-          ';text-align:left;">Save Configuration<br />to Home Assistant</di' +
-          'v></div>'
+          'ck; font-size:24px;"></i><iconify-icon icon="mdi:home-assistant"' +
+          ' class="pe-2" style="color:#3399CC; font-size:32px;"></iconify-i' +
+          'con><div class="lh-1" style="color:black;text-align:left;">Save ' +
+          'Configuration<br />to Home Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHASaveConfiguration'
@@ -932,12 +931,11 @@ object Form1: TForm1
         Height = 60
         Caption = 
           '<div class="d-flex align-items-center justify-content-stretch fl' +
-          'ex-row"><div style="color:#3399CC; font-size:32px; height:40px;"' +
-          '><iconify-icon icon="mdi:home-assistant"></iconify-icon></div><i' +
-          ' class="fa-solid fa-right-long fa-fw" style="color:black; font-s' +
-          'ize:24px;"></i><div class="lh-1 ps-2" style="color:black;text-al' +
-          'ign:left;">Load Configuration<br />from Home Assistant</div></di' +
-          'v>'
+          'ex-row"><iconify-icon icon="mdi:home-assistant" style="color:#33' +
+          '99CC; font-size:32px;"></iconify-icon><i class="fa-solid fa-righ' +
+          't-long fa-fw" style="color:black; font-size:24px;"></i><div clas' +
+          's="lh-1 ps-2" style="color:black;text-align:left;">Load Configur' +
+          'ation<br />from Home Assistant</div></div>'
         ChildOrder = 14
         ElementClassName = 'btn btn-light opacity-25 ConfigButton'
         ElementID = 'btnHALoadConfiguration'
@@ -2985,18 +2983,16 @@ object Form1: TForm1
       Caption = 'Sc'
       ChildOrder = 1
       ElementFont = efCSS
-      object WebLabel3: TWebLabel
-        Left = 455
-        Top = 272
-        Width = 154
-        Height = 50
-        AutoSize = False
-        Caption = 'Scenes'
-        ElementLabelClassName = 'Text TextXL White'
+      object divScenes: TWebHTMLDiv
+        Left = 50
+        Top = 0
+        Width = 1180
+        Height = 396
+        ElementClassName = 'Scroll'
+        ElementID = 'divScenes'
+        ChildOrder = 5
         ElementFont = efCSS
-        HeightStyle = ssAuto
-        HeightPercent = 100.000000000000000000
-        WidthPercent = 100.000000000000000000
+        Role = ''
       end
     end
     object pageHelpConfig: TWebTabSheet
@@ -6239,6 +6235,7 @@ object Form1: TForm1
     OnConnect = HAWebSocketConnect
     OnDisconnect = HAWebSocketDisconnect
     OnDataReceived = HAWebSocketDataReceived
+    OnMessageReceived = HAWebSocketMessageReceived
     Left = 224
     Top = 64
   end

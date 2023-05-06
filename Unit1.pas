@@ -3,7 +3,7 @@ unit Unit1;
 interface
 
 uses
-  System.SysUtils, System.Classes, System.DateUtils, JS, Web, WEBLib.Graphics, WEBLib.Controls, jsdelphisystem, System.Math, System.StrUtils,
+  System.SysUtils, System.Classes, System.Types, System.DateUtils, JS, Web, WEBLib.Graphics, WEBLib.Controls, jsdelphisystem, System.Math, System.StrUtils,
   WEBLib.Forms, WEBLib.Miletus, WEBLib.Dialogs, Vcl.Controls, Vcl.StdCtrls,
   WEBLib.StdCtrls, WEBLib.ComCtrls, WEBLib.WebCtrls, WEBLib.Storage,
   WEBLib.ExtCtrls, WEBLib.WebSocketClient, WEBLib.DropDown;
@@ -354,7 +354,6 @@ type
     pageHelpWeather: TWebTabSheet;
     HelpWeather: TWebHTMLDiv;
     WebLabel2: TWebLabel;
-    WebLabel3: TWebLabel;
     pageRadar: TWebTabSheet;
     divRadar: TWebHTMLDiv;
     btnRadar: TWebButton;
@@ -398,6 +397,7 @@ type
     btnPlayback: TWebButton;
     listRecord: TWebListBox;
     listPlayback: TWebListBox;
+    divScenes: TWebHTMLDiv;
     procedure tmrSecondsTimer(Sender: TObject);
     procedure editConfigChange(Sender: TObject);
     [async] procedure LoadConfiguration;
@@ -454,6 +454,7 @@ type
     procedure LightButtonDimmed(light: String; brightness: Integer);
     procedure LightButtonColor(light: String; hsv: String);
     procedure LightButtonClicked(light: String);
+    procedure SceneButtonClicked(SceneID: String);
     procedure btnLioghtsShowAllClick(Sender: TObject);
     procedure btnLightsGroupsClick(Sender: TObject);
     procedure btnLightsNoGroupsClick(Sender: TObject);
@@ -484,6 +485,7 @@ type
     procedure btnListPlaybackClick(Sender: TObject);
     procedure listRecordChange(Sender: TObject);
     procedure listPlaybackChange(Sender: TObject);
+    procedure HAWebSocketMessageReceived(Sender: TObject; AMessage: string);
     [async] procedure btnRecordClick(Sender: TObject);
     [async] procedure btnPlaybackClick(Sender: TObject);
 
@@ -523,12 +525,15 @@ type
     HAGetStates: Integer;
     HAGetEvents: Integer;
     HAGetPeople: Integer;
+    HaGetScene: Integer;
     HAStates: JSValue;
     HAEntities: JSValue;
     HALoadConfig: Boolean;
     HAStatesLoaded: Boolean;
     HAPeople: JSValue;
     HAZones: JSValue;
+    HAScenes: JSValue;
+    HAScenesLoaded: JSValue;
 
     // Home Assistant values we'll use frequently
     HALanguage: String;
@@ -670,6 +675,11 @@ type
     SwatchColors: Array[0..23] of String;
     SwatchNames: Array[0..23] of String;
 
+    // Scenes Page
+    PositionScenes: Array[0..71] of TPoint;
+    ZCounter: Integer;
+    SceneState: JSValue;
+
 
     // Custom Pages
     CustomPage1URL: String;
@@ -704,6 +714,17 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TForm1.SceneButtonClicked(SceneID: String);
+begin
+  if ChangeMode = False then
+  begin
+    // Nothing to do really but send the request
+    HAID := HAID + 1;
+    HAGetScene := HAID;
+    HAWebSocket.Send('{"id":'+IntToStr(HAID)+', "type":"call_service", "domain": "scene", "service": "turn_on", "target": {"entity_id":"'+SceneID+'"}}');
+  end;
+end;
 
 procedure TForm1.SetupJavaScriptFunctions;
 var
@@ -905,6 +926,75 @@ begin
 
       return [r, g, b]
     }
+  end;
+
+  // InteractJS Code for moving elements
+  asm
+
+    // Drag Anywhere
+    var This = this;
+    interact('.dragdrop')
+      .draggable({
+        inertia: true,
+        modifiers: [
+          interact.modifiers.restrictRect({
+            restriction: 'parent',
+            endOnly: true
+          })
+        ],
+        onstart: function(event) {
+          This.ZCounter += 1;
+          event.target.style.setProperty('z-index',This.ZCounter);
+          event.target.style.removeProperty('animation-name');
+          This.ResetInactivityTimer(null);
+        },
+        onend: async function(event) {
+          var PosX = (parseFloat(event.target.style.left.replace('px','')) + parseFloat(event.target.getAttribute('data-x')));
+          var PosY = (parseFloat(event.target.style.top.replace('px','')) + parseFloat(event.target.getAttribute('data-y')));
+          event.target.style.top = PosY+'px';
+          event.target.style.left = PosX+'px';
+          event.target.style.removeProperty('transform');
+          event.target.removeAttribute('data-x');
+          event.target.removeAttribute('data-y');
+
+          // Find nearest Position
+          var minDistance = 999999;
+          var NewX = 0
+          var NewY = 0;
+          var dist = 0;
+          for (var i = 0; i < This.PositionScenes.length; i++) {
+            dist = Math.sqrt(Math.pow(This.PositionScenes[i].x - PosX,2) + Math.pow(This.PositionScenes[i].y - PosY,2));
+            if (dist < minDistance) {
+              minDistance = dist;
+              NewX = This.PositionScenes[i].x;
+              NewY = This.PositionScenes[i].y;
+            }
+          }
+
+          await sleep(50);
+          event.target.style.setProperty('transition','top 0.2s linear, left 0.2s linear');
+          event.target.style.top = NewY + 'px';
+          event.target.style.left = NewX + 'px';
+          This.SceneState[event.target.getAttribute("sceneid")] = [NewX,NewY];
+          setTimeout(function(){
+            event.target.style.setProperty('animation-name','jigglysmall');
+            event.target.style.removeProperty('transition');
+          },200);
+        },
+        listeners: {
+          move: dragMoveListener
+        }
+      });
+
+      function dragMoveListener (event) {
+      var target = event.target
+      var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+      var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+      target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+      target.setAttribute('data-x', x)
+      target.setAttribute('data-y', y)
+    };
+    window.dragMoveListener = dragMoveListener
   end;
 end;
 
@@ -1277,22 +1367,22 @@ end;
 
 procedure TForm1.btnHALoadConfigurationClick(Sender: TObject);
 begin
+console.log('click');
   // Change icon to indicate an update is happening.
   // Though in this case it might be too quick to be visible
-  btnHALoadConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
-                                      '<div <iconify-icon icon=mdi:home-assistant style="color:#3399CC; font-size:32px;"></iconfiy-icon>'+
+  btnHALoadConfiguration.Caption := '<div class="cursor-pointer d-flex align-items-center justify-content-stretch flex-row">'+
+                                      '<iconify-icon icon="mdi:home-assistant" style="color:#3399CC; font-size:32px;"></iconify-icon>'+
                                       '<i class="fa-solid fa-rotate fa-spin fa-fw" style="color:black; font-size:24px;"></i>'+
                                       '<div class="ps-2 lh-1" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
                                     '</div>';
-
 
   // Set flag to indicate that when states arrive, we want to retrieve the configuration
   HALoadConfig := True;
 
   // Request full set of states again (no option to limit what is returned
-  HAID := HAID + 1;
+  HAID := HAID + 10;
   HAGetStates := HAID;
-  HAWebSocket.Send('{"id":'+IntToStr(HAID)+',"type": "get_states"}');
+  HAWebSocket.Send('{"id":'+IntToStr(HAGetStates)+',"type":"get_states"}');
 
   ResetInactivityTimer(Sender);
 end;
@@ -1302,13 +1392,14 @@ var
   Command: String;
   Data: String;
   i: Integer;
+  SceneStateString: String;
 begin
 
   // Change icon to indicate an update is happening.
   // Though in this case it might be too quick to be visible
   btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
                                       '<i class="fa-solid fa-rotate fa-fw fa-spin" style="color:black; font-size:24px;"></i>'+
-                                      '<iconify-icon icon=mdi:home-assistant class="pe-2" style="color:#3399CC; font-size:32px;"></iconify-icon>'+
+                                      '<iconify-icon icon="mdi:home-assistant" class="pe-2" style="color:#3399CC; font-size:32px;"></iconify-icon>'+
                                       '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
                                     '</div>';
 
@@ -1318,15 +1409,26 @@ begin
   Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_version","value":"'+Data+'"}}';
   HAWebSocket.Send(Command);
 
+  SceneStateString := '[]';
+  asm
+    var SSS = [];
+    for (var el in this.SceneState) {
+      SSS.push({sceneid: el, x: this.SceneState[el][0], y: this.SceneState[el][1]});
+    }
+    SceneStateString = JSON.stringify(SSS);
+  end;
+
   // Update Configuration var as JSON
   HAID := HAID + 1;
-  Data := '{"LD":"'+editConfigLongDate.Text+'",'+
-           '"SD":"'+editConfigShortDate.Text+'",'+
-           '"LT":"'+editConfigLongTime.Text+'",'+
-           '"ST":"'+editConfigShortTime.Text+'",'+
-           '"RR":"'+editConfigRecordRate.Text+'",'+
-           '"PR":"'+editConfigPlaybackRate.Text+'",'+
-           '"BG":"'+editConfigBackground.Text+'"}';
+  Data := '{"LD":"'+editConfigLongDate.Text     +'",'+
+           '"SD":"'+editConfigShortDate.Text    +'",'+
+           '"LT":"'+editConfigLongTime.Text     +'",'+
+           '"ST":"'+editConfigShortTime.Text    +'",'+
+           '"RR":"'+editConfigRecordRate.Text   +'",'+
+           '"PR":"'+editConfigPlaybackRate.Text +'",'+
+           '"BG":"'+editConfigBackground.Text   +'",'+
+           '"SS":'+SceneStateString                  +
+           '}';
   asm Data = JSON.stringify(Data); end;
   Command := '{"id":'+IntToStr(HAID)+', "type":"call_service", "domain":"var", "service":"set", "service_data":{"entity_id":"var.catheedral_configuration","value":"'+FormatDateTime('yyyy-mm-dd hh:nn:ss',Now)+'","attributes":{"feature_000":'+Data+',';
 
@@ -1345,11 +1447,16 @@ begin
   HAWebSocket.Send(Command);
 
   // Revert to normal icon
-  btnHASaveConfiguration.Caption := '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
-                                      '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
-                                      '<iconfiy-icon icon=mdi:home-assistant class="pe-2" style="color:#3399CC; font-size:32px;"></div>'+
-                                      '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
-                                    '</div>';
+  asm
+    setTimeout(function() {
+      pas.Unit1.Form1.btnHASaveConfiguration.SetCaption(
+        '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
+          '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
+          '<iconify-icon icon="mdi:home-assistant" class="pe-2" style="color:#3399CC; font-size:32px;"></iconify-icon>'+
+          '<div class="lh-1" style="color:black;text-align:left;">Save Configuration<br />to Home Assistant</div>'+
+        '</div>');
+      },750);
+  end;
 
   ResetInactivityTimer(Sender);
 end;
@@ -1466,10 +1573,19 @@ var
   i: Integer;
   FeatureKey: String;
   FeatureValue: String;
-
+  SceneStateString: String;
 begin
 //  console.log('Saving Configuration');
   AppINIFile := TMiletusINIFile.Create(StringReplace(ParamStr(0),'.exe','',[])+'.ini');
+
+  SceneStateString := '[]';
+  asm
+    var SSS = [];
+    for (var el in this.SceneState) {
+      SSS.push({sceneid: el, x: this.SceneState[el][0], y: this.SceneState[el][1]});
+    }
+    SceneStateString = JSON.stringify(SSS);
+  end;
 
   // Save each of the Configuration Page paramerts to the INI File
   AppIniFile.WriteString('Configuration', 'URL', editConfigURL.Text);
@@ -1481,6 +1597,8 @@ begin
   AppIniFile.WriteString('Configuration', 'SHORTTIME', editConfigSHORTTIME.Text);
   AppIniFile.WriteString('Configuration', 'RECORDRATE', editConfigRecordRate.Text);
   AppIniFile.WriteString('Configuration', 'PLAYBACKRATE', editConfigPlaybackRate.Text);
+  AppIniFile.WriteString('Configuration', 'SCENESTATE', SceneStateString);
+
 
   // Save each of the links to Home Assistant to the INI file as well
   // Kind of a pain to get it out of Tabulator, but it is an odd thing we're doing...
@@ -1660,7 +1778,7 @@ begin
         this.HAStates = hadata.result.sort((a,b) => (a.entity_id > b.entity_id) ? 1: -1);
 
         // Let's have a look at it, shall we??
-//        console.log('State Information: '+SocketData.jsobject.length+' bytes');
+        console.log('State Information: '+SocketData.jsobject.length+' bytes');
 //        console.log(this.HAStates);
 
         // This is a list of the names of all the entities that have a state, sorted
@@ -1712,8 +1830,19 @@ begin
           });
 
 
+        // Lookup Scenes
+        this.HAScenes = hadata.result.filter(
+          function(o) {
+           return (o.entity_id.indexOf("scene.") == 0);
+          });
+
+
         // Load Configuration from Home Assistant Data (triggered by button click - not automatic)
         if (this.HALoadConfig == true) {
+
+          // Don't run this again unless asked
+          this.HALoadConfig = false;
+
           var config = hadata.result.find(o => o.entity_id === 'var.catheedral_configuration');
           if (config !== undefined) {
             for (var i = 0; i <= this.Features; i++) {
@@ -1728,6 +1857,12 @@ begin
                   editConfigBACKGROUND.value = param.BG;
                   editConfigRecordRate.value = param.RR;
                   editConfigPlaybackRate.value = param.PR;
+
+                  this.HAScenesLoaded = [];
+                  this.SceneState = [];
+                  param.SS.forEach((el) => {
+                    this.SceneState[el.sceneid] = [el.x,el.y];
+                  });
                 }
                 // List of sensors stored in 001..Features
                 else {
@@ -1740,17 +1875,17 @@ begin
           // Reconnect to reload everything
           this.editConfigChange(null);
           this.editConfigBACKGROUNDChange(null);
-          this.dataConfigSTATUSClick(null);
+//          this.dataConfigSTATUSClick(null);
 
-          // And don't run this again unless asked
-          this.HALoadConfig = false;
-
-          // Put back the normal icon
-          this.btnHALoadConfiguration.SetCaption('<div class="d-flex align-items-center justify-content-stretch flex-row">'+
-                                                   '<iconify-icon icon=mdi:home-assistant class="pe-2" style="color:#3399CC; font-size:32px;"></div>'+
-                                                   '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
-                                                   '<div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
-                                                 '</div>');
+            // Put back the normal icon
+            setTimeout(function() {
+              pas.Unit1.Form1.btnHALoadConfiguration.SetCaption(
+                '<div class="d-flex align-items-center justify-content-stretch flex-row">'+
+                  '<iconify-icon icon="mdi:home-assistant" style="color:#3399CC; font-size:32px;"></iconify-icon>'+
+                  '<i class="fa-solid fa-right-long fa-fw" style="color:black; font-size:24px;"></i>'+
+                  '<div class="lh-1 ps-2" style="color:black;text-align:left;">Load Configuration<br />from Home Assistant</div>'+
+                '</div>');
+              }, 750);
         }
 
         this.HAStatesLoaded = true;
@@ -1878,6 +2013,11 @@ begin
     // thank you - this is an empty result typically?
     // console.log('HAGetPeople results have arrived');
   end
+  else if (ResponseType = 'result') and (ResponseID = HAGetScene) then
+  begin
+    // thank you - nothing to do here
+    // console.log('HAGetScene results have arrived');
+  end
   else if (ResponseType = 'event') and (ResponseID = HAGetPeople) then
   begin
     asm
@@ -1945,6 +2085,11 @@ begin
 
     ShowDisconnected;
   end;
+end;
+
+procedure TForm1.HAWebSocketMessageReceived(Sender: TObject; AMessage: string);
+begin
+//  console.log(AMessage);
 end;
 
 procedure TForm1.labelConfigSTATUSClick(Sender: TObject);
@@ -2269,6 +2414,18 @@ begin
   StoredValue := await(String, AppINIFile.ReadString('Configuration', 'PLAYBACKRATE', ''));
   if StoredValue <> '' then editConfigPlaybackRate.Text := StoredValue;
 
+  StoredValue := await(String, AppINIFile.ReadString('Configuration', 'SCENESTATE', ''));
+  if StoredValue <> '' then
+  begin
+    asm
+      var SSS = JSON.parse(StoredValue);
+      this.SceneState = [];
+      SSS.forEach((el) => {
+        this.SceneState[el.sceneid] = [el.x,el.y];
+      });
+    end;
+  end;
+
   // Add each of the links for Home Assistant from the INI file as well
   // Kind of a pain to get it back into Tabulator, but it is an odd thing we're doing...
   FeatureKey := '';
@@ -2522,7 +2679,7 @@ begin
   listTimesLong.Top := 245;
   listTimesLong.Left := 560;
   listTimesLong.Width := 150;
-  listTimesLong.Height := 138;
+  listTimesLong.Height := 0;
   listTimesLong.Tag := 138;
 
   listTimesShort.Top := 285;
@@ -2694,6 +2851,20 @@ begin
   asm
     this.Lights = [];
   end;
+
+  // Scenes Page
+  ZCounter := 1;
+  asm
+    this.HAScenes = [];
+    this.HAScenesLoaded = '';
+    this.SceneState = [];
+  end;
+  for i := 0 to 71 do
+  begin
+    PositionScenes[i].X := 7 + (i mod 8)*147;
+    PositionScenes[i].Y := 20 + (i div 8)*36;
+  end;
+
 
 
   // Got JavaScript functions we want to use?  Not sure where to put them.
@@ -3032,8 +3203,8 @@ begin
     // Set middle text - Advisory and Summary values
     if WeatherAdvisory ='0' then WeatherAdvisory := '';
     if (WeatherAdvisory = '') and (WeatherSummary = '')
-    then divWxText.HTML.Text := '<div style="width:1180px;"><span class="Gray TextSM">'+WeatherAttribution+'</span></div>'
-    else divWxText.HTML.Text := '<div style="width:1180px !important; white-space:normal;"><span class="Yellow">'+WeatherAdvisory+'</span><span>'+WeatherSummary+'</span><span class="Gray TextSM">'+WeatherAttribution+'</span></div>';
+    then divWxText.HTML.Text := '<div style="width:1180px;"> <span class="Gray text-nowrap TextSM">'+WeatherAttribution+'</span></div>'
+    else divWxText.HTML.Text := '<div style="width:1180px !important; white-space:normal;"><span class="Yellow">'+WeatherAdvisory+'</span><span>'+WeatherSummary+'</span> <span class="Gray text-nowrap TextSM">'+WeatherAttribution+'</span></div>';
 
     asm
       // eg: Environment Canada Regular Forecast
@@ -3650,7 +3821,7 @@ begin
       if (UpdateRing2 = True) or (tmrSeconds.Tag = 1) then
       begin
         // Setpoint (Ring 2)
-        segment_start := Trunc(((ClimateSetPoint-ClimateMinTempRange)*290) / (ClimateMaxTempRange-ClimateMinTempRange));
+        segment_start := Trunc(((Max(ClimateSetPoint-ClimateMinTempRange,0))*290) / (ClimateMaxTempRange-ClimateMinTempRange));
         segment := IntToStr(segment_start)+','+IntToStr(290-segment_start)+',70';
         Sparkline_Donut(
           65, 15, 270, 270,                                     // T, L, W, H
@@ -3663,7 +3834,7 @@ begin
         );
 
         // SetPoint Marker (Ring 2)
-        rotation := IntToStr(215+Trunc(((ClimateSetpoint-ClimateMinTempRange)*290) / (ClimateMaxTempRange-ClimateMinTempRange))-2);
+        rotation := IntToStr(215+Trunc(((Max(ClimateSetpoint-ClimateMinTempRange,0))*290) / (ClimateMaxTempRange-ClimateMinTempRange))-2);
         Sparkline_Donut(
           50, 0, 300, 300,                                      // T, L, W, H
           ringSetPointMarker,                                   // TWebHTMLDiv
@@ -4248,6 +4419,81 @@ begin
     end;
   end;
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Scenes Page
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  if (pages.TabIndex = 3) or (tmrSeconds.Tag = 3) then
+  begin
+
+    asm
+      if (this.HAScenesLoaded !== JSON.stringify(this.HAScenes)) {
+
+        this.HAScenesLoaded = JSON.stringify(this.HAScenes);
+        divScenes.replaceChildren();
+
+        if (this.HAScenes.length > 0) {
+          for (var i = 0; i < this.HAScenes.length; i++) {
+
+            // Create a new button
+            var scenebtn = document.createElement("div");
+            scenebtn.id = 'scene-'+this.HAScenes[i].entity_id;
+            scenebtn.setAttribute('sceneid',this.HAScenes[i].entity_id);
+
+            // Not draggable by default
+            scenebtn.classList.add('SceneButton','not-draggable');
+
+            // Want to layout the buttons in a sensible way
+            scenebtn.style.setProperty('position','absolute');
+            if (this.SceneState[this.HAScenes[i].entity_id] !== undefined)  {
+              scenebtn.style.setProperty('top',this.SceneState[this.HAScenes[i].entity_id][1]+'px');
+              scenebtn.style.setProperty('left',this.SceneState[this.HAScenes[i].entity_id][0]+'px');
+            } else {
+              scenebtn.style.setProperty('top',this.PositionScenes[i*2+8*parseInt(i/4)].y+'px');
+              scenebtn.style.setProperty('left',this.PositionScenes[i*2+8*parseInt(i/4)].x+'px');
+            }
+
+            // Set Jiggle Animation Properties
+            scenebtn.style.setProperty('transform-origin',parseInt(10+Math.random()*80)+'% '+parseInt(10+Math.random()*80)+'%');
+            scenebtn.style.setProperty('animation-duration',(0.40+Math.random()*0.40)+'s');
+            scenebtn.style.setProperty('animation-iteration-count','infinite');
+            scenebtn.style.setProperty('animation-timing-function','ease-in-out');
+
+            var scenetxt = document.createElement("div");
+            scenetxt.textContent = this.HAScenes[i].attributes["friendly_name"];
+            scenetxt.classList.add('SceneText');
+
+            // Find the Home Assistant Icon to use
+            var sceneicon = document.createElement("iconify-icon");
+            var icon = "mdi:scenebulb";
+            if (this.HAScenes[i].attributes["icon"] !== undefined) {
+              icon = this.HAScenes[i].attributes["icon"];
+            }
+
+            // Add button to the page
+            divScenes.appendChild(scenebtn);
+
+            // Add Icon to the button
+            scenebtn.appendChild(sceneicon);
+            scenebtn.appendChild(sceneicon);
+            scenebtn.appendChild(sceneicon);
+            sceneicon.setAttribute("icon",icon);
+            sceneicon.classList.add("SceneIcon");
+
+            // Add Text to the button
+            scenebtn.appendChild(scenetxt);
+
+            // Call Delphi function when someone clicks on a button
+
+            scenebtn.addEventListener('click',function(e){
+              pas.Unit1.Form1.SceneButtonClicked(e.target.getAttribute('sceneid'));
+              e.stopPropagation;
+            });
+          }
+        }
+      }
+    end;
+  end;
 
 
   // When do we want to do this again?
@@ -4433,6 +4679,18 @@ begin
     asm
       btnChange.firstElementChild.classList.remove('text-warning','fa-beat');
       btnChange.style.setProperty('opacity','0.25');
+    end;
+
+    // Turn off jiggle mode and drag mode
+    if (StartPage = 3) then
+    begin
+      asm
+        var btns = document.querySelectorAll('.SceneButton');
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].style.removeProperty('animation-name','jigglysmall');
+          btns[i].classList.replace('dragdrop','not-draggable');
+       }
+      end;
     end;
 
     if PopupVisible
@@ -4944,6 +5202,37 @@ begin
       btnChange.firstElementChild.classList.add('text-warning','fa-beat');
       btnChange.style.setProperty('opacity','1');
     end;
+  end
+
+  // Scenes Change Mode
+  else if (pages.Tabindex = 3) and (ChangeMode = False) then
+  begin
+    ChangeMode := True;
+    asm
+      btnChange.firstElementChild.classList.add('text-warning','fa-beat');
+      btnChange.style.setProperty('opacity','1');
+
+      var btns = document.querySelectorAll('.SceneButton');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].style.setProperty('animation-name','jigglysmall');
+        btns[i].classList.replace('not-draggable','dragdrop');
+      }
+    end;
+  end
+  else if (pages.Tabindex = 3) and (ChangeMode = True) then
+  begin
+    ChangeMode := False;
+    asm
+      btnChange.firstElementChild.classList.remove('text-warning','fa-beat');
+      btnChange.style.setProperty('opacity','0.25');
+
+      var btns = document.querySelectorAll('.SceneButton');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].style.removeProperty('animation-name','jigglysmall');
+        btns[i].classList.replace('dragdrop','not-draggable');
+      }
+    end;
+    editConfigChange(sender);
   end
 
   // Cancel Change Mode regardless of what was being changed
