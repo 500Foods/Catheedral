@@ -24,5 +24,24 @@ As with any modern web application, other JavaScript libraries/dependencies have
 ## Additional Notes
 While this project is currently under active development, feel free to give it a try and post any issues you encounter.  Or start a dicussion if you would like to help steer the project in a particular direction.  Early days yet, so a good time to have your voice heard.  As the project unfolds, additional resources will be made available, including platform binaries, more documentation, demos, and so on.
 
+## Repository Information\
+```
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+SVG                           2671           1858           1475          51696
+Delphi Form                      1             15             55           6226
+Pascal                           2            766           1310           3997
+HTML                            15            585             16           2847
+YAML                             4            392              8           2277
+CSS                              2             70             36           1500
+TypeScript                       1              3              0            950
+JSON                           424              0              0            704
+JavaScript                      11            103              4            575
+Markdown                         2             16              0             59
+-------------------------------------------------------------------------------
+SUM:                          3133           3808           2904          70831
+-------------------------------------------------------------------------------
+```
 ## Sponsor / Donate / Support
 If you find this work interesting, helpful, or useful, or that it has sved you time, money, or both, please consider direclty supporting these efforts financially via [GitHub Sponsors](https://github.com/sponsors/500Foods) or donating via [Buy Me a Pizza](https://www.buymeacoffee.com/andrewsimard500). Also, be sure to check out these other [GitHub Repositories](https://github.com/500Foods?tab=repositories&q=&sort=stargazers) that may be of interest to you.
