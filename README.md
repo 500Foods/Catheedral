@@ -22,7 +22,7 @@ As with any modern web application, other JavaScript libraries/dependencies have
 - [Meteocons](https://github.com/basmilius/weather-icons) - Animated Weather Icons by [Bas Milius](https://bas.dev/)
 
 ## Additional Notes
-While this project is currently under active development, feel free to give it a try and post any issues you encounter.  Or start a dicussion if you would like to help steer the project in a particular direction.  Early days yet, so a good time to have your voice heard.  As the project unfolds, additional resources will be made available, including platform binaries, more documentation, demos, and so on.
+While this project is currently under active development, feel free to give it a try and post any issues you encounter.  Or start a discussion if you would like to help steer the project in a particular direction.  Early days yet, so a good time to have your voice heard.  As the project unfolds, additional resources will be made available, including platform binaries, more documentation, demos, and so on.
 
 ## Repository Information 
 [![Count Lines of Code](https://github.com/500Foods/Catheedral/actions/workflows/main.yml/badge.svg)](https://github.com/500Foods/Catheedral/actions/workflows/main.yml)
