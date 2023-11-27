@@ -28,17 +28,18 @@ While this project is currently under active development, feel free to give it a
 [![Count Lines of Code](https://github.com/500Foods/Catheedral/actions/workflows/main.yml/badge.svg)](https://github.com/500Foods/Catheedral/actions/workflows/main.yml)
 <!--CLOC-START -->
 ```
-Last Updated at 2023-11-27 01:52:22 UTC
+Last Updated at 2023-11-27 02:09:49 UTC
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Pascal                           2             48             62            160
-Delphi Form                      1              0              0             39
-Markdown                         1              8              2             39
-YAML                             2             11             13             33
-HTML                             2              7              0             23
+Delphi Form                      1             15             55           6226
+Pascal                           2            766           1310           3997
+CSS                              1             68             36            775
+HTML                            12             15             15            244
+Markdown                         1              7              2             38
+YAML                             2              8             12             33
 -------------------------------------------------------------------------------
-SUM:                             8             74             77            294
+SUM:                            19            879           1430          11313
 -------------------------------------------------------------------------------
 ```
 <!--CLOC-END-->
