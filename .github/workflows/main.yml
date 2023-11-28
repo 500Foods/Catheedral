@@ -30,7 +30,7 @@ jobs:
     - name: Count Lines of Code (cloc)
       uses: djdefi/cloc-action@main
       with:
-        options: --report-file=cloc.txt
+        options: --report-file=cloc.txt --ignored=cloc-ignored.txt
 
     # Copy the new cloc.txt contents into the README.md file at the appropriate spot
     - run: csplit README.md /\<\!--CLOC/ {1}
@@ -38,8 +38,11 @@ jobs:
     - run: echo "<!--CLOC-START -->" >> README.md
     - run: echo "\`\`\`" >> README.md
     - run: echo "NOW=$(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
-    - run: echo "Last Updated at ${{ env.NOW }}" >> README.md
+    - run: echo "Last updated at ${{ env.NOW }}" >> README.md
     - run: tail -n +2 cloc.txt >> README.md
+    - run: echo "SKIP=$(wc -l < cloc-ignored.txt)" >> $GITHUB_ENV
+    - run: echo "${{ env.SKIP }} Files (without source code) were skipped" >> README.md
+#    - run: cat cloc-ignored.txt >> README.md
     - run: echo "\`\`\`" >> README.md
     - run: cat xx02 >> README.md
 
